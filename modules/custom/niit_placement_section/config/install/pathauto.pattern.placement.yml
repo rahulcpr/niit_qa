@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: placement
+label: Placement
+type: 'canonical_entities:node'
+pattern: '[node:content-type:name]/[node:field_page_type:entity:name]/[node:title]'
+selection_criteria:
+  8914ce61-f72f-4a2a-9f12-0834a2aaac97:
+    id: node_type
+    bundles:
+      placement: placement
+    negate: false
+    context_mapping:
+      node: node
+    uuid: 8914ce61-f72f-4a2a-9f12-0834a2aaac97
+selection_logic: and
+weight: -5
+relationships: {  }

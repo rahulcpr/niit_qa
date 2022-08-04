@@ -1,0 +1,160 @@
+<section class="enroll_for_placement">
+    <div class="container">
+        <div class="headding head50 text-center">
+            <h2>hire from us
+             </h2>
+            <span class="underline"></span></div>
+        {{ element.elements.form_token }}
+        {{ element.elements.form_build_id }}
+        {{ element.elements.form_id }}
+        {{ element.elements.form_description }} 
+
+        <form{{ attributes }} onsubmit="jQuery('#formResponse').fadeIn();">
+
+            <div class="ftop-appoinment">
+                <div class="fieldwrap">
+                    <div class="container">   
+
+                         <div class="row">
+                            
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ element.elements.organization_name }}
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ element.elements.full_name }}
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ element.elements.mobile_no }}
+                                </div>
+                            </div>
+                        </div>
+						
+						<div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ element.elements.e_mail }}
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="catfilternew">
+                                    <div class="form-group selctforenroll">
+                                        {{ element.elements.upload_jd_recruitment }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="catfilternew fileinput">
+                                    <div class="form-group"
+                                         id="upload_document_id"
+                                         style="display: none">
+                                        {{ element.elements.upload_document }}
+                                    </div>
+
+                                    <div class="form-group"
+                                         id="fill_up_required_form"
+                                         style="display: none">
+                                        {{ element.elements.nature_of_business }}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+						
+						<div class="row" id="show_all_section" style="display: none">
+							<div class="col-sm-12">
+								<div class="row">
+
+                                    <div class="col-sm-4">
+                                        <div class="catfilter">
+                                            <div class="form-group">
+                                                {{ element.elements.skills_required }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-8">
+                                        <div class="catfilter">
+                                            <div class="form-group">
+                                                {{ element.elements.secondary_skills }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+									
+								</div>
+							</div>
+
+                             
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ element.elements.qualifying }}
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ element.elements.no_of_vacancies }}
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    {{ element.elements.ctc }}
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6" >
+                                <div class="catfilter">
+                                    <div class="form-group text-left">
+                                        <lable> Job Role</lable>
+                                        {{ element.elements.job_role }}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-6">
+								<div class="catfilter">
+                                        <div class="form-group text-left">
+                                            <lable> Academics</lable>
+											{{ element.elements.academics }}
+										</div>
+								</div>
+							</div>
+						</div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="publish_checkbox">
+                                    
+                                    {{ element.elements.privacy_policy }}
+
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                {{ element.elements.actions }}
+                            </div>
+                        </div>
+                       
+                        {{ element.elements.theme }}
+                        {{ element.form_token }}
+                        {{ element.form_build_id }}
+                        {{ element.form_id }}
+                        {{ title_suffix }}
+                    </div>
+                </div>
+            </div>
+    </div>
+    </form>
+</section>

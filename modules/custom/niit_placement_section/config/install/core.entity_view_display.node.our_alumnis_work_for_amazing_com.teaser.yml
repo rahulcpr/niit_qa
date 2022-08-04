@@ -1,0 +1,44 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.our_alumnis_work_for_amazing_com.body
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumni_work_category
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumni_work_top_category
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumnis_company_image
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumnis_company_name
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumnis_designation
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumnis_image
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumnis_name
+    - node.type.our_alumnis_work_for_amazing_com
+  module:
+    - text
+    - user
+id: node.our_alumnis_work_for_amazing_com.teaser
+targetEntityType: node
+bundle: our_alumnis_work_for_amazing_com
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden:
+  field_alumni_work_category: true
+  field_alumni_work_top_category: true
+  field_alumnis_company_image: true
+  field_alumnis_company_name: true
+  field_alumnis_designation: true
+  field_alumnis_image: true
+  field_alumnis_name: true

@@ -1,0 +1,91 @@
+{% block paragraph %}
+ {% block content %}
+
+{% set gallery_title = content.field_gallery_title[0]['#context']['value'] %}
+{% set field_gallery_description = content.field_gallery_description[0]['#context']['value'] %}
+{% set field_see_more_url = content.field_center_cta[0]['#url']|render %}
+{% set field_see_more_title = content.field_center_cta[0]['#title'] %}
+{% set field_disclaimer = content.field_center_page_disclaimer[0]['#context']['value'] %}
+
+<section class="sliderinner-wrap gallery_sec">
+    <div class="container">
+        <div class="headding head50 text-center">
+            {% if gallery_title != '' %}
+            <h2>{{  gallery_title }}</h2>
+            {% endif %}
+
+            {% if field_gallery_description != '' %}
+                <h3>{{  field_gallery_description }}</h3>
+            {% endif %}
+
+            <span class="underline"></span> </div>
+    </div>
+        <div class="tabbing_sec">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Nav tabs -->
+                    <div class="text-center">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#center_img" aria-controls="center_img" role="tab" data-toggle="tab">Center Images </a></li>
+                            <li role="presentation"><a href="#life_center" aria-controls="life_center" role="tab" data-toggle="tab">Life @ Centre</a></li>
+                            <li role="presentation"><a href="#show_all" aria-controls="show_all" role="tab" data-toggle="tab">Show All</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content">
+
+                <div role="tabpanel" class="tab-pane fade  in active" id="center_img">
+                    <div class="container">
+                         <div class="col-md-12 col-sm-12 col-xs-12 padd0 left_col">
+                            <ul class="archive-slider">
+                                {# below function take two parameter first view machine name or other block machine name from advance contaul filter#}
+                                {{ drupal_view('center_image_slider', 'center_galley_block_name') }}
+                           </ul>
+                         </div>
+                    </div>
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="life_center">
+                    <div class="container">
+                        <div class="col-md-12 col-sm-12 col-xs-12 padd0 left_col">
+                            <ul class="archive-slider ">
+                                {# below function take two parameter first view machine name or other block machine name from advance contaul filter#}
+                                {{ drupal_view('life_at_center', 'life_at_center_block_name') }}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="show_all">
+                    <div class="container">
+                        <div class="col-md-12 col-sm-12 col-xs-12 padd0 left_col">
+                            <ul class="archive-slider-random arrowslick ">
+                                {# below function take two parameter first view machine name or other block machine name from advance contaul filter#}
+                                {{ drupal_view('center_page_gallery_show_all', 'center_gallery_show_all') }}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 disclaimer text-center">
+                        {% if field_disclaimer != '' %}
+                        <strong>Disclaimer:</strong> {{ field_disclaimer }}</div>
+                        {% endif %}
+
+                    {% if  field_see_more_url != '#' and field_see_more_title != '' %}
+
+                     <div class="col-md-12 text-center"> <a id="" class="morebtn" href="{{ field_see_more_url }}">{{ field_see_more_title }}</a> </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+</section>
+
+ {% endblock %}
+{% endblock paragraph %}

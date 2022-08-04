@@ -1,0 +1,46 @@
+
+<div class="col-md-6">
+      <div class="selfPaced_courseBox selfPaced_courseBoxNew2">
+      <div class="col-md-4 sp_courseThumbnail">
+        <img src="{{ fields.field_course_image.content }}" class="img-responsive">
+        <div class="sp_socail">
+          <a href="#"><img src="/india/themes/custom/nexus/assets/images/w.png" class="img-responsive"></a>
+          <a href="https://www.facebook.com/NIIT4u/"><img src="/india/themes/custom/nexus/assets/images/f.png" class="img-responsive"></a>
+          <a href="https://twitter.com/NIITLtd"><img src="/india/themes/custom/nexus/assets/images/t.png" class="img-responsive"></a>
+        </div>
+        <div class="sp_buttons sp_cta_desktop">
+          {{ generateEnrollNowAndAccessBtn(fields.nid.content, fields.field_course_code.content, 'Access Your Course', 'Enroll Now', 'LandingPage').stackathonLeadFormBtn|raw }}
+         <!--  <a href="javascript:void(0)" class="sp_enrollNow" node-id="{{ fields.nid.content }}" onclick="stackathonform_popup('{{ fields.nid.content }}')">enroll now</a> --> 
+          <a href="{{ fields.view_node.content }}" class="sp_knowMore col-md-12 mt-4">know more</a>
+          <span class="new_mutlistep_apply_btn newbtnApplypink"> {{ StackathonLeadFormBtn|raw }} </span>
+        </div>
+      </div>
+      <div class="col-md-8 sp_borderLeft">
+        <div class="selfPaced_courser_detail">
+          <h3>{{ fields.title.content }}</h3>
+          <p>{{ fields.field_course_summary.content }}</p>
+          <div class="sp_usps">
+            <p class=""><img src="{{ fields.field_course_duration_icon.content }}"> <span>{{ fields.field_course_duration.content }}</span></p>
+            <p class=""><img src="{{ fields.field_course_module_icon.content }}"> <span>{{ fields.field_course_modules.content }}</span></p>
+            <p class=""><img src="{{ fields.field_assignment_icon.content }}"> <span>{{ fields.field_assignment_text.content }}</span></p>
+          </div>
+          {% if fields.field_course_fee.content is not empty %}
+          <div class="offerBox">
+            <p><img src="/themes/custom/nexus/assets/images/offer.png" class="img-responsive"> <span>{{ fields.field_saving_text.content }}</span></p>
+            <p class="pl-5"><small>{{ fields.field_saving_sub_text.content }}</small></p>
+          </div>
+          
+          <div class="sp_fees">
+            <h4><span><del>Rs. {{ fields.field_course_fee.content }}</del></span></h4>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="sp_buttons sp_cta_mobile">
+          {{ generateEnrollNowAndAccessBtn(fields.nid.content, fields.field_course_code.content, 'Access Your Course', 'Enroll Now', 'LandingPage').stackathonLeadFormBtn|raw }}
+         <!--  <a href="javascript:void(0)" class="sp_enrollNow" node-id="{{ fields.nid.content }}" onclick="stackathonform_popup('{{ fields.nid.content }}')">enroll now</a> --> 
+          <a href="{{ fields.view_node.content }}" class="sp_knowMore col-md-12 mt-4">know more</a>
+          <span class="new_mutlistep_apply_btn newbtnApplypink"> {{ StackathonLeadFormBtn|raw }} </span>
+        </div>
+    </div>
+    </div>

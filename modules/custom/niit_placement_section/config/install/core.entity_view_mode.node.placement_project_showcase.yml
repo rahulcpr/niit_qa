@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.placement_project_showcase
+label: 'Placement Project Showcase'
+targetEntityType: node
+cache: true

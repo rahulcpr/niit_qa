@@ -1,0 +1,58 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.upcoming_drive.field_drive_disclaimer
+    - field.field.paragraph.upcoming_drive.field_in_india_drive
+    - field.field.paragraph.upcoming_drive.field_in_your_city
+    - field.field.paragraph.upcoming_drive.field_mega_drive_archive
+    - field.field.paragraph.upcoming_drive.field_see_more
+    - paragraphs.paragraphs_type.upcoming_drive
+  module:
+    - link
+id: paragraph.upcoming_drive.default
+targetEntityType: paragraph
+bundle: upcoming_drive
+mode: default
+content:
+  field_drive_disclaimer:
+    weight: 3
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_in_india_drive:
+    weight: 0
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_in_your_city:
+    weight: 1
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_mega_drive_archive:
+    weight: 2
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_see_more:
+    weight: 4
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

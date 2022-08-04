@@ -1,0 +1,140 @@
+<!-- Header Section start -->
+<section class="header-container" style="padding: 10px 0px;">
+  <div class="container">
+    <div class="row">
+      <div class="headerSection col-md-12">
+        <div class="logo">
+          <a href="/">
+            <img src="/india/themes/custom/nexus/assets/images/NIIT_logomobile.png" alt="NIIT" title="NIIT" class="scale hide600">
+            <img src="/india/themes/custom/nexus/assets/images/NIIT_logomobile.png" alt="NIIT" title="NIIT" class="scale show600">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Header Section end -->
+
+<!-- Banner Image Section start -->
+{% if node.field_banner_image_interview.entity.fileuri is not empty %}
+  <section class="img-section-data">
+        <img src="{{ file_url(node.field_banner_image_interview.entity.fileuri) }}" class="img-responsive"  alt="{{ node.field_banner_image_interview.alt  }}">
+  </section>
+{% endif %} 
+<!-- Banner Image Section end -->
+
+
+<!-- About Section Start -->
+<section id="icicitestimonoal" class="pt-3 mb-4">
+  <div class="container">
+    <h2 class="learning-app-webpage-title">{{ node.field_content_brief_title.value }}</h2>
+        <p class="learning-app-webpage-Subtitle mb-4">  {{ node.field_field_content_brief_summar.value }}
+        </p>
+   </div>
+</section>        
+<!-- About Section end -->
+
+
+<!-- Video Section Start -->
+{% if node.field_video_section_interview is not empty %}
+<section id="icicitestimonoal" class="pt-3 mb-4 interview-preperation-video">
+  <div class="container">
+    <h2 class="learning-app-webpage-title">{{ node.field_video_section_titles.value }}</h2>
+    <div class="row">
+      <div class="tab-content">
+        <div id="toggleTabIcici-273" class="tab-pane fade in active">
+            <div id="exampleSlider111-0" class="">
+              <div class="MS-content">
+                {% for key, value in node.field_video_section_interview %}
+                <div class="item">
+                  <iframe width="100%" height="318" src= "
+                        {{ value.entity.field_video.value }}"
+                   frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen> </iframe>
+                    <p>
+                       {{ value.entity.field_title_of_video.value }}
+                    </p>
+                    </div>
+                    {% endfor %}
+                </div>
+              <div class="MS-controls">
+                <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+<!-- video Section end -->
+
+
+
+<!-- Related Article Section Start -->
+{% if node.field_related_article_section is not empty %}
+<section id="icicitestimonoal" class="pt-3 mb-4 interview-preperation-article">
+  <div class="container">
+    <h2 class="learning-app-webpage-title">{{ node.field_related_article_title.value }}</h2>
+    <div class="row">
+      <div class="tab-content">
+        <div id="toggleTabIcici-273" class="tab-pane fade in active">
+            <div id="exampleSlider111-1" class="">
+              <div class="MS-content">
+                {% for key, value in node.field_related_article_section  %}
+                  <div class="item">
+                    <img src="{{ file_url(value.entity.field_related_article_image.entity.fileuri) }}" class="img-responsive" >
+                   <a href="{{ value.entity.field_link_of_article.uri }}" target="_blank">
+                    <p>
+                      {{ value.entity.field_related_article_title.value }}
+                    </p>
+                   </a>
+                 </div>
+                {% endfor %}
+             </div>
+                <div class="MS-controls">
+                  <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                  <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+<!-- Related Article Section end -->
+
+
+<!-- FAQ Section start -->
+{% if node.field_faq_interview_prep is not empty %}
+<section id="Icicifaq-sec" class="icici-faqa stackroutFAQ niitDigitalFAQNew interview-preperation-faq">
+   <div class="container">
+    <h2 class="learning-app-webpage-title">{{ node.field_faq_title_interview.value }}</h2>
+      <p class="learning-app-webpage-Subtitle">{{ node.field_faq_summary_interview.value }}</p>
+      <div class="col-md-12 mt-3 iciciAccordianDetail">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            {% for key, data in node.field_faq_interview_prep %}
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-course-{{ key }}" aria-expanded="false" aria-controls="collapseOne">
+                     {{ data.question }}
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-course-{{ key }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  {{ data.answer|raw }}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+</section>
+{% endif %}
+<!-- FAQ Section end -->
+
+{% include directory ~ '/templates/layout/footer.html.twig' %}

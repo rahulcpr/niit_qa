@@ -1,0 +1,276 @@
+{{ page.fest_event_menu }}
+
+<!--============Banner start here=============================================--> 
+{% set base_url = path('<front>') %}
+<section class="summerFestBanner">
+    {% if node.field_banner.entity.fileuri is not empty %}
+	    <img class="img-responsive" src = "{{ file_url(node.field_banner.entity.fileuri) }}" alt="{{ node.field_banner.alt  }}" />
+	{% endif %}
+</section>
+<section class="summerFestBannerTextsec">
+    <div class="container bannerOnText">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="summerFestbannerText">
+                	{% if node.title.value is not empty %}
+					    <h3>{{ node.title.value }}</h3>
+					{% endif %}
+					{% if node.body.value is not empty %}
+					    {{ node.body.value|raw }}
+					{% endif %}
+					{% if node.field_background_video[0].value is not empty %}
+                 	<h4 class="newIntroVideo" data-toggle="modal" data-target="#myModal-videos">
+		              <img src="/india/themes/custom/nexus/assets/images/video-icon.png" class="img-responsive iciciPlayBtn">
+		              <span>Watch <br><span>INTRO VIDEO</span></span>
+		            </h4>
+		            {% endif %} 
+            	</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% if node.field_background_video[0].value is not empty %} 
+  <div class="modal fade" id="myModal-videos" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <div class="modal-body">
+          <iframe width="100%" height="400" src="{{ node.field_background_video[0].value }}?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  {% endif %}
+
+<!--============Banner END here=============================================--> 
+
+
+<!--============Banner offers & deals here=============================================--> 
+
+<section class="offersAndDeals">
+    <div class="container">
+        <div class="row">
+            {% if node.field_offers_deal_title.value is not empty %}
+			    <h3 class="summerFestTitle">{{ node.field_offers_deal_title.value }}</h3>
+			{% endif %}
+            
+            	{{ drupal_view('fest_event', 'block_8' ) }}
+
+
+             {# {% if node.field_offers_deal_view_all_url.value is not empty %}
+			    <div class="col-md-12">
+	                <div class="SummerFestViewAllBtn">
+	                    <a href="{{ base_url }}{{ node.field_offers_deal_view_all_url.value }}"  class="viewAllBtn">VIEW ALL</a>
+	                </div>
+	            </div>
+			{% endif %} #}
+            
+        </div>
+    </div>
+</section>
+
+<!--============Banner offers & deals end=============================================--> 
+
+
+
+<!--============Micro Programs start=============================================--> 
+<section class="MicroPrograms">
+    <div class="container">
+    	{% if node.field_micro_programme_title.value is not empty %}
+		    <h3 class="summerFestTitle">{{ node.field_micro_programme_title.value }}</h3>
+		{% endif %}
+		{% if node.field_micro_programme_summary.value is not empty %}
+		    <h4 class="summerFestSubsTitle mb-5">{{ node.field_micro_programme_summary.value }}</h4>
+		{% endif %}
+        <div class="row">
+        	{{ drupal_view('fest_event', 'block_3' ) }}
+            
+            {% if node.field_micro_programme_view_all_u.value is not empty %}
+			    <div class="col-md-12">
+	                <div class="SummerFestViewAllBtn">
+	                    <a href="{{ base_url }}{{ node.field_micro_programme_view_all_u.value }}"  class="viewAllBtn">VIEW ALL</a>
+	                </div>
+	            </div>
+			{% endif %}
+        </div>
+
+        
+    </div>
+</section>            
+
+<!--============Micro Programs END=============================================--> 
+
+<!--============Webinar start=============================================--> 
+{% if node.field_webinar_title.value is not empty %}
+    <h3 class="summerFestTitle mt-90px mb-0">{{ node.field_webinar_title.value }}</h3>
+{% endif %}
+<section class="webinarSec">
+    <div class="container">
+        <div class="row">
+
+
+        	{{ drupal_view('fest_event', 'block_2' ) }}
+            
+        </div>
+
+        {% if node.field_webinar_view_all_url.value is not empty %}
+		    <div class="col-md-12">
+                <div class="SummerFestViewAllBtn">
+                    <a href="{{ base_url }}{{ node.field_webinar_view_all_url.value }}"  class="viewAllBtn">VIEW ALL</a>
+                </div>
+            </div>
+		{% endif %}
+
+    </div>
+</section>
+
+<!--============Webinar END=============================================--> 
+
+<!--============who is speaking? start=============================================--> 
+
+<section class="whoIsSpeaking">
+    <div class="container">
+        {% if node.field_expert_speak_title.value is not empty %}
+		    <h3 class="summerFestTitle">{{ node.field_expert_speak_title.value }}</h3>
+		{% endif %}
+        <div class="row">
+            <div class="col-md-12">
+            	{% if node.field_expert_speak_image.entity.fileuri is not empty %}
+                	<img src="{{ file_url(node.field_expert_speak_image.entity.fileuri) }}" alt="{{ node.field_expert_speak_image.alt  }}" class="img-responsive">
+                {% endif %}
+            </div>
+        </div>
+        <div class="12 md-flexOverFlow">
+
+			{{ drupal_view('fest_event', 'block_1' ) }}
+
+        </div>
+    </div>
+</section>
+
+<!--============who is speaking? END=============================================--> 
+
+<!--============Content corner start=============================================--> 
+
+
+<section class="summerFestContentCorner">
+	<div class="container">
+		
+		{% if node.field_content_corner_title.value is not empty %}
+		    <h3 class="summerFestTitle">{{ node.field_content_corner_title.value }}</h3>
+		{% endif %}
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<ul class="nav nav-tabs">
+					<li class="active col-md-3 col-xs-6"><a data-toggle="tab" href="#home"><img src="/india/themes/custom/nexus/assets/images/noun_hot.svg" class="img-responsive"> Trending Topics </a></li>
+					<li class=" col-md-3 col-xs-6"><a data-toggle="tab" href="#menu1"><img src="/india/themes/custom/nexus/assets/images/noun_career.svg" class="img-responsive"> Career corner</a></li>
+					<li  class=" col-md-3 col-xs-6"><a data-toggle="tab" href="#menu2"><img src="/india/themes/custom/nexus/assets/images/noun_expert.svg" class="img-responsive"> Expert advice</a></li>
+					<li  class=" col-md-3 col-xs-6"><a data-toggle="tab" href="#menu3"><img src="/india/themes/custom/nexus/assets/images/noun_Industry.svg" class="img-responsive"> industry updates</a></li>
+				</ul>
+				<div class="tab-content">
+					<div id="home" class="tab-pane fade in active">
+						
+						{{ drupal_view('fest_event', 'block_4' ) }}
+
+						<div class="col-md-12">
+							<div class="SummerFestViewAllBtn">
+								<a href="{{ base_url }}knowledge-center?combine=&field_blog_type_target_id=368"  class="viewAllBtn">VIEW ALL ARTICLES</a>
+							</div>
+						</div>
+					</div>
+					<div id="menu1" class="tab-pane fade">
+						{{ drupal_view('fest_event', 'block_5' ) }}
+
+						<div class="col-md-12">
+							<div class="SummerFestViewAllBtn">
+								<a href="{{ base_url }}knowledge-center?combine=&field_blog_type_target_id=369"  class="viewAllBtn">VIEW ALL ARTICLES</a>
+							</div>
+						</div>
+					</div>
+					<div id="menu2" class="tab-pane fade">
+						{{ drupal_view('fest_event', 'block_6' ) }}
+
+						<div class="col-md-12">
+							<div class="SummerFestViewAllBtn">
+								<a href="{{ base_url }}knowledge-center?combine=&field_blog_type_target_id=370"  class="viewAllBtn">VIEW ALL ARTICLES</a>
+							</div>
+						</div>
+					</div>
+					<div id="menu3" class="tab-pane fade">
+						{{ drupal_view('fest_event', 'block_7' ) }}
+
+						<div class="col-md-12">
+							<div class="SummerFestViewAllBtn">
+								<a href="{{ base_url }}knowledge-center?combine=&field_blog_type_target_id=371"  class="viewAllBtn">VIEW ALL ARTICLES</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!--============Content corner END=============================================--> 
+
+
+<!--============Programs start=============================================--> 
+<section class="Programs">
+    <div class="container">
+    	{% if node.field_programme_title.value is not empty %}
+		    <h3 class="summerFestTitle">{{ node.field_programme_title.value }}</h3>
+		{% endif %}
+        <div class="row iciciTestimonoalTabBtn">
+		  	<ul class="nav nav-tabs">
+				<li class="active"><a data-toggle="tab" href="#summerProgrammes">Summer Programmes</a></li>
+				<li><a data-toggle="tab" href="#careerProgrammes">Career Programmes</a></li>
+		  	</ul>
+		</div>
+		<div class="tab-content">
+			<div id="summerProgrammes" class="tab-pane fade in active">
+			  	<div class="row">
+
+		            {{ drupal_view('fest_event', 'block_10' ) }}
+
+		        </div>
+		        {% if node.field_programme_view_all_url.value is not empty %}
+		        	<div class="row">
+					    <div class="col-md-12">
+			                <div class="SummerFestViewAllBtn">
+			                    <a href="{{ base_url }}{{ node.field_programme_view_all_url.value }}"  class="viewAllBtn">VIEW ALL</a>
+			                </div>
+			            </div>
+		            </div>
+				{% endif %}
+			</div>
+			<div id="careerProgrammes" class="tab-pane fade">
+				<div class="row">
+		            
+		            {{ drupal_view('fest_event', 'block_9' ) }}
+
+		        </div>
+		        {% if node.field_programme_view_all_url_car.value is not empty %}
+		        	<div class="row">
+					    <div class="col-md-12">
+			                <div class="SummerFestViewAllBtn">
+			                    <a href="{{ base_url }}{{ node.field_programme_view_all_url_car.value }}"  class="viewAllBtn">VIEW ALL</a>
+			                </div>
+			            </div>
+		            </div>
+				{% endif %}
+			</div>
+		</div>
+
+        
+        
+    </div>
+</section>            
+
+<!--============Programs END=============================================--> 
+
+<!--   Footer Inclusde  ** Start -->
+{% include directory ~ '/templates/layout/footer.html.twig' %}
+<!--   Footer Inclusde  ** End -->

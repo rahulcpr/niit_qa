@@ -1,0 +1,5 @@
+name: NIIT Category Node API
+description: Define's a custom category node Api
+package: Niit Custom API
+type: module
+core: 8.x

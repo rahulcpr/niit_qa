@@ -1,0 +1,42 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.start_faculty_star_alumni_slider.field_star_alumni_slider
+    - field.field.paragraph.start_faculty_star_alumni_slider.field_star_faculty_slider
+    - paragraphs.paragraphs_type.start_faculty_star_alumni_slider
+  module:
+    - paragraphs
+id: paragraph.start_faculty_star_alumni_slider.default
+targetEntityType: paragraph
+bundle: start_faculty_star_alumni_slider
+mode: default
+content:
+  field_star_alumni_slider:
+    type: entity_reference_paragraphs
+    weight: 1
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_star_faculty_slider:
+    type: entity_reference_paragraphs
+    weight: 0
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

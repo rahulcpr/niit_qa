@@ -1,0 +1,73 @@
+<div class="modal fade modal_in_your_city_wrap" id="in-india-{{ node.id }}"
+    role="dialog">
+    <div class="modal-dialog modal_in_your_city">
+        <button type="button" class="close closepop" data-dismiss="modal">
+            &times;
+        </button>
+        <div class="row">
+            <!-- Modal content-->
+            <div class="container text-left">
+                <div class="in_your_city_slider">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="imgvideowrap">
+                                <figure><img
+                                        src="{{ content.field_video_thumbnail[0] }}"
+                                        class="img-responsive"></figure>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="megadrive_content">
+                                <div class="headding text-left">
+                                    <h2>{{ label }}</h2>
+                                    <span class="underline"></span></div>
+                                <div class="content">
+                                    <p>{{ content.body }}</p>
+                                    <p>
+                                        <strong>Venue:</strong> {{ content.field_venue[0]['#context']['value'] }}
+                                    </p>
+                                    
+                               {% if(content.field_drive_date[0]['#text'] is not null) %}   
+
+                               {% if(content.field_no_of_placement[0]['#context']['value'] is not null)%}   
+                                
+                                <p> 
+                                 {% if(content.field_drive_date[0]['#text']|date("m/d/Y") <  "now"|date("m/d/Y")) %} 
+                                  <strong>Number of Placement:</strong> {{ content.field_no_of_placement[0]['#context']['value'] }} 
+                                {% endif %}   
+                                 </p>
+
+                                {% endif %}
+                                {% endif %}
+
+
+                                   {% if is_show_recruitor != false %}
+                                     <p>
+                                        <strong>Recruiter:</strong> {{ content.field_recruiter[0]['#context']['value'] }}
+                                    </p>
+                                    {% endif %}
+
+                                    <p class="md-date">
+                                        <img src="{{ base_url }}themes/custom/nexus/assets/images/icon-date.png">
+                                       {{ content.field_drive_date[0]['#text']| date("dS M") }}
+
+                                        {% if(content.field_drive_end_date[0]['#text'] != '') %}
+                                            - {{ content.field_drive_end_date[0]['#text'] |  date("dS M") }}
+                                        {% endif %}
+
+                                    </p>
+                                    {#<p class="share_row"><span> Share this event:</span>
+                                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ url('<current>') }}&title={{ node.label }}" target="_blank" title="{{ 'Share to'|t }} Facebook"><i
+                                                class="fab fa-facebook-f"></i></a>
+                                        <a href="http://twitter.com/home?status={{ node.label }}+{{ url('<current>') }}" target="_blank" title="{{ 'Share to'|t }} Twitter"><i
+                                                class="fab fa-twitter"></i></a>
+                                    </p>#}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

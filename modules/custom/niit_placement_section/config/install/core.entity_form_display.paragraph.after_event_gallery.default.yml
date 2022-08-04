@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.after_event_gallery.field_gallery_images
+    - image.style.thumbnail
+    - paragraphs.paragraphs_type.after_event_gallery
+  module:
+    - image
+id: paragraph.after_event_gallery.default
+targetEntityType: paragraph
+bundle: after_event_gallery
+mode: default
+content:
+  field_gallery_images:
+    weight: 0
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

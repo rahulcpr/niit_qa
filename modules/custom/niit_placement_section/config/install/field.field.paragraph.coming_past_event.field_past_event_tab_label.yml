@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_past_event_tab_label
+    - paragraphs.paragraphs_type.coming_past_event
+id: paragraph.coming_past_event.field_past_event_tab_label
+field_name: field_past_event_tab_label
+entity_type: paragraph
+bundle: coming_past_event
+label: 'Past Event Tab label'
+description: 'Past Event Tab label'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

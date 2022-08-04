@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.mentors_advice.field_mentor_image
+    - field.field.node.mentors_advice.field_mentor_name
+    - field.field.node.mentors_advice.field_mentor_text
+    - field.field.node.mentors_advice.field_mentor_tile
+    - node.type.mentors_advice
+  module:
+    - user
+id: node.mentors_advice.teaser
+targetEntityType: node
+bundle: mentors_advice
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden:
+  field_mentor_image: true
+  field_mentor_name: true
+  field_mentor_text: true
+  field_mentor_tile: true

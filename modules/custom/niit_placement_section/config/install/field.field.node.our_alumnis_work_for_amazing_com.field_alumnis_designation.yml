@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_alumnis_designation
+    - node.type.our_alumnis_work_for_amazing_com
+id: node.our_alumnis_work_for_amazing_com.field_alumnis_designation
+field_name: field_alumnis_designation
+entity_type: node
+bundle: our_alumnis_work_for_amazing_com
+label: 'Alumnis Designation'
+description: 'Alumnis Designation'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

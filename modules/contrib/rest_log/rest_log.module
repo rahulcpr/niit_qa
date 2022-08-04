@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @file
+ * Contains rest_log.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function rest_log_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the rest_log module.
+    case 'help.page.rest_log':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('all rest log') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function rest_log_cron() {
+  $age = \Drupal::config('rest_log.settings')->get('maximum_age');
+  $storage = \Drupal::entityTypeManager()->getStorage('rest_log');
+  $time = \Drupal::time()->getCurrentTime();
+
+  // Only delete logs if older than $age. Note that automatic cleanup
+  // is disabled if $age set to 0.
+  if ($age) {
+    $ids = $storage->getQuery()
+      ->condition('created', $time - $age, '<')
+      ->range(0, 100)
+      ->execute();
+    if ($ids) {
+      $logs = $storage->loadMultiple($ids);
+      if (!empty($logs)) {
+        $storage->delete($logs);
+      }
+    }
+  }
+}

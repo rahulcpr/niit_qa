@@ -1,0 +1,5 @@
+name: 'IFBI'
+type: module
+description: 'This Module is MISC help for IFBI for hooks'
+core: 8.x
+package: 'Custom'

@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.placement_mega_drive_gallery
+    - field.field.paragraph.mega_drive_image_video_gallery.field_drive_images
+    - field.field.paragraph.mega_drive_image_video_gallery.field_gallery_video
+    - paragraphs.paragraphs_type.mega_drive_image_video_gallery
+  module:
+    - image
+id: paragraph.mega_drive_image_video_gallery.placement_mega_drive_gallery
+targetEntityType: paragraph
+bundle: mega_drive_image_video_gallery
+mode: placement_mega_drive_gallery
+content:
+  field_drive_images:
+    type: image_url
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+  field_gallery_video:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

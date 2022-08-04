@@ -1,0 +1,22 @@
+<div class="contentbar contentimgrow">
+             <a href="{{ fields.field_video_link.content }}">
+             {# <img src="{{ fields.field_image.content }}" alt="How to Develop Your Own Game Using Python" class="img-responsive js-lazyload-image loaded"> #}
+             <picture>
+              <source class="img-responsive js-lazyload-image" data-srcset="{{ webp_image_get(fields.field_image.content | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="How to Develop Your Own Game Using Python"/>
+              <img class="img-responsive js-lazyload-image" data-src="{{ fields.field_image.content }}" src="/india/sites/default/files/transparentimg.jpg" alt="How to Develop Your Own Game Using Python"/>
+             </picture>
+             </a>
+             <span class="kmcgbar">{{ fields.field_categories.content }}</span>
+             <label>{{ fields.title.content }}</label>
+             <div class="contentimg col-md-12">
+                <p class="pl-4">{{ fields.body.content }}</p>
+                <p class="articlebar">
+                   <i class="fa fa-book"></i> <b>{{ fields.field_blog_type.content }}</b> 
+                   · {{ fields.field_duration.content }} 
+                   · By &nbsp;{{ fields.field_faculty_name.content }}
+                    <span class="kc-bookmark-btn-2" node-id="{{ fields.nid.content }}" category-id="{{ fields.field_categories_1.content }}" bmk-text="Yes"><span class="bookmark-sec" iswl="true">
+                           <i class="fa fa-bookmark-o make-bookmark"></i>
+                    </span></span>  
+                </p>
+             </div>
+          </div>

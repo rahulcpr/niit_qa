@@ -1,0 +1,5 @@
+name: IFBI Global Module
+type: module
+description: 'IFBI module to alter any changes'
+package: Custom
+core: 8.x

@@ -1,0 +1,48 @@
+{#
+/**
+ * @file
+ * Theme override to display a view of unformatted rows.
+ *
+ * Available variables:
+ * - title: The title of this group of rows. May be empty.
+ * - rows: A list of the view's row items.
+ *   - attributes: The row's HTML attributes.
+ *   - content: The row's content.
+ * - view: The view object.
+ * - default_row_class: A flag indicating whether default classes should be
+ *   used on rows.
+ *
+ * @see template_preprocess_views_view_unformatted()
+ function template_preprocess_views_view_unformatted(&$variables) {
+  $view = $variables['view'];
+  $rows = $variables['rows'];
+  $style = $view->style_plugin;
+  $options = $style->options;
+  $variables['default_row_class'] = !empty($options['default_row_class']);
+  foreach ($rows as $id => $row) {
+    $variables['rows'][$id] = array();
+    $variables['rows'][$id]['content'] = $row;
+    $variables['rows'][$id]['attributes'] = new Attribute();
+    if ($row_class = $view->style_plugin
+      ->getRowClass($id)) {
+      $variables['rows'][$id]['attributes']
+        ->addClass($row_class);
+    }
+  }
+}
+ */
+#}
+<h1>TEST<h1>
+{% if title %}
+  <h3>{{ title }} - TEST</h3>
+{% endif %}
+{% for row in rows %}
+  {%
+    set row_classes = [
+      default_row_class ? 'views-row',
+    ]
+  %}
+  <div{{ row.attributes.addClass(row_classes) }}>
+    {{ row.content }}
+  </div>
+{% endfor %}

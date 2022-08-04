@@ -1,0 +1,5 @@
+name: Webp image
+type: module
+description: 'Module to change images to webp images'
+package: Custom
+core: 8.x

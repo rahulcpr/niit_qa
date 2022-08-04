@@ -1,0 +1,6 @@
+services:
+  webp_image.customTwigExtension:
+    class: Drupal\webp_image\customTwigExtension
+    tags:
+      - { name: twig.extension }
+    

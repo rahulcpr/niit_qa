@@ -1,0 +1,37 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.placement_student_recruiter.field_placement_tab_type
+    - field.field.paragraph.placement_student_recruiter.field_student_recruiter_cta
+    - paragraphs.paragraphs_type.placement_student_recruiter
+  module:
+    - entity_reference_revisions
+    - link
+id: paragraph.placement_student_recruiter.default
+targetEntityType: paragraph
+bundle: placement_student_recruiter
+mode: default
+content:
+  field_placement_tab_type:
+    type: entity_reference_revisions_entity_view
+    weight: 0
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_student_recruiter_cta:
+    weight: 1
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link_separate
+    region: content
+hidden: {  }

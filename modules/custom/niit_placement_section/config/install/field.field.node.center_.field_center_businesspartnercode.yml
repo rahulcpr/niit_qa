@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_center_businesspartnercode
+    - node.type.center_
+id: node.center_.field_center_businesspartnercode
+field_name: field_center_businesspartnercode
+entity_type: node
+bundle: center_
+label: 'Center Business Partner Code'
+description: 'Enter Center Business Partner Code'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

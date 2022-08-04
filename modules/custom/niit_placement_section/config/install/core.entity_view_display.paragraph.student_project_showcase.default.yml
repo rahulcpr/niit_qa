@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.student_project_showcase.field_project_references
+    - field.field.paragraph.student_project_showcase.field_project_showcase_label
+    - paragraphs.paragraphs_type.student_project_showcase
+id: paragraph.student_project_showcase.default
+targetEntityType: paragraph
+bundle: student_project_showcase
+mode: default
+content:
+  field_project_references:
+    weight: 1
+    label: hidden
+    settings:
+      view_mode: placement_project_showcase_list
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+    region: content
+  field_project_showcase_label:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

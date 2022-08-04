@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: general_industry
+label: 'General Industry'
+category: General
+likert: false
+options: "'Information Technology/IT': 'Information Technology/IT'\n'Banking & Finance': 'Banking & Finance'\nMarketing/Advertising/Sales: Marketing/Advertising/Sales\nAnimation: Animation\n'Education Management': 'Education Management'\n'Government Administration': 'Government Administration'\n'Hospital/Health Care': 'Hospital/Health Care'\n'Human Resources/HR': 'Human Resources/HR'\nInsurance: Insurance\n'Online Publishing': 'Online Publishing'\nTelecommunications: Telecommunications\nothers: others\n"

@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_age_group
+    - node.type.niit_job_profile
+id: node.niit_job_profile.field_age_group
+field_name: field_age_group
+entity_type: node
+bundle: niit_job_profile
+label: 'Age Group'
+description: 'Age Group'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

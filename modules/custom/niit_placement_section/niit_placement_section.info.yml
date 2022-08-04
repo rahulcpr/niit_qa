@@ -1,0 +1,44 @@
+name: 'NIIT Placement Section'
+description: 'NIIT Placement Section'
+type: module
+core: 8.x
+dependencies:
+  - better_exposed_filters
+  - block
+  - comment
+  - datetime
+  - entity_reference_revisions
+  - faqfield
+  - features
+  - field
+  - field_group
+  - file
+  - geolocation
+  - geolocation_google_maps
+  - image
+  - jcarousel
+  - link
+  - menu_ui
+  - metatag
+  - niit_lead_form
+  - node
+  - owlcarousel
+  - paragraphs
+  - path
+  - pathauto
+  - rest
+  - serialization
+  - shs
+  - starrating
+  - starrating_formdisplay
+  - system
+  - taxonomy
+  - tb_megamenu
+  - text
+  - user
+  - video_embed_field
+  - views
+  - webform
+  - youtube
+version: 8.x-1.0
+package: NIIT

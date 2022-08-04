@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_center_complete_address
+    - paragraphs.paragraphs_type.center_address_detail
+id: paragraph.center_address_detail.field_center_complete_address
+field_name: field_center_complete_address
+entity_type: paragraph
+bundle: center_address_detail
+label: Address
+description: Address
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

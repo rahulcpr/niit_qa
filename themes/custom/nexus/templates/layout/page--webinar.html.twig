@@ -1,0 +1,205 @@
+<!-- Header Start-->
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+<!-- Header End -->
+
+<section class="kc_webinar">
+<!--Banner start here-->
+<section class="kc_eventPage">
+  <img data-src="{{ file_url(node.field_webinar_banner.entity.fileuri) }}" class="img-responsive js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">  
+  <div class="container banner_tex_kc">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="kc_textBanner">
+          <h3 style="color:{{ node.field_banner_text_color.value }};">{{ node.label }}</h3>
+          <p>{{ node.field_webinar_summary.value|raw }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--Banner start end-->
+
+<section class="kc_eventPage_eventDetail">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="col-md-4">
+          <div class="kc_evntDet">
+            <p>{{ node.field_start_date.value|date("F jS, Y") }}</p>
+            <span>{{ node.field_start_date.value|date("l") }}</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="kc_evntDet kc_evntDet1">
+            <p>{{ timeinterval }}</p>
+            <span>India Standard Time</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="kc_evntDet">
+            <p>Free</p>
+            <span>Limited Time Offer</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        {% if node.field_webinar_category.value == 'recorded' %}
+          <div class="record-btn">
+            <a href="{{ node.field_recorded_link.value}}" target="_blank" class="rec-link">View Webinar</a>
+          </div>
+        {% else %}
+          <div class="web-detail-btn">
+            <div class="web-details-display" nid={{node.id}}><div id="det-replace-web"></div></div>
+            <a href="{{ node.field_join_link.value}}" target="_blank" style="display:none;" id="web_link_redirect">Link</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="kc_eventPage_form">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <p class="kc_evntDet_text">{{ node.body.value|raw }}</p>
+      </div>
+    </div>
+  </div>
+</section> 
+
+<section class="kc_eventPage_WebLearn kc_whyShouldSec">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h4 class="text-center">{{ node.field_program_overview_title.value }}</h4>
+          {% if node.field_program_overview_icon_text is not empty %}
+            {% for key, item in node.field_program_overview_icon_text %}
+               <div class="col-md-4 kc_mt-4">
+                <div class="why-icon-back">
+                  <img data-src="{{ file_url(item.entity.field_icon.entity.fileuri) }}" class="img-responsive js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+                </div>
+                <p class="kc_why-icpn-para">{{ item.entity.field_text.value }}</p>
+              </div>
+            {% endfor %}          
+          {% endif %}
+      </div>
+    </div>
+    <div class="row kc_mt-4">
+      <div class="col-md-9 col-md-offset-2">
+        {% if node.field_content_list is not empty %}
+          <ul class="web_con-list">
+            {% for key, item in node.field_content_list %}
+              <li>{{ item.value }}</li>
+            {% endfor %}  
+          </ul>        
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="web_speaker speaking-section">
+  <div class="container">
+  <h3 class="feature-speak">Institutions</h3>
+  <div class="row kc_speak">
+  {% if node.field_author is not empty %}
+    {% for key, value in node.field_author %}
+      <div class="col-md-3 image-holder text-center">
+          <div class="image-box">
+              <figure>
+                  <img data-src="{{ file_url(value.entity.field_author_pic.entity.fileuri) }}" class="img-responsive js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+              </figure>                                                     
+          </div>
+          <div class="image-content">
+              <h5>{{ value.entity.label }}</h5>
+              <span>{{ value.entity.field_designation.value }}</span>
+          </div>
+      </div>
+    {% endfor %}          
+  {% endif %}
+  </div>
+  </div>
+</section>
+
+<section class="web_tag">
+  <div class="container">
+    <div class="tag-body-kc">
+      {% if node.field_blog_tags is not empty %}
+          {% for key, value in node.field_blog_tags %}
+            <a href="/india/kc-search?keyword={{ value.entity.label }}">{{ value.entity.label }}</a>
+          {% endfor %}
+      {% endif %}
+        {# {{ drupal_view('knowledge_center_blog_tag', 'block_2') }}  #}
+    </div>
+  </div>
+</section>
+
+<!--KC upcoming events start here-->
+{% if getEventsData.status == 1 %}
+  {% if getEventsData.data is not empty %}
+    <section class="upComingSliderEvent">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="col-md-9 col-xs-8 pl-0 pr-0">
+              <h2 class="Pagetitle"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> UPCOMING EVENTS</h2>
+            </div>
+            <div class="col-md-3 col-xs-4 pl-0">
+              <p class="kc_up_all"><a href="/india/kc-events?scgrp=Webinar&evtyp=schedule" class="viewResultListing_kc">View All <i class="fa fa-chevron-right pl-2"></i> </a></p>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="card-stack">
+            {% if getEventsData.data|length > 1 %}
+              <a class="buttons prev" href="javascript:"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+            {% endif %}
+            <ul class="card-list">
+              {% for key, value in getEventsData.data %}
+              <li class="card">
+                <div class="uebar">                        
+                  <div class="img-box col-md-4">
+                    <img src="{{ value.img }}" alt="{{ value.ttl }}" class="img-responsive">                         
+                  </div>
+                  <div class="text-box col-md-8">
+                    <label><a href="{{ value.src }}" data-taxonomy="{{value.map_taxonomy.0.value}}">{{ value.ttl }}</a></label>
+                    <p class="upcimgeventPara">{{ value.dsc|raw }}</p>
+                    <p><span>FEATURED SPEAKER(S)</span></p>
+                    <div class="featuredrow row">
+                      {% if value.athrinfo is not empty %}
+                        <div class="col-md-4 col-xs-4">
+                          <span><img src="{{ value.athrinfo.img }}" alt="{{ value.athrinfo.nm }}"></span>
+                          <h4>{{ value.athrinfo.nm }}</h4>
+                          <h6>{{ value.athrinfo.ttl }}</h6>
+                        </div>
+                      {% endif %}           
+                    </div>
+                    <div class="datetimebar">
+                      <div class="col-md-6"> <i class="fa fa-calendar-o"></i> {{ value.evd|date("l, jS F  Y") }} </div>
+                      <div class="col-md-6"> <i class="fa fa-clock-o"></i> {{ value.evrdt|date("g:i A") }} - {{ value.evrcdt|date("g:i A") }} </div>
+                    </div>
+                  </div>        
+                </div>
+              </li>  
+              {% endfor %}          
+            </ul> 
+            {% if getEventsData.data|length > 1 %}
+              <a class="buttons next" href="javascript:"><i class="fa fa-chevron-right" style="padding-left: 7px;" aria-hidden="true"></i></a>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+{% endif %}
+<!--KC upcoming events end here-->
+
+</section>
+
+
+{{join_webinar_form|raw}}
+
+{% include directory ~ '/templates/layout/footer.html.twig' %}

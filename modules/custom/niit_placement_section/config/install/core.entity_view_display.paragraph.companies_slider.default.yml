@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.companies_slider.field_company_refer
+    - paragraphs.paragraphs_type.companies_slider
+id: paragraph.companies_slider.default
+targetEntityType: paragraph
+bundle: companies_slider
+mode: default
+content:
+  field_company_refer:
+    weight: 0
+    label: hidden
+    settings:
+      view_mode: company_slider
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+    region: content
+hidden: {  }

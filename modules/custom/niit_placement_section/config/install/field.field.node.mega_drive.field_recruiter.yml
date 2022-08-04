@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_recruiter
+    - node.type.mega_drive
+id: node.mega_drive.field_recruiter
+field_name: field_recruiter
+entity_type: node
+bundle: mega_drive
+label: Recruiter
+description: Recruiter
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.placement_testimonial.field_testimonial_label
+    - field.field.paragraph.placement_testimonial.field_testimonials_reference
+    - paragraphs.paragraphs_type.placement_testimonial
+id: paragraph.placement_testimonial.default
+targetEntityType: paragraph
+bundle: placement_testimonial
+mode: default
+content:
+  field_testimonial_label:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_testimonials_reference:
+    weight: 1
+    label: hidden
+    settings:
+      view_mode: placement_testimonial
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+    region: content
+hidden: {  }

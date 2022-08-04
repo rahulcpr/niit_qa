@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_placement_header_label
+    - paragraphs.paragraphs_type.placement_section
+id: paragraph.placement_section.field_placement_header_label
+field_name: field_placement_header_label
+entity_type: paragraph
+bundle: placement_section
+label: 'Placement Header Label'
+description: 'Placement Header Label'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

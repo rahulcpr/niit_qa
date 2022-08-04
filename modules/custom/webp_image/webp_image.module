@@ -1,0 +1,16 @@
+<?php
+
+use Drupal\image\Entity\ImageStyle;
+
+/**
+ * Implements hook_theme().
+ */
+//function webp_image_theme($existing, $type, $theme, $path) {
+//  return [
+//    'my_template' => [
+//      'variables' => ['wpfilename' => NULL],
+//    ],
+//  ];
+//}
+  
+

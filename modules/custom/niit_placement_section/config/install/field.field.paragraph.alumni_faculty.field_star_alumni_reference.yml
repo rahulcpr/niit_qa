@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_star_alumni_reference
+    - node.type.our_alumnis_work_for_amazing_com
+    - paragraphs.paragraphs_type.alumni_faculty
+id: paragraph.alumni_faculty.field_star_alumni_reference
+field_name: field_star_alumni_reference
+entity_type: paragraph
+bundle: alumni_faculty
+label: 'Star Alumni Reference'
+description: 'Star Alumni Reference'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      our_alumnis_work_for_amazing_com: our_alumnis_work_for_amazing_com
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

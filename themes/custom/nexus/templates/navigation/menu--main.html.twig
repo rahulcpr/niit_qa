@@ -1,0 +1,255 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a menu.
+ *
+ * Available variables:
+ * - menu_name: The machine name of the menu.
+ * - items: A nested list of menu items. Each menu item contains:
+ *   - attributes: HTML attributes for the menu item.
+ *   - below: The menu item child items.
+ *   - title: The menu link title.
+ *   - url: The menu link url, instance of \Drupal\Core\Url
+ *   - localized_options: Menu link localized options.
+ *    `
+ * @ingroup templates
+ *
+ * Define a custom macro that will render all menu trees.
+ */
+#}
+{% macro menu_links(items, attributes, menu_level, classes, user_info, mob_user_info_signup, mob_user_info_login, register_info, userMyCourseLink, course_brochure_url) %}
+    {% if items %}
+        {# *************************
+        *** New header *** Start ***
+        ************************* #}
+        {% set base_url = path('<front>') %}
+            <section class="mega_menu_new" id="mega_menu_new">
+                <div class="container">
+                    <div class="row pos_relative">
+                        <div class="col-md-8 bhoechie-tab-container">
+                            <div class="col-md-5 bhoechie-tab-menu">
+                                <h5><b>I'm interested in</b></h5>
+                                <div class="list-group">
+                                    {% for stage1Nav in items %}
+                                        
+                                        {% if menu_level == 0 and stage1Nav.is_expanded and stage1Nav.below %}
+                                            {% if loop.first %}
+                                                {% set active = "active" %}
+                                            {% else %}
+                                                {% set active = "" %}
+                                            {% endif %}
+                                            <a href="#" class="list-group-item img-se {{ active }} {{ stage1Nav.brand_colour_list }}">
+                                                {% if stage1Nav.field_icon is not empty %}
+                                                    <img alt="icon" src="{{ stage1Nav.field_icon }}" class="img-responsive img-se {{ stage1Nav.brand_colour_list }}">  
+                                                {% endif %}
+                                                {{ stage1Nav.title }}
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                                       
+                            
+                          </div>
+                          <p class="mt-5"><small> T&C apply. Refer to program page </small></p>
+                        </div>
+                        <div class="col-md-7 bhoechie-tab">
+                          <h5></h5>
+                            {% set count = 0 %}
+                            {% for stage1Nav in items %}
+                                {% if menu_level == 0 and stage1Nav.is_expanded and stage1Nav.below %}
+                                    {% if loop.first %}
+                                        {% set active = "active" %}
+                                    {% else %}
+                                        {% set active = "" %}
+                                    {% endif %}
+                                    <div class="bhoechie-tab-content {{ active }}">
+                                        <div class="panel-group" id="accordion">
+
+                                            {% if stage1Nav.below %}
+                                                <div class="panel panel-default">
+                                                    {% set collapse_in = "" %}
+                                                    {% set count_in = 0 %}
+                                                    {% for stage2Nav in stage1Nav.below %}
+                                                        {% if stage2Nav.below is not empty %}
+                                                            {% if count_in == 0 %}
+                                                                {% set collapse_in = "in" %}
+                                                            {% else %}
+                                                                {% set collapse_in = "" %}
+                                                            {% endif %}
+                                                            <div class="panel-heading">
+                                                                <h4 class="panel-title">
+                                                                  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{count}}-{{count_in}}">
+                                                                    {{ stage2Nav.title }}
+                                                                  </a>
+                                                                </h4>
+                                                            </div>
+                                                            <div id="collapse-{{count}}-{{count_in}}" class="panel-collapse collapse {{ collapse_in }}">
+                                                                <div class="panel-body">
+                                                                    {% for stage3Nav in stage2Nav.below %}
+                                                                        {{ generateCourseCardSec(stage3Nav.url.getRouteParameters()['node'])|raw }}
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                           
+
+                                                        {% endif %}
+                                                        {% set count_in = count_in + 1 %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+
+
+                                        
+                                          </div>
+                                    </div>
+                                {% endif %}
+                                {% set count = count + 1 %}
+                            {% endfor %}
+
+
+
+
+
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                      {# <div class="megaMenuRightBlock">
+                       
+                         <h4>Featured Courses</h4>
+                         <div class="fetured_course_card">
+                           <img src="/india/themes/custom/nexus/assets/css/img/c-img1.png" class="img-responsive course_bnr">
+                           <img src="/india/themes/custom/nexus/assets/css/img/b-logo.png" class="img-responsive banr_logo">
+                           <h5>Certificate in Sales Management</h5>
+                           <ul class="list-unstyled">
+                             <li>
+                               <i class="fa fa-clock-o"></i> <span>2 weeks</span>
+                             </li>
+                             <li>
+                               <i class="fa fa-calendar"></i> <span>Part-Time</span>
+                             </li>
+                           </ul>
+                         </div>
+
+                         <div class="fetured_course_card">
+                           <img src="/india/themes/custom/nexus/assets/css/img/c-img1.png" class="img-responsive course_bnr">
+                           <img src="/india/themes/custom/nexus/assets/css/img/b-logo.png" class="img-responsive banr_logo">
+                           <h5>Certificate in Sales Management</h5>
+                           <ul class="list-unstyled">
+                             <li>
+                               <i class="fa fa-clock-o"></i> <span>2 weeks</span>
+                             </li>
+                             <li>
+                               <i class="fa fa-calendar"></i> <span>Part-Time</span>
+                             </li>
+                           </ul>
+                         </div>
+
+                      </div> #}
+                    </div>
+                   <div class="close_CTA">
+                    <button type="button" class="close" id="collapse_it" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div> 
+              </div>
+              </div>
+            </section>
+
+           
+<section class="latest_mobileNavigation desktop-hide">
+    <div class="container">
+        <div class="row">
+            <nav class="nav-drill">
+                <ul class="nav-items nav-level-1">
+                    <li class="program_cta_mob1 nav-item"><a href="#" class="nav-link"><img src="/india/themes/custom/nexus/assets/images/course_icon.svg" alt="programs"> PROGRAMS
+                        <span id="mob_close_it"> <i class="fa fa-times"></i></span>
+                        </a>
+                    </li>
+                    <h4 class="mobile_nav_title"><strong>I'm interested in</strong></h4>
+
+
+
+
+                    
+
+                    
+
+                            {% for stage1Nav in items %}
+                                {% if menu_level == 0 and stage1Nav.is_expanded and stage1Nav.below %}
+                                <li class="nav-item nav-expand">    
+                                    <a href="#" class="nav-link nav-expand-link img-se">
+                                        {% if stage1Nav.field_icon is not empty %}
+                                            <img alt="icon" src="{{ stage1Nav.field_icon }}" class="img-responsive img-se">  
+                                        {% endif %} 
+                                        <span>{{ stage1Nav.title }}</span> <i class="fa fa-angle-right"></i>
+                                    </a>
+                                   
+                                    {% if stage1Nav.below %}
+                                        
+                                        <ul class="nav-items nav-expand-content">
+
+                                            <li class="nav-item">
+                                                <a class="nav-link nav-back-link img-ds nav-expand-link" href="javascript:void(0)">
+                                                
+                                                {% if stage1Nav.field_icon is not empty %}
+                                                    <img alt="icon" src="{{ stage1Nav.field_icon }}" class="img-responsive img-se">  
+                                                {% endif %} 
+                                                <span>{{ stage1Nav.title }}</span>
+                                                </a>
+                                            </li>
+
+
+                                            {% for stage2Nav in stage1Nav.below %}
+                                                {% if stage2Nav.below is not empty %}
+                                                    {% set zclass = loop.index %}
+                                                    <li class="nav-item">
+                                                        {# <a class="nav-link" href="#"> #}
+                                                            <div class="accordion">
+                                                                <div class="{{ zclass }}-heading mb-3"> {{ stage2Nav.title }} <i class="fa fa-angle-down"></i></div>
+                                                                <div class="{{ zclass }}-contents">
+                                                                    {% for stage3Nav in stage2Nav.below %}
+                                                                        {{ generateCourseCardSec(stage3Nav.url.getRouteParameters()['node'])|raw }}
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                        {# </a> #}
+                                                    </li>
+
+                                                    
+                                                    
+                                                   
+                                                {% endif %}
+                                            {% endfor %}
+
+                                        </ul>
+
+
+                                    {% endif %}
+
+                                    </li>
+
+                                {% endif %}
+
+                            {% endfor %}
+                        
+
+                
+
+                    
+
+                    
+
+                    
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+
+
+        {# ***********************
+        *** New header *** End ***
+        *********************** #}
+    {% endif %}
+{% endmacro %}
+{{ _self.menu_links(items, attributes, 0, classes ? classes : ['', '' ~ menu_name|clean_class, ''], user_info, mob_user_info_signup, mob_user_info_login, register_info, userMyCourseLink, course_brochure_url) }}

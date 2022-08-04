@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: placement_slider
+label: 'Placement Header Slider container'
+icon_uuid: null
+description: 'Placement Header Slider container'
+behavior_plugins: {  }

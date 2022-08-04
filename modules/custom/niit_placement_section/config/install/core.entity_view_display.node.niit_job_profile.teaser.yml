@@ -1,0 +1,44 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.niit_job_profile.body
+    - field.field.node.niit_job_profile.field_age_group
+    - field.field.node.niit_job_profile.field_course_rec
+    - field.field.node.niit_job_profile.field_highest_qualification
+    - field.field.node.niit_job_profile.field_job_category_rec
+    - field.field.node.niit_job_profile.field_job_detail
+    - field.field.node.niit_job_profile.field_job_state
+    - field.field.node.niit_job_profile.field_key_skills
+    - node.type.niit_job_profile
+  module:
+    - text
+    - user
+id: node.niit_job_profile.teaser
+targetEntityType: node
+bundle: niit_job_profile
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden:
+  field_age_group: true
+  field_course_rec: true
+  field_highest_qualification: true
+  field_job_category_rec: true
+  field_job_detail: true
+  field_job_state: true
+  field_key_skills: true

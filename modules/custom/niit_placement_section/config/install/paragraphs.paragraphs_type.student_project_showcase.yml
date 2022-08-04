@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: student_project_showcase
+label: 'Student Project Showcase'
+icon_uuid: null
+description: 'Student Project Showcase'
+behavior_plugins: {  }

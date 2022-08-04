@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_center_page_disclaimer
+    - paragraphs.paragraphs_type.center_page_gallery_tabs
+id: paragraph.center_page_gallery_tabs.field_center_page_disclaimer
+field_name: field_center_page_disclaimer
+entity_type: paragraph
+bundle: center_page_gallery_tabs
+label: Disclaimer
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: placement_testimonial
+label: 'Placement Testimonial'
+icon_uuid: null
+description: 'Placement Testimonial'
+behavior_plugins: {  }

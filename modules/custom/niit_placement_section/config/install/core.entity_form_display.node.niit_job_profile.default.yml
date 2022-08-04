@@ -1,0 +1,142 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.niit_job_profile.body
+    - field.field.node.niit_job_profile.field_age_group
+    - field.field.node.niit_job_profile.field_course_rec
+    - field.field.node.niit_job_profile.field_highest_qualification
+    - field.field.node.niit_job_profile.field_job_category_rec
+    - field.field.node.niit_job_profile.field_job_detail
+    - field.field.node.niit_job_profile.field_job_state
+    - field.field.node.niit_job_profile.field_key_skills
+    - node.type.niit_job_profile
+  module:
+    - file
+    - path
+    - shs
+    - text
+id: node.niit_job_profile.default
+targetEntityType: node
+bundle: niit_job_profile
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 2
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_age_group:
+    weight: 5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_course_rec:
+    weight: 4
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_highest_qualification:
+    weight: 3
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_job_category_rec:
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_job_detail:
+    weight: 27
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+    region: content
+  field_job_state:
+    weight: 13
+    settings:
+      force_deepest: true
+      create_new_items: false
+      create_new_levels: false
+      display_node_count: false
+    third_party_settings: {  }
+    type: options_shs
+    region: content
+  field_key_skills:
+    weight: 26
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete_tags
+    region: content
+  path:
+    type: path
+    weight: 11
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 9
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 12
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 10
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 7
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+hidden: {  }

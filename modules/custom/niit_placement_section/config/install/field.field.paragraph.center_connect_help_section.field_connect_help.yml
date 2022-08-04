@@ -1,0 +1,114 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_connect_help
+    - paragraphs.paragraphs_type.center_connect_help_section
+    - paragraphs.paragraphs_type.connect_help
+  module:
+    - entity_reference_revisions
+id: paragraph.center_connect_help_section.field_connect_help
+field_name: field_connect_help
+entity_type: paragraph
+bundle: center_connect_help_section
+label: 'Connect & help'
+description: 'Center connect & Help Section'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      connect_help: connect_help
+    target_bundles_drag_drop:
+      after_event_gallery:
+        weight: 30
+        enabled: false
+      assured_job_section:
+        weight: 31
+        enabled: false
+      assured_job_slider_placement:
+        weight: 32
+        enabled: false
+      center_address_detail:
+        weight: 33
+        enabled: false
+      center_connect_help_section:
+        weight: 34
+        enabled: false
+      center_slider_and_expert_contact:
+        weight: 35
+        enabled: false
+      coming_past_event:
+        weight: 36
+        enabled: false
+      companies_slider:
+        weight: 37
+        enabled: false
+      connect_help:
+        enabled: true
+        weight: 38
+      enrollment_contact_form:
+        weight: 39
+        enabled: false
+      faq:
+        weight: 40
+        enabled: false
+      faqs:
+        weight: 41
+        enabled: false
+      from_library:
+        weight: 42
+        enabled: false
+      header_slider_section:
+        weight: 43
+        enabled: false
+      mega_drive_image_video_gallery:
+        weight: 44
+        enabled: false
+      niit_job_profile_paragraph:
+        weight: 45
+        enabled: false
+      placement_mega_drive:
+        weight: 46
+        enabled: false
+      placement_mentors_advice:
+        weight: 47
+        enabled: false
+      placement_section:
+        weight: 48
+        enabled: false
+      placement_slider:
+        weight: 49
+        enabled: false
+      placement_student_recruiter:
+        weight: 50
+        enabled: false
+      placement_testimonial:
+        weight: 51
+        enabled: false
+      recruitment_job_assured_icons:
+        weight: 52
+        enabled: false
+      recruitment_job_assured_section:
+        weight: 53
+        enabled: false
+      student_project_showcase:
+        weight: 54
+        enabled: false
+      tips_of_the_day:
+        weight: 55
+        enabled: false
+      tips_of_the_day_embed:
+        weight: 56
+        enabled: false
+      top_salaried_students:
+        weight: 57
+        enabled: false
+      upcoming_drive:
+        weight: 58
+        enabled: false
+field_type: entity_reference_revisions

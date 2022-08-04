@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_project_tag_info
+    - node.type.student_project
+id: node.student_project.field_project_tag_info
+field_name: field_project_tag_info
+entity_type: node
+bundle: student_project
+label: 'Project tag info'
+description: 'Project tag info'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

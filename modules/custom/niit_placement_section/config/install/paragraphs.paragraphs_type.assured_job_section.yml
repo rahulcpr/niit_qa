@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: assured_job_section
+label: 'Assured Job Section'
+icon_uuid: null
+description: 'Assured job section.'
+behavior_plugins: {  }

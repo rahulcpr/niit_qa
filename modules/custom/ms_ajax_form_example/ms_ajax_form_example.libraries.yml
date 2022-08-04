@@ -1,0 +1,7 @@
+ms_ajax_form_example.library:
+  version: 1.x
+  css:
+    theme:
+      css/ms_ajax_form_example.css: {}
+  js:
+    js/ms_ajax_form_example.js: {}

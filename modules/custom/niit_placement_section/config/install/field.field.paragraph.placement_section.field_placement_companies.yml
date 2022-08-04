@@ -1,0 +1,42 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_placement_companies
+    - paragraphs.paragraphs_type.companies_slider
+    - paragraphs.paragraphs_type.placement_section
+  module:
+    - entity_reference_revisions
+id: paragraph.placement_section.field_placement_companies
+field_name: field_placement_companies
+entity_type: paragraph
+bundle: placement_section
+label: 'Placement Companies'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      companies_slider: companies_slider
+    target_bundles_drag_drop:
+      companies_slider:
+        enabled: true
+        weight: 6
+      from_library:
+        weight: 7
+        enabled: false
+      header_slider_section:
+        weight: 8
+        enabled: false
+      placement_section:
+        weight: 9
+        enabled: false
+      placement_slider:
+        weight: 10
+        enabled: false
+field_type: entity_reference_revisions

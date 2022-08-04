@@ -1,0 +1,38 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.student_project.body
+    - field.field.node.student_project.field_overview
+    - field.field.node.student_project.field_project_image
+    - field.field.node.student_project.field_project_publish_date
+    - field.field.node.student_project.field_project_tag_info
+    - node.type.student_project
+  module:
+    - text
+    - user
+id: node.student_project.teaser
+targetEntityType: node
+bundle: student_project
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden:
+  field_overview: true
+  field_project_image: true
+  field_project_publish_date: true
+  field_project_tag_info: true

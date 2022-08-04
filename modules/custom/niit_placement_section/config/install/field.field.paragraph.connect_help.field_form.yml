@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_form
+    - paragraphs.paragraphs_type.connect_help
+    - taxonomy.vocabulary.center_form_type
+id: paragraph.connect_help.field_form
+field_name: field_form
+entity_type: paragraph
+bundle: connect_help
+label: 'Form Type'
+description: 'Please select form type, alumni or need help . Form will be displayed accordingly.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      center_form_type: center_form_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

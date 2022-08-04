@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_star_faculty_label
+    - paragraphs.paragraphs_type.star_faculty
+id: paragraph.star_faculty.field_star_faculty_label
+field_name: field_star_faculty_label
+entity_type: paragraph
+bundle: star_faculty
+label: Label
+description: Label
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

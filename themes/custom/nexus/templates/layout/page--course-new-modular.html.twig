@@ -1,0 +1,809 @@
+<!-- Header Start-->
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+<!-- Header End -->
+<section id="stackroute-pageMainSection" class="career-pagemainsection modular-pagemainsection">
+<!-- Breadcrub Start -->
+<section class="course-page-breadcrub mobile-hide icici-breadcrumb">
+  <div class="container">
+    <div class="row">
+            <div class="col-lg-12">
+                <div class="page-breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="/">Home</a>
+                        </li>
+                        <li>
+                            <a id="courseCategory"
+                                href="{{ path('entity.node.canonical', {'node':  node.field_top_course_category.entity.id}) }}">{{ node.field_top_course_category[0].entity.title.value }}
+                            </a> 
+                        </li>
+                        <li>{{ node.label }}</li> 
+                    </ul>
+                </div>
+            </div>
+      </div>
+  </div>
+</section>
+<!-- Breadcrub End -->
+
+<!-- nav bar stricky Start-->
+<div id="icici-page-navbar">
+  <div id="icici-navbar">
+    <div class="container">
+      <div class="row desktop-hide icici-page-scroll">
+        <ul class="nav nav-tabs" role="tablist">
+          {% if node.field_floater_menu is not empty %}
+            {% for key, value in node.field_floater_menu %}
+              <li><a href="#{{ value.entity.field_menu_section.value }}" class="searchbycharICICI">{{ value.entity.field_menu_title.value }}</a></li>
+            {% endfor %}
+          {% endif %}
+          {% if node.field_click_to_call_phone_number.value is not empty %}
+            <li><a href="tel:{{ node.field_click_to_call_phone_number.value }}"><i class="fa fa-phone"></i>{{ node.field_click_to_call_phone_number.value }}</a></li>
+          {% endif %}
+          <li>{# {{ modular_enrollnow|raw }} #}
+			 <div class="enrollnow-div"></div>
+		   </li>
+        </ul>
+      </div>
+      <div class="row pl-0 mobile-hide">
+        <div class="col-md-8 icici-page-scroll">
+          {% if node.field_floater_menu is not empty %}
+            {% for key, value in node.field_floater_menu %}
+              <a href="#{{ value.entity.field_menu_section.value }}" class="searchbycharICICI">{{ value.entity.field_menu_title.value }}</a>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div class="col-md-4">
+          <p class="iciciStickyNav">
+            {% if node.field_click_to_call_phone_number.value is not empty %}
+              <a href="tel:{{ node.field_click_to_call_phone_number.value }}"><i class="fa fa-phone"></i>{{ node.field_click_to_call_phone_number.value }}</a>
+            {% endif %}
+            {# {{ modular_enrollnow|raw }} #}
+			 <div class="enrollnow-div"></div></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- nav bar stricky end-->
+
+<!-- Upper Banner start-->
+<section class="newImgBanner stackRouteNewBanner">
+  <div class="newBannerImage">
+    {% if node.field_background_video_image.entity.fileuri is not empty %}
+      <picture>
+          <source class="img-responsive banner-img js-lazyload-image" data-srcset="{{ webp_image_get(node.field_background_video_image.entity.fileuri |image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ node.field_background_video_image.alt  }}">
+          <img class="img-responsive banner-img js-lazyload-image" data-src="{{ node.field_background_video_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ node.field_background_video_image.alt  }}">
+        </picture>
+    {% endif %}
+  </div>
+  <section class="newBannerStyle">
+    <div class="container">
+      <div class="newBannerTextOverlay">
+        <div class="col-md-9 pl-0 pt-5 pr-0">
+          <div class="newIciciLogo">
+              {% if node.field_title_logo.entity.fileuri is not empty %}
+                <picture>
+                  <source class="img-responsive iciciLogo js-lazyload-image" data-srcset="{{ webp_image_get(node.field_title_logo.entity.fileuri |image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ node.field_title_logo.alt }}"/>
+                  <img class="img-responsive iciciLogo js-lazyload-image" data-src="{{ node.field_title_logo.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ node.field_title_logo.alt }}"/>
+                </picture>
+                {% endif %}
+            </div>
+
+            <div class="offer_ticker mt-5">
+              {% if node.field_placement_offer.value is not empty %}
+              {% if node.field_placement_offer_text.value is not empty %}
+                <span class="ticker_title">{{ node.field_placement_offer.value }}</span>
+                <div class="programme_ticker">
+                <div class="ticker_text_animate"><marquee>{{ node.field_placement_offer_text.value }}</marquee></div>
+                </div>
+                {% endif %}
+                {% endif %}
+              </div>
+
+          <div class="newCourseDetail-1">
+            <h1 class="mt-2">{{ node.title.value }}</h1>
+              {% if node.field_course_summary.value is not empty %}
+                <h6>{{ node.field_course_summary.value }}</h6>
+              {% endif %}
+            <h5 class="newRating">
+              {% if CourseStarRating is not empty %}
+                {{ CourseStarRating|raw }}
+              {% endif %}
+              {% if CourseReview is not empty %}
+                <span>{{ CourseReview }}</span>
+              {% endif %}
+            </h5>
+            <p class="vide0Card-share-icons share-icici new-share-icon-modular ">Share
+              <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ request_protocol_domain ~ request_path_uri }}" rel="nofollow"><i class="fa fa-facebook"></i></a>
+
+              <a target="_blank" href="https://twitter.com/intent/tweet?url={{ request_protocol_domain ~ request_path_uri }}" rel="nofollow"><i class="fa fa-twitter"></i></a>
+
+              <a target="_blank"  href="https://www.linkedin.com/cws/share?url={{ request_protocol_domain ~ request_path_uri }}&token=&isFramed=true" rel="nofollow"><i class="fa fa-linkedin"></i></a>
+
+            </p>
+            <span>
+              {% if node.field_course_video_review[0].input is not empty %}
+              <p class="col-md-4 col-xs-6 newIntroVideo" onclick="video_iframe_popup('{{ node.field_course_video_review[0].input }}')">
+                <img data-src="/india/themes/custom/nexus/assets/images/video-icon.png" class="img-responsive js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg" alt="NIIT program video">
+                <span>Watch <br><span>INTRO VIDEO</span></span>
+              </p>
+              {% endif %} 
+            </span>
+            <div class="col-md-3 col-xs-6 pl-0 pr-0">
+                {% if node.field_mode_of_delivery.value is not empty %} 
+                <div class="modeOfdelivery">
+                  <h5>Mode Of Delivery</h5>
+                  <p class="mb-0">{{node.field_mode_of_delivery.value}}
+                    {% if node.field_mode_of_delivery_tooltip.value is not empty %}
+                      <small class="FeeTooltip deliveryModeInfo">
+                        <i class="fa fa-info-circle"></i>
+                        <small class="tip_popup">{{ node.field_mode_of_delivery_tooltip.value }}</small>
+                    </small>
+                    {% endif %}
+                  </p>
+                </div>
+                {% endif %}
+                {# System Requirement  Start #}
+				{% if node.field_system_requirement_title.value is not empty %}
+					<div class="modularSystemRequirement"><a data-toggle="modal" data-target="#systemRequirementInfo">{{ node.field_system_requirement_title.value }}</a></div>
+					{% if node.field_system_requirement_content.value is not empty %}
+						<div id="systemRequirementInfo" class="modal fade" role="dialog">
+	                        <div class="modal-dialog">
+	                          <!-- Modal content-->
+	                          <div class="modal-content">
+	                            <div class="modal-header">
+	                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+	                              <h4 class="modal-title">{{node.field_system_requirement_title.value}}</h4>
+	                            </div>
+	                            <div class="modal-body">
+	                              {{ node.field_system_requirement_content.value|raw }}
+	                            </div>
+	                          </div>
+	                        </div>
+	                    </div>
+	                {% endif %}
+	            {% endif %}
+	            {# System Requirement  End #}
+              </div>
+              {# <span class="desktop-hide">
+                {% if node.field_course_video_review[0].input is not empty %}
+                <p class="col-md-4 newIntroVideo" data-toggle="modal" data-target="#myModal-videos">
+                  <img data-src="/india/themes/custom/nexus/assets/images/video-icon.png" class="img-responsive js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+                  <span>Watch <br><span>INTRO VIDEO</span></span>
+                </p>
+                {% endif %} 
+              </span> #}
+
+          </div>
+        </div>
+        <div class="col-md-3 col-md-offset-0 modular-right-banner mobile-hide">
+          <div class="priceBoxModular">
+            <div class="col-md-6 rup-price">
+              <h3 class="actPrice">
+              <i class="fa fa-rupee"></i> {{ maincoursebatchfee|raw }}
+            </h3> 
+            </div>
+            <div class="col-md-6">
+              {% if maincoursebasefeecheck is not empty %}
+                <h5  class="DelPrice"><del>
+                  <i class="fa fa-rupee"></i> {{ maincoursebasefee|raw }}
+                  </del>
+                </h5>
+              {% endif %} 
+            </div>
+            <div class="col-md-12 gst-small">
+              <small class="ex-gst">( Excluding GST @ 18% )</small>
+            </div>
+            
+
+            <div class="col-md-12 mt-3">
+              {% if CoursebatchStartTime is not empty %}
+                <h5 class="batchSelct">Batch Starting From {{ CoursebatchStartTime|raw }}</h5>
+              {% endif %}
+              {% if CoursebatchTimings is not empty %}
+                <div class="alert alert-info priceBoxModularBatch">{{ CoursebatchTimings|raw }} 
+                  <span class="badgeImg2">
+                    <img data-src="/india/themes/custom/nexus/assets/images/check-circle.png" class="img-responsive js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg" align="check">
+                  </span>
+                </div>
+              {% endif %}
+            </div>
+            {% if node.field_additional_off is not empty %}
+              <div class="flag"><p class="flag__text">{{ node.field_additional_off.value }}</p></div>
+            {% endif %}
+
+           <div class="col-md-12 mt-20px">
+             {# {{ modular_enrollnow|raw }} #}
+			 <div class="enrollnow-div"></div>
+           </div>
+           <div class="col-md-12">
+             <p class="stillText">Still confused?{{ requestACallBackFormBtn|raw }}</p>
+           </div>
+
+         </div>          
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+<!-- Upper Banner End -->
+
+<section class="desktop-hide enroll-mob-data mt-4">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="priceBoxModular">
+          <div class="col-md-6 col-xs-6 rup-price">
+            <h3 class="actPrice">
+              <i class="fa fa-rupee"></i> {{ maincoursebatchfee|raw }}
+            </h3> 
+          </div>
+
+          <div class="col-md-6 col-xs-6">
+            {% if maincoursebasefeecheck is not empty %}
+              <h5  class="DelPrice"><del>
+                <i class="fa fa-rupee"></i> {{ maincoursebasefee|raw }}
+                </del>
+              </h5>
+            {% endif %} 
+          </div>
+          <div class="col-md-12 gst-small">
+              <small class="ex-gst">( Excluding GST @ 18% )</small>
+          </div>
+
+          <div class="col-md-12 mt-4">
+            {% if CoursebatchStartTime is not empty %}
+              <h5 class="batchSelct">Batch Starting From {{ CoursebatchStartTime|raw }}</h5>
+            {% endif %}
+            {% if CoursebatchTimings is not empty %}
+              <div class="alert alert-info priceBoxModularBatch">{{ CoursebatchTimings|raw }} 
+                <span class="badgeImg2">
+                  <img data-src="/india/themes/custom/nexus/assets/images/check-circle.png" class="img-responsive js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg" align="check">
+                
+                </span>
+              </div>
+            {% endif %}
+          </div>
+          {% if node.field_additional_off is not empty %}
+            <div class="flag"><p class="flag__text">{{ node.field_additional_off.value }}</p></div>
+          {% endif %}
+
+         <div class="col-md-12 mt-20px">
+          {# {{ modular_enrollnow|raw }} #}
+			 <div class="enrollnow-div"></div>
+         </div>
+         <div class="col-md-12">
+           <p class="stillText">Still confused? {{ requestACallBackFormBtn|raw }}</p>
+         </div>
+
+       </div> 
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="newUsps mobile-hide newUspsStackRoute">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9 pl-0">
+        <div class="forrUspbox-1">
+          <div class="col-md-3">
+            <h5>{{ node.field_course_modules.value }}</h5>
+          </div>
+          <div class="col-md-3">
+            <h5>{{ node.field_rated_text.value }}</h5>
+          </div>
+          <div class="col-md-3">
+            <h5>{{ node.field_course_type.value }}</h5>
+          </div>
+          <div class="col-md-3">
+            <h5>{{ node.field_course_duration.value }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mobile-newusps desktop-hide mb-4">
+ <div class="container">
+  <div class="row">
+    <div class="col-md-3 col-xs-6">
+        <div class="iciciUsp">
+            <p>{{ node.field_course_modules.value }}</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-xs-6">
+        <div class="iciciUsp">
+            <p>{{ node.field_rated_text.value }}</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-xs-6">
+        <div class="iciciUsp fasttruckIcon-1">
+            <p>{{ node.field_course_type.value }}</p>
+        </div>
+    </div>
+    <div class="col-md-3 col-xs-6">
+        <div class="iciciUsp fasttruckIcon">
+            <p>{{ node.field_course_duration.value }}</p>
+        </div>
+    </div>
+  </div>
+ </div>
+</section> 
+
+<!-- Programme Overview Start-->
+<section class="programSummary">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2 class="newTitleCsss">{{ node.field_program_overview_title_cou.value  }}</h2>
+        {% if node.field_course_module.value is not empty %}
+          <h5 class="newSubTitleCss">{{ node.field_course_module.value|raw }}</h5>
+        {% endif %}
+      <div class="row">
+        {% if node.field_program_overview_icon_text is not empty %}
+          {% for key, item in node.field_program_overview_icon_text %}
+             <div class="col-md-4">
+              <div class="newKeyHighlightListing">
+                <picture>
+          <source class="img-responsive js-lazyload-image" data-srcset="{{ webp_image_get(item.entity.field_icon.entity.fileuri |image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ item.field_icon.entity.alt }}">
+          <img class="img-responsive js-lazyload-image" data-src="{{ item.entity.field_icon.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ item.field_icon.entity.alt }}"/>
+        </picture>
+                <span>{{ item.entity.field_text.value }}</span>
+              </div>
+            </div>
+          {% endfor %}  
+         
+        {% endif %}
+      </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+<!--  Programme Overview Endm-->
+
+<!-- ELIGIBILITY Start-->
+<section class="newEligibility mt-5 mb-5">
+  <div class="container">
+    <div class="row">
+      {% if node.field_course_eligibility_title.value is not empty %}
+        <h2 class="newTitleCsss mt-3 mb-3">{{ node.field_course_eligibility_title.value }}</h2>
+      {% endif %}
+      <div class="col-md-12">
+        <div class="newEligibilityBoxCss">
+          <div class="row">
+            {% if node.field_course_eligibility.value is not empty %}
+              {{ node.field_course_eligibility.value|raw }}   
+            {% endif %} 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ELIGIBILITY End-->
+
+<!-- Program Overview Start -->
+<div id="programOverviewSectionNav"></div>
+<section id="iciciPageNavbar" class="pt-3 mb-4 CourseBgColorProgramOverview">
+  {% if node.field_program_overview_image.entity.fileuri is not empty %}
+    <h2 class="iciciMainTitle mb-5">{{ node.field_program_overview_image.title  }}</h2>
+  {% endif %}
+    <div class="iciciOverviweleftImg">
+      {% if node.field_program_overview_image.entity.fileuri is not empty %}
+        <picture>
+          <source class="img-responsive js-lazyload-image" data-srcset="{{ webp_image_get(node.field_program_overview_image.entity.fileuri |image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ node.field_program_overview_image.alt  }}"/>
+          <img class="img-responsive js-lazyload-image" data-src="{{ node.field_program_overview_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ node.field_program_overview_image.alt  }}"/>
+        </picture>
+        {% endif %}
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-5 icicOverviewBg">
+                    <div class="overViewTextRight">
+                      {{node.body.value|raw}}
+                    </div>
+                </div>      
+            </div>
+        </div>   
+</section> 
+<!-- Program Overview End -->
+
+<!-- CourseDetail Section Start -->
+<div id="courseDetailsSectionNav"></div>
+<section id="iciciCourseDetail"  class="careercoursedetails pt-3 mb-4">
+  <div class="container">
+    <h2 class="iciciMainTitle mb-5">{{ node.field_course_details_title.value }}</h2>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="col-md-9 pl-0">
+          {{ node.field_course_details.value|raw }}
+        </div>
+
+        <div class="col-md-3 brochureDwnloadBtn-parent">
+          {% if node.field_course_brochure.entity.fileuri is not empty %}
+            <a class="btn brochureDwnloadBtn" target="_blank" href="{{ file_url(node.field_course_brochure.entity.fileuri) }}" download><i class="fa fa-download"></i> Download Brochure</a>
+          {% endif %}
+        </div>
+      </div>
+            
+      {% if node.field_course_module_faq is not empty %}
+      <div class="col-md-12 mt-3 iciciAccordianDetail">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          {% for key, data in node.field_course_module_faq %}
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-course-{{ key }}" aria-expanded="false" aria-controls="collapseOne">
+                    {{ data.question }}
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-course-{{ key }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  {{ data.answer|raw }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}  
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>    
+<!-- CourseDetail Section end -->
+
+<!-- Niit Digital Advantage Start -->
+{% if node.field_pedagogy_image_title_summa is not empty %}
+<div id="NIITDigitalAdvantageSectionNav"></div>
+<section id="digitaladvantage" class="digitaladvantage CourseBgColorProgramOverview">
+  <div class="container">
+    <div class="row">
+      <h3 class="new-headTitle pt-2 mb-2">{{ node.field_pedagogy_title.value }}</h3>
+      <div class="digitaladvantageSection">
+        {% for key, value in node.field_pedagogy_image_title_summa %}
+        <div class="col-md-4 mt-4">
+          <div class="digital-advantage-box">
+            <div class="media">
+              <div class="media-left media-top">
+                <picture>
+                 <source class="media-object js-lazyload-image" data-srcset="{{ webp_image_get(value.entity.field_image_pedagogy.entity.fileuri |image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.field_image_pedagogy.alt }}"/>
+                 <img class="media-object js-lazyload-image" data-src="{{ value.entity.field_image_pedagogy.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.field_image_pedagogy.alt }}"/>
+                </picture>
+              </div>
+              <div class="media-body">
+                <h4 class="media-heading">{{ value.entity.field_title_pedagogy.value }}</h4>
+                <p>{{ value.entity.field_summary_pedagogy.value }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+<!-- Niit Digital Advantage End -->
+
+<!-- Instructor Start -->
+{% if node.field_instructor_reference is not empty %}
+<div id="InstructorSectionNav"></div>
+<section id="newInstructor" class="new-instructor">
+  <div class="container">
+    <div class="row">
+      <h3 class="new-headTitle pt-2">{{ node.field_instructor_title.value }}</h3>
+      <div id="exampleSlider-industructor">
+        <div class="MS-content">
+        {% for key, value in node.field_instructor_reference %}                 
+        <div class="item">
+          <div class="col-md-8">
+            <div class="new-instructor-content">
+              <h3>{{ value.entity.field_faculty_name.value }}</h3>
+              <h4>{{ value.entity.field_short_text.value }}</h4>
+              <p>{{ value.entity.body.value|raw }}</p>
+              
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="new-instructor-image">
+              <picture>
+                 <source class="img-responsive img-circle js-lazyload-image" data-srcset="{{ webp_image_get(value.entity.field_faculty_image.entity.fileuri |image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ value.field_faculty_image.alt }}">
+                 <img class="img-responsive img-circle js-lazyload-image" data-src="{{ value.entity.field_faculty_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ value.field_faculty_image.alt }}"/>
+                </picture>
+              <h3>{{ value.entity.field_faculty_name.value }}</h3>
+              <h4>{{ value.entity.field_faculty_qualification.value }}</h4>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        </div>
+        {% if node.field_instructor_reference|length > 1 %}
+        <div class="MS-controls">
+          <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+          <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+<!-- Instructor End -->
+
+<!-- Rating and Review Section start -->
+{% if genarateRatingDataCount.totalRating == true %}
+<div id="reviewsRatingsSectionNav"></div>
+<section class="ratingSection rating-mt-4" id="ratingSection">
+  <div class="container">
+    <h2 class="iciciMainTitle mb-5">{{ node.field_rating_and_reviews_title.value }}</h2>
+    <div class="row rating-border-top rating-border-bottom bg-white">
+      <div class="col-md-4 rating-border-left">
+        <h3 class="rating-mt-0 rating-mb-0 rating-title">{{ node.field_rating_title.value }}</h3>
+      </div>
+      <div class="col-md-8 rating-border-left mobile-hide rating-border-right">
+        <h3 class="rating-mt-0 rating-title rating-mb-0">{{ node.field_reviews_title.value }}</h3>
+      </div>
+      {# <div class="col-md-4 rating-border-right rating-viewBtnCss">
+        <a href="#" class="rating-viewBtn">View All</a>
+      </div> #}
+    </div>
+    <div class="row rating-border-bottom bg-white">
+      <div class="col-md-4 rating-border-left rating-pb-33">
+        <h3 class="main-rating rating-mb-0 rating-pt-1">{{ genarateRatingDataCount.totalStar }} <span class="glyphicon glyphicon-star text-warning"></span></h3>
+        <p class="main-ratingText rating-pb-2">{{ genarateRatingDataCount.totalRating }} Ratings</p>
+        <div class="pull-left">
+          <div class="pull-left r-5-starCss">
+            <div class="r-5-star">5 <span class="glyphicon glyphicon-star"></span></div>
+          </div>
+          <div class="pull-left r-progress">
+            <div class="progress progress-1">
+              <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5" style="width: {{ genarateRatingDataCount.fiveStarPercent }}%">
+                <span class="sr-only">{{ genarateRatingDataCount.fiveStarPercent }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="pull-right r-ml-10">{{ genarateRatingDataCount.fiveStar }}</div>
+        </div>
+        <div class="pull-left">
+          <div class="pull-left r-5-starCss">
+            <div class="r-5-star">4 <span class="glyphicon glyphicon-star"></span></div>
+          </div>
+          <div class="pull-left r-progress">
+            <div class="progress progress-1">
+              <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: {{ genarateRatingDataCount.fourStarPercent }}%">
+                <span class="sr-only">{{ genarateRatingDataCount.fourStarPercent }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="pull-right r-ml-10">{{ genarateRatingDataCount.fourStar }}</div>
+        </div>
+        <div class="pull-left">
+          <div class="pull-left r-5-starCss">
+            <div class="r-5-star">3 <span class="glyphicon glyphicon-star"></span></div>
+          </div>
+          <div class="pull-left r-progress">
+            <div class="progress progress-1">
+              <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5" style="width: {{ genarateRatingDataCount.threeStarPercent }}%">
+                <span class="sr-only">{{ genarateRatingDataCount.threeStarPercent }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="pull-right r-ml-10">{{ genarateRatingDataCount.threeStar }}</div>
+        </div>
+        <div class="pull-left">
+          <div class="pull-left r-5-starCss">
+            <div class="r-5-star">2 <span class="glyphicon glyphicon-star"></span></div>
+          </div>
+          <div class="pull-left r-progress">
+            <div class="progress progress-1">
+              <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" style="width: {{ genarateRatingDataCount.twoStarPercent }}%">
+                <span class="sr-only">{{ genarateRatingDataCount.twoStarPercent }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="pull-right r-ml-10">{{ genarateRatingDataCount.twoStar }}</div>
+        </div>
+        <div class="pull-left">
+          <div class="pull-left r-5-starCss">
+            <div class="r-5-star">1 <span class="glyphicon glyphicon-star"></span></div>
+          </div>
+          <div class="pull-left r-progress">
+            <div class="progress progress-1">
+              <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="5" style="width: {{ genarateRatingDataCount.oneStarPercent }}%">
+                <span class="sr-only">{{ genarateRatingDataCount.oneStarPercent }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="pull-right r-ml-10">{{ genarateRatingDataCount.oneStar }}</div>
+        </div>
+      </div>
+      <div class="col-md-8 rating-border-right rating-border-left rating-flt-left">
+        <div class="row">
+          <div class="col-xs-12 desktop-hide rating-border-top rating-border-bottom">
+            <h3 class="rating-mt-0 rating-title rating-mb-0">{{ node.field_reviews_title.value }}</h3>
+          </div>
+          </div>
+          <div class="row">
+          <div id="exampleSlider-rating">
+            <div class="MS-content">
+              {% if courseRatingAndReviewData.review is not empty %}
+                {% for key, nodeData in courseRatingAndReviewData.review %}
+                  <div class="item">
+                    {% for key, data in nodeData %}
+                      <div class="itemRatingCard rating-border-bottom rating-pt-3">
+                        <div class="media">
+                          <div class="media-left">
+                            <picture>
+                             <source class="media-object img-circle js-lazyload-image" data-srcset="{{ webp_image_get(data.image | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" style="width:60px" alt="{{ data.name|raw }}"/>
+                             <img class="media-object img-circle js-lazyload-image" data-src="{{ data.image }}" src="/india/sites/default/files/transparentimg.jpg" style="width:60px" alt="{{ data.name|raw }}"/>
+                            </picture>
+                          </div>
+                          <div class="media-body">
+                            <h4 class="media-heading">{{ data.name|raw }}</h4>
+                            <p class="text-warning-1">
+                              {{ data.rating|raw }}
+                            </p>
+                            <p class="r-date">{{ data.timing|raw }}</p>
+                          </div>
+                          <p class="ratingSectionFeedback">{{ data.feedback|raw }}</p>
+                        </div>
+                      </div>
+                    {% endfor %} 
+                  </div>
+                {% endfor %}   
+              {% endif %}
+            </div>
+            <div class="MS-controls">
+              <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+              <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+<!-- Rating and Review Section end -->
+
+<!-- Testimonial Section Start -->
+{% if iciciTestimonialTabOutput is not empty %}
+<div id="testimonialsSectionNav"></div>
+<section id="icicitestimonoal" class="careertestimonialSec pt-3 mb-4">
+  <div class="container">
+    <h2 class="iciciMainTitle mb-0">{{ node.field_testimonials_title.value }}</h2>
+    <div class="row">
+      <div class="tab-content">
+        <div id="testimonial_video" nid={{ course_post_id }}></div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+<!-- Testimonial Section end -->
+
+<!-- Niit Advance Start -->
+<div id="NIITIFBIAdvantageSectionNav"></div>
+<section id="stackRouteNiitAdvance" class="pt-3 pb-5 CareerNiitSection">
+    <div class="container">
+        {{ node.field_why_niit_content.value|raw }}
+        <div class="row">
+            <div class="col-md-12 mt-3 m-iciciNiitWhy">  
+            {% for key, data in node.field_why_study_with_us %}
+              <div class="col-md-3 col-sm-6 col-xs-12">
+                        <div class="whyNiitBox">
+                        <picture>
+                             <source class="img-responsive js-lazyload-image" data-srcset="{{ webp_image_get(data.entity.field_why_study_with_us_image.entity.fileuri |image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ data.field_why_study_with_us_image.alt }}">
+                             <img class="img-responsive js-lazyload-image" data-src="{{ data.entity.field_why_study_with_us_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ data.field_why_study_with_us_image.alt }}"/>
+                        </picture>
+                        <h5>{{ data.entity.title.value }}</h5>
+                    </div>
+                </div>
+            {% endfor %}               
+            </div>
+        </div>
+    </div>
+</section> 
+<!-- Niit Advance End -->
+
+
+<!--FAQ start here -->
+<div id="faqSectionNav"></div>
+<section id="Icicifaq-sec" class="icici-faq careerroutFAQ">
+   <div class="container">
+      <h2 class="iciciMainTitle title-transform">{{ courseFAQTitle|raw }}</h2>
+      <p class="iciciDis mb-5 col-md-12">{{ node.field_faq_summary.value }}</p>
+      {% if node.field_faq is not empty %}
+      <div class="col-md-12 mt-3 iciciAccordianDetail">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          {% for key, data in node.field_faq %}
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ key }}" aria-expanded="false" aria-controls="collapseOne">
+                    {{ data.question }}
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-{{ key }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  {{ data.answer|raw }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}  
+        </div>
+      </div>
+      {% endif %}
+   </div>
+</section>
+<!--FAQ end here -->
+
+<section class="careerrouteHaveQuery py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <p class="mb-0 dFlex btn-left-dis"><span class="IcicistillHaveIssue">STILL HAVE A QUERY?</span> 
+                  {{ stillquery_connectwithus|raw }}</p>
+            </div>           
+        </div>
+    </div>
+</section> 
+
+{# footer sticky Apply now button mobile view -- Start #}
+<footer id="mobile-sticky-footer" class="desktop-hide">
+  <div class="container">
+    <div class="row">
+      <center class="only-apply">{# {{ modular_enrollnow|raw }} #}
+			 <div class="enrollnow-div"></div> 
+	  </center>
+    </div>
+  </div>
+</footer>
+{# footer sticky Apply now button mobile view -- End #}
+
+
+
+
+
+
+
+{#{{ requestACallBackForm|raw }}#}
+<div id="talk-to-expert-form"></div>
+
+
+
+<!--Modal- open start-->
+<div id="course_modal" class="modal course_modal centre_modal modal_full fade" role="dialog">
+<!-- Append  -->
+</div>
+<!--Related course end here-->
+
+</section>
+
+{% if node.field_course_video_review[0].input is not empty %} 
+  <div class="modal fade" id="myModal-videos" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <div class="modal-body">
+          <div id="iframe_data"></div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+{% endif %}
+
+{% include directory ~ '/templates/layout/footer.html.twig' %}

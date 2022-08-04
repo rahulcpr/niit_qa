@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_drive_city
+    - node.type.mega_drive
+    - taxonomy.vocabulary.states
+id: node.mega_drive.field_drive_city
+field_name: field_drive_city
+entity_type: node
+bundle: mega_drive
+label: 'Drive City'
+description: 'Drive City'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      states: states
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

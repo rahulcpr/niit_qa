@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_tips
+    - paragraphs.paragraphs_type.tips_of_the_day
+  module:
+    - text
+id: paragraph.tips_of_the_day.field_tips
+field_name: field_tips
+entity_type: paragraph
+bundle: tips_of_the_day
+label: Tips
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

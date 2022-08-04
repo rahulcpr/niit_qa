@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: placement_mega_drive
+label: 'Placement Mega Drive'
+icon_uuid: null
+description: 'Placement Mega Drive'
+behavior_plugins: {  }

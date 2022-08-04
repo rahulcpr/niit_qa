@@ -1,0 +1,109 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.alumni_speak.body
+    - field.field.node.alumni_speak.field_alumni_name
+    - field.field.node.alumni_speak.field_alumni_place
+    - field.field.node.alumni_speak.field_alumni_speak
+    - field.field.node.alumni_speak.field_alumni_summary
+    - field.field.node.alumni_speak.field_alumni_vedio
+    - field.field.node.alumni_speak.field_alumni_video
+    - field.field.node.alumni_speak.field_banner_image
+    - field.field.node.alumni_speak.field_thumbnail_image
+    - node.type.alumni_speak
+  module:
+    - image
+    - text
+    - user
+    - video_embed_field
+id: node.alumni_speak.default
+targetEntityType: node
+bundle: alumni_speak
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_alumni_name:
+    weight: 103
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_alumni_place:
+    weight: 104
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_alumni_speak:
+    weight: 105
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_alumni_summary:
+    weight: 102
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_alumni_vedio:
+    weight: 106
+    label: above
+    settings:
+      responsive: true
+      width: 854
+      height: 480
+      autoplay: true
+    third_party_settings: {  }
+    type: video_embed_field_video
+    region: content
+  field_alumni_video:
+    weight: 107
+    label: above
+    settings:
+      responsive: true
+      width: 854
+      height: 480
+      autoplay: true
+    third_party_settings: {  }
+    type: video_embed_field_video
+    region: content
+  field_banner_image:
+    weight: 109
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_thumbnail_image:
+    weight: 108
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden: {  }

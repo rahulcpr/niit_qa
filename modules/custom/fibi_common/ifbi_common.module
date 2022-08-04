@@ -1,0 +1,74 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+/**
+ * @param $form
+ * @param \FormStateInterface $form_state
+ * @param $form_id
+*/
+
+function ifbi_common_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+	/* IFBI Talk To Our Export form validate */ 
+    if ($form['#id'] == 'webform-submission-ifbi-for-individuals-add-form' || $form['#id'] == 'webform-submission-ifbi-for-individuals-node-976-add-form') {
+        $form['actions']['submit']['#validate'][] = 'ifbi_talk_to_export_form_validate';
+    }
+}
+
+/**
+ * IFBI Talk To Our Experts form Form validation.
+ */
+function ifbi_talk_to_export_form_validate(array &$form, FormStateInterface $form_state) {
+ 
+        //call javascript method define on top for SEO purspecive
+        echo '<script type="text/JavaScript">
+            function onFormSuccess(eventName,formIdName) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                event: eventName, // form event name should be changed according to forms.
+                formId: formIdName //form id needs to be changed for each form depending on hard codes
+                });
+                // Rest of the success callback code
+            }
+        </script>';
+            
+        $eventName = "Student Enroll For Placement";
+        $formIdName = "webform_submission_enroll_for_placement_node";
+        echo '<script type="text/JavaScript">  
+             onFormSuccess("'.$eventName.'","'.$formIdName.'");
+             </script>' 
+        ; 
+
+    // Check existing term id.
+    $body = [
+        'Name' => !empty($form_state->getValue('name')) ? $form_state->getValue('name') : '',
+        'EmailID' => !empty($form_state->getValue('email')) ? $form_state->getValue('email') : '',
+        'PhoneNo' => !empty($form_state->getValue('mobile_number')) ? $form_state->getValue('mobile_number') : '',
+        'Center' => '',
+        'CampaignCode' => 'IFBICOM',
+    ];
+         
+   $url = $_ENV['LEAD_API_DEFAULT'];
+ 
+    $headers = [
+        'Content-Type' => 'application/json',
+        'Token' => $_ENV['LEAD_API_DEFAULT_TOKEN'],
+    ]; 
+    
+    $client = \Drupal::httpClient();
+    try {
+         $request_test = $client->post($url, [
+            'headers' => $headers,
+            'body' => json_encode($body),
+        ]);
+       
+    }
+    catch(\GuzzleHttp\Exception\ConnectException $e) { 
+        $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+        return new RedirectResponse($url);
+    }
+    if ($request_test->getStatusCode() != 200) {  
+        \Drupal::logger(' Placement page : ENQUIRE FOR OUR PLACEMENT LINKED PROGRAMMES')
+            ->notice('Query is not submitted');
+    }
+}

@@ -1,0 +1,6 @@
+rest_log.settings_tab:
+  title: Settings
+  description: Configure the rest log lifetime.
+  route_name: rest_log.settings
+  base_route: view.rest_log.listing
+  weight: 10

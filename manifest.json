@@ -1,0 +1,37 @@
+{
+  "name"              : "NIIT Limited",
+  "short_name"        : "NIIT",
+  "description"       : "Elevate your skills with our most in-demand programmes",
+  "start_url"         : "/india/",
+  "display"           : "standalone",
+  "orientation"       : "any",
+  "background_color"  : "#ACE",
+  "theme_color"       : "#ACE",
+  "icons": [
+		{
+      "src"           : "/india/images/logo/logo072.png",
+      "sizes"         : "72x72",
+      "type"          : "image/png"
+    },
+		{
+      "src"           : "/india/images/logo/logo152.png",
+      "sizes"         : "152x152",
+      "type"          : "image/png"
+    },
+		{
+      "src"           : "/india/images/logo/logo192.png",
+      "sizes"         : "192x192",
+      "type"          : "image/png"
+    },
+		{
+      "src"           : "/india/images/logo/logo256.png",
+      "sizes"         : "256x256",
+      "type"          : "image/png"
+    },
+		{
+      "src"           : "/india/images/logo/logo512.png",
+      "sizes"         : "512x512",
+      "type"          : "image/png"
+    }
+	]
+}

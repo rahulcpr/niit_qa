@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: top_salaried_students
+label: 'Top Salaried Students Section'
+icon_uuid: null
+description: 'This is use for display top salaried student.'
+behavior_plugins: {  }

@@ -1,0 +1,73 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.center_address_detail.field_about_center_detail
+    - field.field.paragraph.center_address_detail.field_center_address_detail_labe
+    - field.field.paragraph.center_address_detail.field_center_complete_address
+    - field.field.paragraph.center_address_detail.field_center_map
+    - field.field.paragraph.center_address_detail.field_center_phone_extension
+    - field.field.paragraph.center_address_detail.field_icon_and_text
+    - paragraphs.paragraphs_type.center_address_detail
+  module:
+    - geolocation
+    - paragraphs
+id: paragraph.center_address_detail.default
+targetEntityType: paragraph
+bundle: center_address_detail
+mode: default
+content:
+  field_about_center_detail:
+    weight: 1
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_center_address_detail_labe:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_center_complete_address:
+    weight: 2
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_center_map:
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+    type: geolocation_latlng
+    region: content
+  field_center_phone_extension:
+    weight: 3
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_icon_and_text:
+    type: entity_reference_paragraphs
+    weight: 4
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

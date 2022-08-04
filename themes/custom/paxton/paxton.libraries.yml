@@ -1,0 +1,49 @@
+paxton-bootstrap:
+  version: 1.x
+  # css:
+  #   theme:
+  #     includes/bootstrap/css/bootstrap.min.css: {}
+  js:
+    includes/bootstrap/js/bootstrap.min.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal.ajax
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery.once
+
+global-css:
+  Version: 1.x
+  css:
+    theme:
+      css/page.css: {}
+      css/style.min.css: {}
+      css/responsive.css: {} 
+      css/parallax-slider.css: {}
+      css/scrolling-nav.css.css: {}
+      css/bootstrap.min.css: {}
+      css/style.css: {}
+  js:  
+    js/jquery.isotope.min.js: {}
+    js/jquery.imagesloaded.js: {}
+    js/flexslider.js: {}
+    js/jquery.cslider.js: {}
+    js/slider.js: {}
+    js/jquery.fancybox.js: {}
+    js/jquery.gmap.min.js: {}
+    https://maps.google.com/maps/api/js?sensor=true: {}
+    js/location.js: {} 
+    js/custom.js: {}
+    js/bootstrap.bundle.min.js: {}
+    js/jquery.easing.min.js: {}
+    js/scrolling-nav.js: {}
+    js/mainslider.js: {}
+    js/script.js: {}
+    js/custom_script.js: {}
+    js/accordion.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal.ajax
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery.once 

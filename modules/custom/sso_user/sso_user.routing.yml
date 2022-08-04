@@ -1,0 +1,413 @@
+sso_user.controllerpage:
+  path: 'controller-page'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\SsoUserController::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.currentuserjoinwebnier:
+  path: '/currentuser-joinwebnier'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\CurrentuserJoinWebnier::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.joinwebnier:
+  path: '/web-details-display/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\WebDetailsDisplay::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.leadencryptjoinWebnier:
+  path: '/leadencrypt-joinWebnier'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\LeadencryptJoinWebnier::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.myapplication:
+  path: '/myapplication-popup'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\MyApplication::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.testimlvideo:
+  path: '/testimonil-video/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\TestimonialVideo::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.fbtwwidget:
+  path: '/fbtwwidget'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\Fbtwwidget::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.leadtokencreate:
+  path: '/leadtokencreate'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\Leadtokencreate::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.checkemail:
+  path: '/check-email'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\Checkemail::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_search_page:
+  path: '/kc-search'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::KCSearchPage'
+    _title: 'Search Page'
+  requirements:
+    _permission: 'access content'
+sso_user.term_and_condition:
+  path: '/term-and-condition'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\TermsAndCondition::TermAndCondition'
+    _title: 'Search Page'
+  requirements:
+    _permission: 'access content'    
+sso_user.load_more_get_article:
+  path: '/load_more_get_article'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::loadMoreGetArticleData'
+    _title: 'Get Article data'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_categorysearch_page:
+  path: '/kc-category-search'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::KCCategorySearchPage'
+    _title: 'Category Listing Page'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_events:
+  path: '/kc-events'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::KCEventsPage'
+    _title: 'Event Listing Page'
+  requirements:
+    _permission: 'access content'
+sso_user.load_more_get_event:
+  path: '/load_more_get_event'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::loadMoreGetEventData'
+    _title: 'Get Events data'
+  requirements:
+    _permission: 'access content'
+sso_user.updownvote:
+  path: '/updownvote/{node_id}/{feedback}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\UPDownvote::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_rating_and_comment_url:
+  path: '/kc_rating_and_comment_url'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::ratingAndCommentFunction'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_onload_bookmark_btn:
+  path: '/kc_onload_bookmark_btn'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::onloadBookmarkBtnFunction'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_onclick_bookmark_btn:
+  path: '/kc_onclick_bookmark_btn'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::onClickBookmarkBtnFunction'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_my_preferences:
+  path: '/my-preferences'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::myPreferencesPageFunction'
+    _title: 'My Preferences'
+  requirements:
+    _role: 'administrator+niit'
+sso_user.kc_my_profile_bookmark_list:
+  path: '/clear_bookmark_list'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::myProfileClearBookmarkList'
+    _title: 'My Profile clear Bookmark list'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_my_profile_load_more_bookmark:
+  path: '/kc_my_profile_load_more_bookmark'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::myProfileLoadMoreBookmark'
+    _title: 'My Profile Load more Bookmark list'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_category_onclick_follow_unfollow:
+  path: '/kc_category_onclick_follow_unfollow'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::categoryOnclickFollowUnfollow'
+    _title: 'Category follow Un-follow'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_category_onload_follow_unfollow:
+  path: '/kc_category_onload_follow_unfollow'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::categoryOnloadFollowUnfollow'
+    _title: 'Category follow Un-follow'
+  requirements:
+    _permission: 'access content'
+sso_user.uservote:
+  path: '/article_per_user_vote/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\Articleperuservote::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _permission: 'access content'
+sso_user.pendingcomments:
+  path: '/pending-comments'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\Pendingcomments::ControllerPage'
+    _title: 'controller page'
+  requirements:
+    _role: 'administrator'
+sso_user.viewpendingcomments:
+  path: '/pending-comment-view/{node_id}'
+  defaults:
+    _form: '\Drupal\sso_user\Form\Pendingcommentsview'
+    _title: 'View Comment'
+  requirements:
+    _role: 'administrator'
+sso_user.kc_article_star_rating_append:
+  path: '/kc_article_star_rating_append'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::articleStarRatingAppend'
+    _title: 'My Profile clear Bookmark list'
+  requirements:
+    _permission: 'access content'
+sso_user.newsletter_subscribe:
+  path: '/newsletter_subscribe'
+  defaults:
+    _form: '\Drupal\sso_user\Form\NewsLetterSubscribe'
+    _title: 'Newsletter Subscribe'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_my_preferences_bookmark_list:
+  path: '/kc_my_preferences_bookmark_list'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::KCMyPreferencesBookmarkList'
+    _title: 'My Profile clear Bookmark list'
+  requirements:
+    _permission: 'access content'
+sso_user.kc_my_preferences_following_list:
+  path: '/kc_my_preferences_following_list'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::KCMyPreferencesFollowingList'
+    _title: 'My Profile clear Bookmark list'
+  requirements:
+    _permission: 'access content'
+sso_user.my_course_link_generate_radio_btn_click:
+  path: '/my_course_link_generate_radio_btn_click'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\SsoUserController::MyCourseLinkGenerateRadioBtnClick'
+    _title: 'My Course'
+  requirements:
+    _permission: 'access content'
+sso_user.my_batches_link_generate_click:
+  path: '/my_batches_link_generate_click'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\SsoUserController::MyBatchesLinkGenerateClick'
+    _title: 'My Course'
+  requirements:
+    _permission: 'access content'
+sso_user.capture_leads_in_CMS_view:
+  path: '/leads_in_CMS_list'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\LeadsInCMSList::ControllerPage'
+    _title: 'Lead Data View'
+  requirements:
+    _role: 'administrator'
+sso_user.login_user_info:
+  path: '/login_user_info'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\LoginUserInfo::AfterLoginUserInfo'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+sso_user.user_reg_link:
+  path: '/user_reg_link'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\LoginUserInfo::UserRegisterLink'
+    _title: ''
+  requirements:
+    _permission: 'access content'	
+sso_user.mobile_user_reg_link:
+  path: '/mobile_user_reg_link'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\LoginUserInfo::MobileLoginRegisterLink'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+sso_user.my_programs:
+  path: '/my_programs'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\LoginUserInfo::MyPrograms'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+sso_user.my_programs_pop:
+  path: '/my_programs_pop'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\LoginUserInfo::MyProgramsPop'
+    _title: ''
+  requirements:
+    _permission: 'access content'	
+sso_user.register_user_info:
+  path: '/register_user_info'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RegisterUserInfo::BeforeRegisterUserInfo'
+    _title: ''
+  requirements:
+    _permission: 'access content'	
+sso_user.continue_register_user_pop:
+  path: '/continue_register_user_pop'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RegisterUserInfo::ContinueApplicationPop'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+sso_user.talk_to_expert:
+  path: '/talk_to_expert'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RenderTalkToExpFormAfterPageLoad::TalktoExpertFormUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+sso_user.talk-to-exp-pop:
+  path: '/talk-to-exp-pop/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RenderTalkToExpFormAfterPageLoad::TalktoExperPop'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+sso_user.simple-lead-form-ajax:
+  path: '/simple-lead-form-ajax/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RenderTalkToExpFormAfterPageLoad::SimpleLeadFormUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+sso_user.mobile-simple-lead-form-ajax:
+  path: '/mobile-simple-lead-form-ajax/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RenderTalkToExpFormAfterPageLoad::MobileSimpleLeadFormUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'	
+sso_user.modular_enrollnow_login:
+  path: '/modular_enrollnow_login/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RenderEnrollnowPageLoad::EnrollnowFormUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'	
+sso_user.modular_enrollnow_login_nokia:
+  path: '/modular_enrollnow_login_nokia/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RenderEnrollnowPageLoad::EnrollnowFormUsingAjaxNokia'
+    _title: ''
+  requirements:
+    _permission: 'access content' 
+sso_user.Self_land_stackathon_form:
+  path: '/Self_land_stackathon_form/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RenderStackathonPageLoad::StackathonFormUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content' 
+sso_user.Self_paced_stackathon_form:
+  path: '/Self_paced_stackathon_form/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RenderStackathonPageLoad::StackathonEmbedFormUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+sso_user.stackathon_lead_button_ajax:
+  path: '/stackathon_lead_button_ajax/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RenderStackathonPageLoad::StackathonLeadButtonAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+sso_user.autoRedirectLoaderSec:
+  path: '/autoRedirectLoaderSec/{nid}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::autoRedirectLoaderSec'
+    _title: 'auto Redirect Loader Sec'
+  requirements:
+    _permission: 'access content'
+sso_user.stackroute_brochure_pdf:
+  path: '/stackroute_brochure_pdf/{node_id}'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\RenderBroucherPage::BroucherPage'
+    _title: ''
+  requirements:
+    _permission: 'access content'  
+sso_user.eligibility_search_page:
+  path: '/eligibility-search-page'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\CheckUserEligibilityController::EligibilitySearchPage'
+    _title: 'Eligibility Search Page'
+  requirements:
+    _permission: 'access content'   
+sso_user.wiproPageSupersetIdCheck:
+  path: '/wiproPageSupersetIdCheck'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\KnowledgeCenterController::wiproPageSupersetIdCheck'
+    _title: 'My Profile clear Bookmark list'
+  requirements:
+    _permission: 'access content'
+sso_user.homepage_multistepform:
+  path: '/homepage_multistepform'
+  defaults:
+    _form: '\Drupal\sso_user\Form\HomePageMultistepForm'
+    _title: 'Homepage Multi Step Form'
+  requirements:
+    _permission: 'access content'
+sso_user.homepageleadform:
+  path: '/homepageleadform'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\homepageleadform::homepageleadformfnctn'
+    _title: 'My Profile clear Bookmark list'
+  requirements:
+    _permission: 'access content'
+sso_user.homepageleadformfirststep:
+  path: '/homepageleadformfirststep'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\homepageleadformfirststepclass::homepageleadformfnctnfirst'
+    _title: 'Homepage Lead form'
+  requirements:
+    _permission: 'access content'
+sso_user.homepageleadformsecondstep:
+  path: '/homepageleadformsecondstep'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\homepageleadformfirststepclass::homepageleadformfnctnsecond'
+    _title: 'Homepage Lead form'
+  requirements:
+    _permission: 'access content'
+sso_user.homepageleadformfnctnthird:
+  path: '/homepageleadformfnctnthird'
+  defaults:
+    _controller: '\Drupal\sso_user\Controller\homepageleadformfirststepclass::homepageleadformfnctnthird'
+    _title: 'Homepage Lead form'
+  requirements:
+    _permission: 'access content'                

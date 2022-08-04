@@ -1,0 +1,63 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.placement_project_showcase_list
+    - field.field.node.student_project.body
+    - field.field.node.student_project.field_overview
+    - field.field.node.student_project.field_project_image
+    - field.field.node.student_project.field_project_publish_date
+    - field.field.node.student_project.field_project_tag_info
+    - node.type.student_project
+  module:
+    - datetime
+    - image
+    - text
+    - user
+id: node.student_project.placement_project_showcase_list
+targetEntityType: node
+bundle: student_project
+mode: placement_project_showcase_list
+content:
+  body:
+    type: text_default
+    weight: 2
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_overview:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_project_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+  field_project_publish_date:
+    type: datetime_default
+    weight: 3
+    region: content
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: placement_project_date
+    third_party_settings: {  }
+  field_project_tag_info:
+    type: string
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden:
+  links: true
+  share_everywhere: true

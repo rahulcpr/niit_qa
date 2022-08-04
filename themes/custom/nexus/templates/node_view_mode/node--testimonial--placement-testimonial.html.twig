@@ -1,0 +1,19 @@
+<div class="col-xs-12 col-sm-4">
+    <div class="achieve-box">
+        <div class="img-box square video"><img
+                src="{{ content.field_testimonial_image[0] }}" class="scale"
+                alt="img">
+            <div class="overlay videoo">
+                <div class="head">
+                    <p>{{ content.field_about_testimonial }}</p>
+                </div>
+                {% if  content.field_testimonial_video[0]['#context']['value'] %}
+                    <a class="play testimonialplay" data-id="{{ content.field_testimonial_video[0]['#context']['value'] }}" href="javascript:void(0)"
+                        data-toggle="modal"
+                        data-target="#node-testimonial-{{ node.id }}"><i
+                            class="far fa-play-circle"></i></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

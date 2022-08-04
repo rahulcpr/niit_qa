@@ -1,0 +1,55 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.connect_help.field_connect_cta
+    - field.field.paragraph.connect_help.field_connect_description
+    - field.field.paragraph.connect_help.field_connect_icon
+    - field.field.paragraph.connect_help.field_connect_label
+    - field.field.paragraph.connect_help.field_form
+    - paragraphs.paragraphs_type.connect_help
+  module:
+    - image
+    - link
+id: paragraph.connect_help.default
+targetEntityType: paragraph
+bundle: connect_help
+mode: default
+content:
+  field_connect_cta:
+    weight: 3
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+  field_connect_description:
+    weight: 2
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_connect_icon:
+    weight: 1
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+  field_connect_label:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  field_form: true

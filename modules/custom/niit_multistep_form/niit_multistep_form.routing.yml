@@ -1,0 +1,7 @@
+# niit_multistep_form.multistep_form_query_optimize:
+#   path: '/multiform-query-optimize'
+#   defaults:
+#     _title: 'Join Query to convert simple Query'
+#     _controller: '\Drupal\niit_multistep_form\Controller\FormController::multiFormQueryOptimize'
+#   requirements:
+#     _role: 'administrator'

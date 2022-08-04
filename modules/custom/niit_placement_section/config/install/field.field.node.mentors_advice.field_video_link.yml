@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_video_link
+    - node.type.mentors_advice
+id: node.mentors_advice.field_video_link
+field_name: field_video_link
+entity_type: node
+bundle: mentors_advice
+label: 'Video Link'
+description: 'Video Url'
+required: false
+translatable: false
+default_value:
+  -
+    value: '#'
+default_value_callback: ''
+settings: {  }
+field_type: string

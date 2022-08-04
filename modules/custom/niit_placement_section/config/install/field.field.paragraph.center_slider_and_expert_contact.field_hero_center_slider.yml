@@ -1,0 +1,102 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_hero_center_slider
+    - paragraphs.paragraphs_type.center_slider_and_expert_contact
+    - paragraphs.paragraphs_type.placement_slider
+  module:
+    - entity_reference_revisions
+id: paragraph.center_slider_and_expert_contact.field_hero_center_slider
+field_name: field_hero_center_slider
+entity_type: paragraph
+bundle: center_slider_and_expert_contact
+label: 'Hero Center Slider'
+description: 'Hero Center Slider'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      placement_slider: placement_slider
+    target_bundles_drag_drop:
+      after_event_gallery:
+        weight: 26
+        enabled: false
+      assured_job_section:
+        weight: 27
+        enabled: false
+      assured_job_slider_placement:
+        weight: 28
+        enabled: false
+      center_slider_and_expert_contact:
+        weight: 29
+        enabled: false
+      companies_slider:
+        weight: 30
+        enabled: false
+      enrollment_contact_form:
+        weight: 31
+        enabled: false
+      faq:
+        weight: 32
+        enabled: false
+      faqs:
+        weight: 33
+        enabled: false
+      from_library:
+        weight: 34
+        enabled: false
+      header_slider_section:
+        weight: 35
+        enabled: false
+      mega_drive_image_video_gallery:
+        weight: 36
+        enabled: false
+      niit_job_profile_paragraph:
+        weight: 37
+        enabled: false
+      placement_mega_drive:
+        weight: 38
+        enabled: false
+      placement_mentors_advice:
+        weight: 39
+        enabled: false
+      placement_section:
+        weight: 40
+        enabled: false
+      placement_slider:
+        enabled: true
+        weight: 41
+      placement_student_recruiter:
+        weight: 42
+        enabled: false
+      placement_testimonial:
+        weight: 43
+        enabled: false
+      recruitment_job_assured_icons:
+        weight: 44
+        enabled: false
+      recruitment_job_assured_section:
+        weight: 45
+        enabled: false
+      student_project_showcase:
+        weight: 46
+        enabled: false
+      tips_of_the_day:
+        weight: 47
+        enabled: false
+      tips_of_the_day_embed:
+        weight: 48
+        enabled: false
+      top_salaried_students:
+        weight: 49
+        enabled: false
+      upcoming_drive:
+        weight: 50
+        enabled: false
+field_type: entity_reference_revisions

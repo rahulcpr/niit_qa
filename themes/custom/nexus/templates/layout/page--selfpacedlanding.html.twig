@@ -1,0 +1,261 @@
+<!-- Header Start-->
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+<!-- Header End -->
+
+<section class="selfpaced_course_container">
+<section class="new_selfPaced_banner">
+  <div class="container">
+    <div class="row">
+      <h3>{{ node.title.value }} </h3>
+    </div>
+  </div>
+</section>  
+
+<section class="new_selfPaced_courseList">
+  <div class="container">
+    <div class="row">
+ <!--  <input checked="checked" id="tab1" type="radio" name="tab" data-tab="tab1" />
+  <input id="tab2" type="radio" name="tab" data-tab="tab2" />
+  <input id="tab3" type="radio" name="tab" data-tab="tab3" />
+  <nav>
+    <div class="sp_tab_scroll">
+      <label for="tab1" data-tab-label="tab1" role="tab">Web Development</label>
+    <label for="tab2" data-tab-label="tab2" role="tab">Data Science</label>
+    <label for="tab3" data-tab-label="tab3" role="tab">Cloud Computing</label>
+    </div>
+  </nav>
+ -->
+<div class="sp_tbScroll">
+  <ul class="nav nav-pills sp_tab_scroll">
+    <li class="active tabselect1"><a data-toggle="pill" href="#sp_web-dev">{{ node.field_category_name[0].value }}</a></li> 
+    <li class="tabselect2"><a data-toggle="pill" href="#sp_web-dev1" >{{ node.field_category_name[1].value }}</a></li>
+    <li class="tabselect3"><a data-toggle="pill" href="#sp_web-dev2">{{ node.field_category_name[2].value }}</a></li>
+  </ul>
+</div>
+
+<div class="tab-content">
+  <div id="sp_web-dev" class="tab-pane fade in active">
+   <div class="row">
+
+   {{ drupal_view('self_paced', 'block_1') }}
+
+    <div class="col-md-12">
+      <p class="text-center"><a href="javascript:void(0);" class="sp_viewAll sp_viewAll1">view all</a></p>
+    </div>
+    
+   </div> 
+
+   </div>
+
+
+    <div id="sp_web-dev1" class="tab-pane fade">
+    <div class="row sp_tab2">
+
+    {{ drupal_view('self_paced', 'block_2') }}
+
+
+    <div class="col-md-12">
+      <p class="text-center"><a href="javascript:void(0);" class="sp_viewAll sp_viewAll2">view all</a></p>
+    </div>
+
+   </div> 
+  </div>
+
+
+
+  <div id="sp_web-dev2" class="tab-pane fade">
+    <div class="row sp_tab2">
+
+    
+  {{ drupal_view('self_paced', 'block_3') }}
+
+    <div class="col-md-12">
+      <p class="text-center"><a href="javascript:void(0);" class="sp_viewAll sp_viewAll3">view all</a></p>
+    </div>
+    
+  </div>
+
+  </div>
+
+</div>
+</div>
+</div>
+</section>
+
+<div class="modal fade" id="myModal-forms" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <div class="modal-body">
+          <div id="forms_data"></div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+<section class="new_sp_productTestimonial mb-0">
+      <div class="container">
+            <div class="row">
+         <h3 class="sp_title">{{ node.field_upgrade_to_our_advanced_tr.value }}</h3>
+            <div class="card-slider card-slider4 advancedprog1">        
+                {{ drupal_view('self_paced', 'block_4') }}
+            </div>
+            <div class="card-slider card-slider4 advancedprog2">        
+                {{ drupal_view('self_paced', 'block_5') }}
+            </div>  
+            <div class="card-slider card-slider4 advancedprog3">        
+                {{ drupal_view('self_paced', 'block_6') }}
+            </div>   
+        </div>
+      </div>
+
+</section>
+
+
+
+
+
+<!--KC upcoming events start here-->
+<!-- {% if getEventsData.status == 1 %}
+  {% if getEventsData.data is not empty %}
+   <section class="events">
+      <div class="container">
+        <div class="d-flex">
+          <div class="left-event">
+            <h3>Upcoming Events</h3>
+            <div class="arrows">
+              <div class="dots-item"></div>
+            </div>
+            <div class="button button-secondary">
+              <a href="#!">EXPLORE ALL EVENTS</a>
+            </div>
+          </div>
+
+          <div class="slider-primary">
+            {% for key, value in getEventsData.data %}
+            <div class="event-blk wow fadeIn" data-wow-delay=".3s">
+              <div class="right-event">
+                <div class="cards-white slide">
+                  <img src="{{ value.img }}" alt="{{ value.ttl }}" />
+                  <div class="cards-white_length">
+                    <div class="col-md-6"> <i class="fa fa-calendar-o"></i> {{ value.evd|date("l, jS F  Y") }} </div>
+                      <div class="col-md-6"> <i class="fa fa-clock-o"></i> {{ value.evrdt|date("g:i A") }} - {{ value.evrcdt|date("g:i A") }} </div>
+                    <div class="button button-tertiary"><a href="{{ value.src }}">{{ value.ttl }}</a></div>
+                    <p>{{ value.dsc|raw }}</p>
+                    <div class="link">
+                      <a href="#!">Event Details</a>
+                    </div>
+                    
+                    <div class="featuredrow row">
+                      {% if value.athrinfo is not empty %}
+                        <div class="col-md-4 col-xs-4">
+                          <span><img src="{{ value.athrinfo.img }}" alt="{{ value.athrinfo.nm }}"></span>
+                          <h4>{{ value.athrinfo.nm }}</h4>
+                          <h6>{{ value.athrinfo.ttl }}</h6>
+                        </div>
+                      {% endif %}           
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+{% endif %}
+{% endif %} -->
+<!--KC upcoming events end here-->
+
+
+<!--KC upcoming events start here-->
+{% if node.field_new_upcoming.value == '1' %}
+<section class="new-hp-page-wrapper">
+<section class="events pb-5 pt-5">
+   <div class="container">
+      <div class="events-mob">
+         <h3>{{ node.field_upcoming_events_title.value }}</h3>
+      </div>
+      <div class="d-flex">
+         <div class="left-event">
+            <h3>{{ node.field_upcoming_events_title.value }}</h3>
+            <div class="arrows">
+               <div class="dots-item"></div>
+            </div>
+            <div class="button button-secondary"><a href="/india/kc-events?scgrp=Webinar&amp;evtyp=schedule">EXPLORE ALL EVENTS</a></div>
+         </div>
+         <div class="slider-primary populareevents1">
+          {{ drupal_view('self_paced', 'block_9') }}
+         </div>
+         <div class="slider-primary populareevents2">
+          {{ drupal_view('self_paced', 'block_12') }}
+         </div>
+         <div class="slider-primary populareevents3">
+          {{ drupal_view('self_paced', 'block_13') }}
+         </div>
+      </div>
+
+   </div>
+ </section>
+</section>
+{% endif %}
+
+
+
+<!--KC upcoming events end here-->
+
+
+
+<section class="new_sp_productTestimonial sp_event_slider">
+  <div class="container">
+    <div class="row">   
+
+   <h3 class="sp_title">{{ node.field_popular_articles_title.value }}</h3>
+      
+          <div class="card-slider card-slider5 populararticless1">        
+                {{ drupal_view('self_paced', 'block_8') }}
+            </div>
+            <div class="card-slider card-slider5 populararticless2">        
+                {{ drupal_view('self_paced', 'block_10') }}
+            </div>  
+            <div class="card-slider card-slider5 populararticless3">        
+                {{ drupal_view('self_paced', 'block_11') }}
+            </div>
+          <!-- {% for key, value in node.field_popular_articles %}
+          <div class="contentbar contentimgrow">
+             <a href="{{ value.entity.field_video_link.value }}">
+             <img src="{{file_url(value.entity.field_image.entity.fileuri) }}" alt="How to Develop Your Own Game Using Python" class="img-responsive js-lazyload-image loaded">
+             </a>
+             <span class="kmcgbar"><a href="https://www.niit.com/india/knowledge-center/Software-Development/Game-Development">{{ value.entity.field_categories.entity.name.value }}</a></span>
+             <label><a href="https://www.niit.com/india/knowledge-centre/python-game-development">{{ value.entity.title.value }}</a></label>
+             <div class="contentimg col-md-12">
+                <p class="pl-4">{{ value.entity.body.summary|raw }}</p>
+                <p class="articlebar">
+                   <i class="fa fa-book"></i> <b>{{ value.entity.field_blog_type.entity.name.value }}</b> 
+                   · {{ value.entity.field_duration.value }} 
+                   · By &nbsp;{{ value.entity.field_faculty_name.value }} 
+                   <span class="kc-bookmark-btn-2" node-id="3290" category-id="415" bmk-text="No"><span class="bookmark-sec" iswl="true">
+                   <i class="fa fa-bookmark-o make-bookmark"></i>
+                   </span></span>
+                </p>
+             </div>
+          </div>
+          {% endfor %} -->
+        
+       </div>
+    </div>    
+</section>
+
+
+
+
+</section>
+
+{% include directory ~ '/templates/layout/footer.html.twig' %}

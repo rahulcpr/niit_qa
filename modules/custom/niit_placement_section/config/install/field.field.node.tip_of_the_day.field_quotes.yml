@@ -1,0 +1,78 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_quotes
+    - node.type.tip_of_the_day
+    - paragraphs.paragraphs_type.tips_of_the_day
+  module:
+    - entity_reference_revisions
+id: node.tip_of_the_day.field_quotes
+field_name: field_quotes
+entity_type: node
+bundle: tip_of_the_day
+label: Quotes
+description: Quotes
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      tips_of_the_day: tips_of_the_day
+    target_bundles_drag_drop:
+      tips_of_the_day:
+        enabled: true
+        weight: 2
+      assured_job_section:
+        weight: 18
+        enabled: false
+      assured_job_slider_placement:
+        weight: 19
+        enabled: false
+      companies_slider:
+        weight: 20
+        enabled: false
+      enrollment_contact_form:
+        weight: 21
+        enabled: false
+      faq:
+        weight: 22
+        enabled: false
+      faqs:
+        weight: 23
+        enabled: false
+      from_library:
+        weight: 24
+        enabled: false
+      header_slider_section:
+        weight: 25
+        enabled: false
+      placement_mentors_advice:
+        weight: 26
+        enabled: false
+      placement_section:
+        weight: 27
+        enabled: false
+      placement_slider:
+        weight: 28
+        enabled: false
+      placement_student_recruiter:
+        weight: 29
+        enabled: false
+      placement_testimonial:
+        weight: 30
+        enabled: false
+      student_project_showcase:
+        weight: 31
+        enabled: false
+      tips_of_the_day_embed:
+        weight: 33
+        enabled: false
+      top_salaried_students:
+        weight: 34
+        enabled: false
+field_type: entity_reference_revisions

@@ -1,0 +1,51 @@
+<!-- Header Start-->
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+<!-- Header End -->
+<section class="kc-page-breadcrub mobile-hide">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="page-breadcrumbs">
+          <ul class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            <li>My Preferences</li> 
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="kc_my_profile_tabs">
+	<div class="container">
+	    <div class="row">
+		    <div class="col-md-12">
+
+		    	<ul class="nav nav-tabs">
+				    <li class="active"><a data-toggle="tab" href="#bookmarkTab">Bookmarks</a></li>
+				    <li><a data-toggle="tab" href="#followingTab">Following</a></li>
+				</ul>
+				<div class="tab-content pt-5">
+					{# --------------Bookmarks Tab Content --------------- #}
+				    <div id="bookmarkTab" class="tab-pane fade in active">
+				    	<div class="setBookmarkListData"></div>
+
+				    </div>
+				    {# --------------Category Tab Content --------------- #}
+				    <div id="followingTab" class="tab-pane fade">
+				      	{# <h3>Follow Category List</h3> #}
+				      	<div class="follow-category-sec setFollowingListData">
+
+	                  	</div>
+				    </div>
+				    {# ----------------------------- #}
+			  	</div>
+				
+				
+				
+		    </div>
+	    </div>
+	</div>
+</section>
+{% include directory ~ '/templates/layout/footer.html.twig' %}

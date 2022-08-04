@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: placement_student_recruiter
+label: 'Placement Student & Recruiter'
+icon_uuid: null
+description: 'Placement Student & Recruiter'
+behavior_plugins: {  }

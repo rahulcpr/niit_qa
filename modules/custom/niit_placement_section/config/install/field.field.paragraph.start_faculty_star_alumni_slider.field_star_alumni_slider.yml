@@ -1,0 +1,123 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_star_alumni_slider
+    - paragraphs.paragraphs_type.alumni_faculty
+    - paragraphs.paragraphs_type.start_faculty_star_alumni_slider
+  module:
+    - entity_reference_revisions
+id: paragraph.start_faculty_star_alumni_slider.field_star_alumni_slider
+field_name: field_star_alumni_slider
+entity_type: paragraph
+bundle: start_faculty_star_alumni_slider
+label: 'Star Alumni slider'
+description: 'Star Alumni slider'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      alumni_faculty: alumni_faculty
+    target_bundles_drag_drop:
+      after_event_gallery:
+        weight: 33
+        enabled: false
+      alumni_faculty:
+        enabled: true
+        weight: 34
+      assured_job_section:
+        weight: 35
+        enabled: false
+      assured_job_slider_placement:
+        weight: 36
+        enabled: false
+      center_address_detail:
+        weight: 37
+        enabled: false
+      center_connect_help_section:
+        weight: 38
+        enabled: false
+      center_slider_and_expert_contact:
+        weight: 39
+        enabled: false
+      coming_past_event:
+        weight: 40
+        enabled: false
+      companies_slider:
+        weight: 41
+        enabled: false
+      connect_help:
+        weight: 42
+        enabled: false
+      enrollment_contact_form:
+        weight: 43
+        enabled: false
+      faq:
+        weight: 44
+        enabled: false
+      faqs:
+        weight: 45
+        enabled: false
+      from_library:
+        weight: 46
+        enabled: false
+      header_slider_section:
+        weight: 47
+        enabled: false
+      mega_drive_image_video_gallery:
+        weight: 48
+        enabled: false
+      niit_job_profile_paragraph:
+        weight: 49
+        enabled: false
+      placement_mega_drive:
+        weight: 50
+        enabled: false
+      placement_mentors_advice:
+        weight: 51
+        enabled: false
+      placement_section:
+        weight: 52
+        enabled: false
+      placement_slider:
+        weight: 53
+        enabled: false
+      placement_student_recruiter:
+        weight: 54
+        enabled: false
+      placement_testimonial:
+        weight: 55
+        enabled: false
+      recruitment_job_assured_icons:
+        weight: 56
+        enabled: false
+      recruitment_job_assured_section:
+        weight: 57
+        enabled: false
+      star_faculty:
+        weight: 58
+        enabled: false
+      start_faculty_star_alumni_slider:
+        weight: 59
+        enabled: false
+      student_project_showcase:
+        weight: 60
+        enabled: false
+      tips_of_the_day:
+        weight: 61
+        enabled: false
+      tips_of_the_day_embed:
+        weight: 62
+        enabled: false
+      top_salaried_students:
+        weight: 63
+        enabled: false
+      upcoming_drive:
+        weight: 64
+        enabled: false
+field_type: entity_reference_revisions

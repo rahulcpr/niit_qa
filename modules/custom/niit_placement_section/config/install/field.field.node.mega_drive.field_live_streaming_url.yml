@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_live_streaming_url
+    - node.type.mega_drive
+id: node.mega_drive.field_live_streaming_url
+field_name: field_live_streaming_url
+entity_type: node
+bundle: mega_drive
+label: 'Live Streaming URL'
+description: 'Live Streaming URL'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,150 @@
+langcode: en
+status: open
+dependencies: {  }
+open: null
+close: null
+weight: 0
+uid: 1
+template: false
+archive: false
+id: connect_to_center
+title: 'Connect to Center'
+description: "<table style=\"border-collapse:collapse; width:357pt; border:none\" width=\"476\">\n\t<colgroup>\n\t\t<col style=\"width:357pt\" width=\"476\" />\n\t</colgroup>\n\t<tbody>\n\t\t<tr height=\"19\">\n\t\t\t<td class=\"xl63\" height=\"19\" style=\"border:none; height:14.4pt; padding-left:1px; padding-right:1px; padding-top:1px; vertical-align:bottom; white-space:normal; width:357pt\" width=\"476\"><span style=\"font-size:11pt\"><strong style=\"font-weight:700\"><span style=\"color:black\"><span style=\"font-style:normal\"><span style=\"text-decoration:none\"><span style=\"font-family:Calibri,sans-serif\">Connect to Center</span></span></span></span></strong></span></td>\n\t\t</tr>\n\t</tbody>\n</table>"
+category: ''
+elements: "name:\n  '#type': textfield\n  '#title': Name\n  '#title_display': invisible\n  '#description_display': invisible\n  '#maxlength': '200'\n  '#size': '200'\n  '#placeholder': Name\n  '#required': true\n  '#attributes':\n    class:\n      - 'form-control mb-4'\nmobile_number:\n  '#type': tel\n  '#title': 'Mobile Number'\n  '#title_display': invisible\n  '#description_display': invisible\n  '#maxlength': '10'\n  '#placeholder': 'Mobile Number'\n  '#required': true\n  '#required_error': 'Mobile number must be 10 digit number.'\n  '#pattern': '^[0-9]{10}$'\n  '#attributes':\n    class:\n      - 'form-control mb-4'\ne_mail:\n  '#type': email\n  '#title': E-mail\n  '#title_display': invisible\n  '#description_display': invisible\n  '#maxlength': '200'\n  '#placeholder': E-mail\n  '#required': true\n  '#required_error': 'Enter valid email.'\n  '#pattern': '^[a-z0-9_-]+[a-z0-9_.-]*@[a-z0-9_-]+[a-z0-9_.-]*\\.[a-z]{2,5}$'\n  '#attributes':\n    class:\n      - 'form-control mb-4'\nyear_of_passing:\n  '#type': select\n  '#title': 'Year of Passing'\n  '#options': year\n  '#empty_option': Year\n  '#required': true\n  '#attributes':\n    class:\n      - 'form-control mb-4'\ncurrent_employer:\n  '#type': textfield\n  '#title': 'Current Employer'\n  '#title_display': invisible\n  '#description_display': invisible\n  '#placeholder': 'Current Employer'\n  '#required': true\n  '#attributes':\n    class:\n      - 'form-control mb-4'\nindustry:\n  '#type': select\n  '#title': Industry\n  '#title_display': invisible\n  '#description_display': invisible\n  '#options': category_industry\n  '#empty_option': Industry\n  '#required': true\n  '#attributes':\n    class:\n      - 'form-control mb-4'\nother_text:\n  '#type': textfield\n  '#title': 'Other Text'\n  '#title_display': invisible\n  '#description_display': invisible\n  '#maxlength': '250'\n  '#placeholder': 'Please Write...'\n  '#attributes':\n    class:\n      - 'form-control mb-4'\nprivacy_policy:\n  '#type': checkbox\n  '#title': 'Privacy Policy'\n  '#description': 'Please tick this box to indicate that you understand that your personal data will be used in accordance with the <a href=\"https://ppm.niit.com/consent-form/prospective_customer.html\" style=\"color: #0161b5;\" target=\"_blank\">Privacy Policy</a> here *'\n  '#title_display': invisible\n  '#description_display': invisible\n  '#required': true\n  '#required_error': 'Please tick this box if you want to proceed.'\n  '#attributes':\n    class:\n      - custom-control-input\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#submit__attributes':\n    class:\n      - 'btn btn-info btn-block'\n"
+css: ''
+javascript: ''
+settings:
+  ajax: false
+  ajax_scroll_top: form
+  page: true
+  page_submit_path: ''
+  page_confirm_path: ''
+  form_submit_once: false
+  form_exception_message: ''
+  form_open_message: ''
+  form_close_message: ''
+  form_previous_submissions: true
+  form_confidential: false
+  form_confidential_message: ''
+  form_convert_anonymous: false
+  form_prepopulate: false
+  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_reset: false
+  form_disable_autocomplete: false
+  form_novalidate: false
+  form_disable_inline_errors: false
+  form_required: false
+  form_unsaved: false
+  form_disable_back: false
+  form_submit_back: false
+  form_autofocus: false
+  form_details_toggle: false
+  form_login: false
+  form_login_message: ''
+  submission_label: ''
+  submission_log: false
+  submission_user_columns: {  }
+  submission_user_duplicate: false
+  submission_login: false
+  submission_login_message: ''
+  submission_exception_message: ''
+  submission_locked_message: ''
+  previous_submission_message: ''
+  previous_submissions_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
+  wizard_progress_bar: true
+  wizard_progress_pages: false
+  wizard_progress_percentage: false
+  wizard_progress_link: false
+  wizard_start_label: ''
+  wizard_preview_link: false
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
+  wizard_track: ''
+  preview: 0
+  preview_label: ''
+  preview_title: ''
+  preview_message: ''
+  preview_attributes: {  }
+  preview_excluded_elements: {  }
+  preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
+  draft: none
+  draft_multiple: false
+  draft_auto_save: false
+  draft_saved_message: ''
+  draft_loaded_message: ''
+  confirmation_type: modal
+  confirmation_title: ''
+  confirmation_message: ''
+  confirmation_url: ''
+  confirmation_attributes: {  }
+  confirmation_back: true
+  confirmation_back_label: ''
+  confirmation_back_attributes: {  }
+  confirmation_exclude_query: false
+  confirmation_exclude_token: false
+  limit_total: null
+  limit_total_interval: null
+  limit_total_message: ''
+  limit_user: null
+  limit_user_interval: null
+  limit_user_message: ''
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
+  purge: none
+  purge_days: null
+  results_disabled: false
+  results_disabled_ignore: false
+  token_update: false
+access:
+  create:
+    roles:
+      - anonymous
+      - authenticated
+    users: {  }
+    permissions: {  }
+  view_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  update_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  purge_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  view_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  update_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+handlers: {  }

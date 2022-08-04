@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.tip_of_the_day.field_quotes
+    - node.type.tip_of_the_day
+  module:
+    - user
+id: node.tip_of_the_day.teaser
+targetEntityType: node
+bundle: tip_of_the_day
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden:
+  field_quotes: true

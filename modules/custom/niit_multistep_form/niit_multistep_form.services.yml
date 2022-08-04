@@ -1,0 +1,7 @@
+services:
+    niit_multistep_form.niit_get_form_field:
+        class: Drupal\niit_multistep_form\Services\MultiStepFormService
+    niit_multistep_form.FormTwigExtension:
+        class: Drupal\niit_multistep_form\FormTwigExtension
+        tags:
+        - {name: twig.extension}

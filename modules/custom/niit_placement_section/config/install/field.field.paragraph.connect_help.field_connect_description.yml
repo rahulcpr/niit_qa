@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_connect_description
+    - paragraphs.paragraphs_type.connect_help
+id: paragraph.connect_help.field_connect_description
+field_name: field_connect_description
+entity_type: paragraph
+bundle: connect_help
+label: Description
+description: Description
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

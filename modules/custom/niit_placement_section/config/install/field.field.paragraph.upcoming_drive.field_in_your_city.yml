@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_in_your_city
+    - paragraphs.paragraphs_type.upcoming_drive
+id: paragraph.upcoming_drive.field_in_your_city
+field_name: field_in_your_city
+entity_type: paragraph
+bundle: upcoming_drive
+label: 'In Your City'
+description: 'In Your City'
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

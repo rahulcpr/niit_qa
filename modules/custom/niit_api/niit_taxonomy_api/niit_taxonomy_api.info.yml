@@ -1,0 +1,5 @@
+name: NIIT TAXONOMY API
+description: Define's a custom Taxonomy Api
+package: Niit Custom API
+type: module
+core: 8.x

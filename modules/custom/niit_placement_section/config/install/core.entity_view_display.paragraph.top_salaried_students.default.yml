@@ -1,0 +1,38 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.top_salaried_students.field_body
+    - field.field.paragraph.top_salaried_students.field_content_title
+    - field.field.paragraph.top_salaried_students.field_top_salaried_students
+    - paragraphs.paragraphs_type.top_salaried_students
+id: paragraph.top_salaried_students.default
+targetEntityType: paragraph
+bundle: top_salaried_students
+mode: default
+content:
+  field_body:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_content_title:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_top_salaried_students:
+    weight: 2
+    label: hidden
+    settings:
+      view_mode: top_salaried
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+    region: content
+hidden: {  }

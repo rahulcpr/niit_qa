@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.mega_drive_archive
+    - field.field.paragraph.mega_drive_image_video_gallery.field_drive_images
+    - field.field.paragraph.mega_drive_image_video_gallery.field_gallery_video
+    - paragraphs.paragraphs_type.mega_drive_image_video_gallery
+  module:
+    - image
+id: paragraph.mega_drive_image_video_gallery.mega_drive_archive
+targetEntityType: paragraph
+bundle: mega_drive_image_video_gallery
+mode: mega_drive_archive
+content:
+  field_drive_images:
+    type: image_url
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+hidden:
+  field_gallery_video: true

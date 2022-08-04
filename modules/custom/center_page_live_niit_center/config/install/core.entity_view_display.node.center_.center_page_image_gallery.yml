@@ -1,0 +1,63 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.center_page_image_gallery
+    - field.field.node.center_.body
+    - field.field.node.center_.field_center_businesspartnercode
+    - field.field.node.center_.field_center_businessunitcode
+    - field.field.node.center_.field_center_city
+    - field.field.node.center_.field_center_code
+    - field.field.node.center_.field_center_contact_person
+    - field.field.node.center_.field_center_country
+    - field.field.node.center_.field_center_email
+    - field.field.node.center_.field_center_latitude
+    - field.field.node.center_.field_center_location
+    - field.field.node.center_.field_center_longitude
+    - field.field.node.center_.field_center_page_components
+    - field.field.node.center_.field_center_phone
+    - field.field.node.center_.field_center_regioncode
+    - field.field.node.center_.field_center_state
+    - field.field.node.center_.field_center_status
+    - field.field.node.center_.field_center_zipcode
+    - field.field.node.center_.field_location
+    - field.field.node.center_.field_slider_and_expert_form
+    - node.type.center_
+  module:
+    - entity_reference_revisions
+    - user
+id: node.center_.center_page_image_gallery
+targetEntityType: node
+bundle: center_
+mode: center_page_image_gallery
+content:
+  field_center_page_components:
+    type: entity_reference_revisions_entity_view
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+hidden:
+  body: true
+  field_center_businesspartnercode: true
+  field_center_businessunitcode: true
+  field_center_city: true
+  field_center_code: true
+  field_center_contact_person: true
+  field_center_country: true
+  field_center_email: true
+  field_center_latitude: true
+  field_center_location: true
+  field_center_longitude: true
+  field_center_phone: true
+  field_center_regioncode: true
+  field_center_state: true
+  field_center_status: true
+  field_center_zipcode: true
+  field_location: true
+  field_slider_and_expert_form: true
+  links: true
+  share_everywhere: true

@@ -1,0 +1,108 @@
+<section class="header-container" style="padding: 10px 0px;">
+  <div class="container">
+    <div class="row">
+
+      <div class="headerSection col-md-6">
+        <div class="logo">
+          <a href="/">
+            <img data-src="/india/themes/custom/nexus/assets/images/NIIT_logomobile.png" alt="NIIT" title="NIIT" class="scale hide600 js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+            <img data-src="/india/themes/custom/nexus/assets/images/NIIT_logomobile.png" alt="NIIT" title="NIIT" class="scale show600 js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+          </a>
+        </div>
+      </div>
+      <div class="headerSection col-md-6">
+        <div class="logo">
+          <a href="javascript:void(0);">
+            {% if node.field_title_logo.entity.fileuri is not empty %}
+              <img data-src="{{ file_url(node.field_title_logo.entity.fileuri) }}" alt="{{ node.field_title_logo.alt }}" title="NIIT" class="scale pull-right js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+            {% endif %}
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="custom-privacy-policy-sec">
+  <div class="container">
+    <h2 class="iciciMainTitle">Terms and Conditions</h2>
+    <h2 class="iciciMainTitle">{{ node.title.value }}</h2>
+    <div class="row">
+      <div class="col-md-12 uniqueListing mb-5">
+        {% if node.field_content_privacy_policy is not empty %}
+          {% for key, data in node.field_content_privacy_policy %}
+            {{ data.value|raw }}
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Footer Start -->
+<footer>
+   <section class="container">
+       <div class="row landing-page-footer">
+           <div class="col-xs-12 col-lg-12">
+               <div class="row">
+                <div class="col-md-12">
+                  {# {% if node.field_click_to_call_phone_number.value is not empty %} #}
+                    <div class="footercopy mb-5">
+                      {% if page.copy_right_first %} {{ page.copy_right_first }} {% endif %}
+                      {# <i class="fa fa-phone-square"></i>  9098767890 #}
+                    </div>
+                  {# {% endif %} #}
+                  {# {% if node.field_footer_email.value is not empty %} #}
+                   {#  <div class="mt-4 email-icon icon-data">
+                      {% if page.copy_right_second %} {{ page.copy_right_second }} {% endif %}
+                      <i class="fa fa-envelope"></i> asdwer@gmail.com
+                    </div> #}
+                  {# {% endif %} #}
+                </div>
+                {# <div class="col-md-2">
+                  
+                </div> #}
+                {# <div class="col-md-4">
+                  <div class="social-icons">
+                       <h2 class="mt-0 linkhead">Follow Us:</h2>
+                       <ul>
+                           <li>
+                               <a href="https://www.facebook.com/NIIT4u/"
+                                   target="_blank" rel="nofollow">
+                                   <i class="fab fa-facebook-f"></i>
+                               </a>
+                           </li>
+                           <li>
+                               <a href="https://twitter.com/NIITLtd"
+                                   class="twi" target="_blank" rel="nofollow">
+                                   <i class="fab fa-twitter"></i>
+                               </a>
+                           </li>
+                           <li>
+                               <a href="https://www.youtube.com/channel/UCtE0wET2olVOwVw7ELCP35w"
+                                   class="tube"
+                                   target="_blank" rel="nofollow">
+                                   <i class="fab fa-youtube"></i>
+                               </a>
+                           </li>
+                           <li>
+                               <a href="https://www.linkedin.com/company/niit-limited"
+                                   class="lin"
+                                   target="_blank" rel="nofollow">
+                                   <i class="fab fa-linkedin-in"></i>
+                               </a>
+                           </li>
+                       </ul>
+                   </div>
+                </div>   #}  
+
+               </div>
+           </div>
+       </div>
+   </section>
+</footer>
+<!--fofooter-listlinkoter-->

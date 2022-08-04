@@ -1,0 +1,212 @@
+<!-- Header Start-->
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+<!-- Header End -->
+
+<!--breadcrumb section starts here-->
+<section class="breadcrum-top">
+  <div class="container">
+    <div class="row">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <!-- <li class="breadcrumb-item"><a href="#">All Catagories</a></li> -->
+          <li class="breadcrumb-item active" aria-current="page">{{ node.title.value }}</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+</section>
+<!--breadcrumb section ends here-->
+
+<!-- Banner view start here -->
+<section class="program-for-engineering">
+  <div class="container green-bg">
+    <div class="row eng-wrapper">
+      <div class="eng-lft-row col-md-6">
+        <h4>{{ getTopCourseCategoryBannerCounter(node.id) }} programs for</h4>
+        {% if node.title.value is not empty %}
+          <h2>{{ node.title.value }}</h3>
+        {% endif %}
+      </div>
+      <div class="eng-rgt-row col-md-6">
+        {% if node.field_banner_content.value is not empty %}
+          <p>{{ node.field_banner_content.value|raw }}</p>
+        {% endif %}
+        {% if node.field_banner_attributes is not empty %}
+          <div class="lower-eng-part">
+            {% for key, value in node.field_banner_attributes %}
+              <div class="eng-icon"><span><img src="{{ file_url(value.entity.field_ccb_attribute_image.entity.fileuri) }}" width="13px"></span>{{ value.entity.field_ccb_attribute_title.value }}</div>
+            {% endfor %}  
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if node.field_featured_program_section is not empty %}
+  <!-------Program Slider Starts Here-->
+  <section class="diff-program">
+    <div class="container-fluid">        
+      <!--  slider -->
+      <div class="slider">
+        {% for key, value in node.field_featured_program_section %}
+          <div class="slider__item">
+            {% set zclass = loop.index is odd ? 'yellow' : 'blue' %}
+            {% set iconclass = loop.index is odd ? 'blue' : 'yellow' %}
+            <div class="{{ zclass }}-bg">
+              <div class="{{ zclass }}-wrapper">
+                <div class="row">
+                  <div class="col-md-4 lft-prog">
+                    {% if value.entity.field_fp_background_text.value is not empty %}
+                      <div class="{{ iconclass }}-icon"></div>
+                      {{ value.entity.field_fp_background_text.value|raw }}
+                    {% endif %}
+                  </div>
+                  <div class="col-md-7">
+                    <div class="gradution-prog">
+                      <div class="prog-img">
+                        {% if value.entity.field_fp_program.entity.field_course_image.entity.fileuri is not empty %}
+                          <img src="{{ file_url(value.entity.field_fp_program.entity.field_course_image.entity.fileuri) }}">
+                        {% endif %}
+                      </div>
+                      <div class="prog-text">
+                        {% if value.entity.field_fp_program.entity.title.value is not empty %}
+                          <h4>{{ value.entity.field_fp_program.entity.title.value }}</h4>
+                        {% endif %}
+                        <div class="prog-sch clearfix">
+                          <div class="grad-icons col-md-4 col-xs-6">
+						  {% if value.entity.field_fp_program.entity.field_course_duration.value is not empty %}
+                            <span class="icons-prog"><img src="{{ path_to_theme }}/assets/images/schedule.png"></span>
+                            <span class="text-prog">{{ value.entity.field_fp_program.entity.field_course_duration.value }}</span>
+						  {% endif %}
+                          </div>
+                          <div class="grad-icons col-md-4 col-xs-6">
+						  {% if value.entity.field_fp_program.entity.field_mode_of_learning.entity.label is not empty %}
+                            <span class="icons-prog"><img src="{{ path_to_theme }}/assets/images/time.png"></span>
+                            <span class="text-prog">{{ value.entity.field_fp_program.entity.field_mode_of_learning.entity.label }}</span>
+						  {% endif %}	
+                          </div>
+                          <div class="grad-icons col-md-4">
+						   {% if value.entity.field_fp_program.entity.field_mode_of_delivery.value is not empty %}
+                            <span class="icons-prog"><img src="{{ path_to_theme }}/assets/images/video.png"></span>
+                            <span class="text-prog">{{ value.entity.field_fp_program.entity.field_mode_of_delivery.value }}</span>
+						   {% endif %}	
+                          </div>
+                        </div>
+                        <div class="enr-sec clearfix">
+                          <div class="group-enr col-md-4">
+						    {% if value.entity.field_fp_program.entity.field_enroll_no.value is not empty %}
+                            <span><img src="{{ path_to_theme }}/assets/images/Group.png"></span>
+                            <span class="course-text">{{ value.entity.field_fp_program.entity.field_enroll_no.value }}{{ value.entity.field_fp_program.entity.field_alumni_name.value }}</span>
+							{% endif %}
+                          </div>
+                          <div class="assured-placement col-md-7">
+						    {% if value.entity.field_fp_program.entity.field_course_modules.value is not empty %}
+                            <img src="{{ path_to_theme }}/assets/images/ribbon.png">
+                            {{ value.entity.field_fp_program.entity.field_course_modules.value }}
+							{% endif %}
+                          </div>
+						  
+                          <div class="info-icon col-md-1 pr-0"><img src="{{ path_to_theme }}/assets/images/info.png"><span class="tooltiptext">*T&C Apply. Refer to Program Page</span></div>
+                        </div>
+						</div>
+                        <div class="view-prog new-batchfill {{ value.entity.field_fp_program.entity.id }}"><a duration= "{{ value.entity.field_fp_program.entity.field_course_duration.value }}" mode-delivery="{{ value.entity.field_fp_program.entity.field_mode_of_delivery.value }}" modeofflearning="{{ value.entity.field_fp_program.entity.field_mode_of_learning.entity.label }}" course-name="{{ value.entity.field_fp_program.entity.title.value }}" href="{{ path('entity.node.canonical', {'node':  value.entity.field_fp_program.entity.id }) }}">View Program <i class="fa fa-angle-right" aria-hidden="true"></i></a></div>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <!-- ./Small cards slider -->
+    </div>
+  </section>
+  <!-------Program Slider End Here-->
+{% endif %}
+
+<div class="topcoursefilter">{{ top_category_filter|raw }}</div>
+<div class="coursefilterdata">{{ NiitCourseCategoryDetails|raw }}</div>
+
+{% if node.field_insights_title.value is not empty %}
+<!--- latest insight --->
+<section class="latest-insight">
+  <div class="container">
+    <div class="row"> 
+      <div class="col-md-5 latest-lft">
+        <div class="neon-icon"><img src="{{ path_to_theme }}/assets/images/neon-icon.png"></div>
+        <h2>{{ node.field_insights_title.value }}</h2>
+      </div>
+      <div class="col-md-6 latest-rgt">
+        <div class="latest-rgt-inner">
+		  
+          {% if node.field_insights_attributes is not empty %}
+            {% for key, value in node.field_insights_attributes %}
+			<div class="righticons">
+              <div class="latest-rgt-icon">
+                <img src="{{ file_url(value.entity.field_ccb_attribute_image.entity.fileuri) }}">
+              </div>    
+              <p>{{ value.entity.field_ccb_attribute_title.value }}</p>
+		     </div>
+            {% endfor %}
+          {% endif %}
+		  
+        
+      </div>        
+    </div>
+    <div class="row three-cat">
+      <div class="three-cat-inner">
+        <div class="col-md-5"><img src="{{ file_url(node.field_insights_image.entity.fileuri) }}" class="img-responsive"></div>
+        <div class="col-md-7 block-top">
+          {% if node.field_insights_blocks is not empty %}
+            {% for key, value in node.field_insights_blocks %}
+              <div class="cat-test">
+                {% if value.entity.field_image.entity.fileuri is not empty %}
+                  <div class="cat-icon"><img src="{{ file_url(value.entity.field_image.entity.fileuri) }}" width="20px"></div>
+                {% else %}
+                  <div class="cat-icon"><img src="{{ path_to_theme }}/assets/images/neon-icon.png" width="20px"></div>
+                {% endif %}
+                <h4>{{ value.entity.field_label.value }}</h4>
+                <p>{{ value.entity.field_describe.value|raw }}</p>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--- latest insight end --->
+{% endif %}
+
+<!---explore program--->
+{% if node.field_other_programs is not empty %}	
+  <section  class="explore-prog">
+    <div class="container">
+      <h2>Explore other Programs</h2>
+      <div class="row otherprograms">
+        {% for key, value in node.field_other_programs %}
+          <div class="col-md-4 prog-cat">
+            <div class="prog-wrapper-inner clearfix {{ value.entity.field_program_color.value }}">
+		          {% if value.entity.field_op_title.value is not empty %}
+                <div class="prog-cat-text col-md-7 col-sm-7 col-xs-7"> 
+                  <a class="exp-program-title" coursname="{{ value.entity.field_op_title.entity.title.value }}"  href="{{ path('entity.node.canonical', {'node':  value.entity.field_op_title.entity.id }) }}"><h4>{{ value.entity.field_op_title.entity.title.value }}</h4></a>
+                  <p>{{ getTopCourseCategoryBannerCounter(value.entity.field_op_title.entity.id) }} programs</p>
+                </div>
+		          {% endif %}
+		          {% if value.entity.field_op_image.entity.fileuri is not empty %}
+                <div class="prog-img col-md-5 col-sm-5 col-xs-5"><img class="img-responsive" src="{{ file_url(value.entity.field_op_image.entity.fileuri) }}"></div>              
+              {% endif %}    
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %} 
+<!---explore program end-->
+{% include directory ~ '/templates/layout/footer.html.twig' %}

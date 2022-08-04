@@ -1,0 +1,86 @@
+<script>
+    window.leadForm = true;
+    window.courseBannerImage = '{{ file_url(node.field_course_banner_image.entity.fileuri) }}';
+    window.schoolBannerImage = '{{ file_url(node.field_school_banner_image.entity.fileuri) }}';
+    window.enterprisesBannerImage = '{{ file_url(node.field_enterprises_banner_image.entity.fileuri) }}';
+    window.courseBannerText = '{{ node.field_banner_course_text.value | replace({"\n":' ', "\r":' '}) | raw }}';
+    window.schoolBannerText = '{{ node.field_banner_school_text.value | replace({"\n":' ', "\r":' '}) | raw }}';
+    window.enterprisesBannerText = '{{ node.field_banner_enterprises_text.value | replace({"\n":' ', "\r":' '}) | raw }}';
+</script>
+<!--Slider-->
+<section class="slider-container cat-banner">
+    <div class="slidermain">
+        <div>
+            <div class="slidewrap" id="lead-form-banner">
+            </div>
+        </div>
+    </div>
+    <div class="sliderinnerbg"><img
+            src="{{ request_path }}themes/custom/nexus/assets/images/banner-inner.jpg"
+            width="1366" height="11"></div>
+    <!--<div class="chatandconslr">
+        <ul class="mobilechatcon">
+            <li><a href="">Get Counselor</a></li>
+            <li><a href="">Chat</a></li>
+            <div class="clearfix"></div>
+        </ul>
+    </div>    -->
+</section>
+<!--Slider-->
+<!--leadform-->
+<section class="sliderinner-wrap sliderinnerbg cat-popular slidetrending">
+    <div class="container">
+        <ul class="leadform-breadcrum">
+            <li><a href="">Home</a><span>/</span></li>
+            <li class="breadcrumb-replace"></li>
+        </ul>
+        <div class="headding headeleft-leadform leadpadbot">
+            <h2 class="breadcrumb-replace">Loading ...</h2>
+        </div>
+        <form action="" name="lead-form-api" id="lead-form-api">
+            <div class="leadform-container" id="">
+                <div class="row">
+                    <div class="leadform-box" id="leadform-container">
+                        <div class="lead-loading"
+                            style="width:150px; height:auto; margin:0 auto;">
+                            <img
+                                src="{{ url('<front>') }}themes/custom/nexus/assets/images/loaderform.gif"
+                                alt="loading.." class="scale">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+<!--leadform-->
+<!-- Search POPup-->
+<div class="overlay4"></div>
+<div class="tcbox" id="review">
+    <a href="javascript:void(0)" class="closetcpop">&times;</a>
+    <div class="home-searchbar">
+        <div class="searchbar-top">
+            <form action="/niit/search/content" method="get">
+                <div class="regular-growth">
+                    <div class="select1">
+                        <select id="select-box1" class="select-styled1"
+                            onChange="DisplayDiv(this.value);">
+                            <option value="1">College Students</option>
+                            <option value="2">Graduates</option>
+                            <option value="3">Working Professionals</option>
+                            <option value="4">All</option>
+                        </select>
+                    </div>
+                </div>
+                <input name="keys" id="textfield" class="searchbar-top-style"
+                    placeholder="Search for Courses" type="text">
+                <button id="button" class="homesearch" type="submit"
+                    style="text-align: center; display: inline-block; line-height: 70px;">
+                    Search
+                </button>
+            </form>
+        </div>
+        <div class="clr"></div>
+    </div>
+</div>
+<!-- Search POPup-->

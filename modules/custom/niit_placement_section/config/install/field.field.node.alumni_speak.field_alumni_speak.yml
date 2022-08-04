@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_alumni_speak
+    - node.type.alumni_speak
+  module:
+    - text
+id: node.alumni_speak.field_alumni_speak
+field_name: field_alumni_speak
+entity_type: node
+bundle: alumni_speak
+label: 'Alumni Speak Tagline'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

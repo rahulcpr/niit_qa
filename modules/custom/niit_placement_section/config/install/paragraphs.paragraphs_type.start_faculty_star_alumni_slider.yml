@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: start_faculty_star_alumni_slider
+label: 'Start Faculty & Star Alumni Slider'
+icon_uuid: null
+description: 'Start Faculty & Star Alumni Slider'
+behavior_plugins: {  }

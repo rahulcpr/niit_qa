@@ -1,0 +1,43 @@
+{# {% set base_url_final = path('<front>') %} #}
+<div id="main-wrap">
+    {% if page.strip_on_banner %}    
+        {% set strip_on_banner = page.strip_on_banner|render|striptags|trim is not empty %}
+        {% if strip_on_banner %}
+        <div class="offer_top_bar">
+            <div class="container">
+                {{ page.strip_on_banner }}
+                <span class="close_offer">X</span>
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <header role="banner">
+                {% include directory ~ '/templates/layout/header.html.twig' %}
+            </header>
+            {{ page.primary_menu }}
+            {{ page.secondary_menu }}
+            
+            {% if page.sidebar_first %}
+            <div id="sidebar-first" class="filter-list sidebar"
+                role="complementary">
+                {% block sidebar %} {{ page.sidebar_first }} {% endblock %}
+            </div>
+            {% endif %}
+            <div>
+                <section id="content" role="main" class="clearfix">
+                    <div id="content-wrap">
+                        {{ page.help }}
+                        {{ page.content }}
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+           
+            
+         
+{% include directory ~ '/templates/layout/footer.html.twig' %}

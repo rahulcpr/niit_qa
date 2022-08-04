@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: center_page_gallery_tabs
+label: 'Center Page Gallery Tabs'
+icon_uuid: null
+description: 'Center Page Gallery Tabs'
+behavior_plugins: {  }

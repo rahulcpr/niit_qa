@@ -1,0 +1,52 @@
+ 
+ <!-- Default form contact -->
+        {{ element.elements.form_token }}
+        {{ element.elements.form_build_id }}
+        {{ element.elements.form_id }}
+        {{ element.elements.form_description }}
+
+   <form {{ attributes }} class="text-center border border-light"> 
+            <!-- Name --> 
+
+            <div class="form-group">
+                {{ element.elements.name }}
+            </div>
+
+            <div class="form-group">
+               {{ element.elements.e_mail }}
+            </div>
+
+            <div class="form-group">
+                {{ element.elements.mobile_number }}
+            </div> 
+
+            <div class="form-group">
+               {{ element.elements.current_employer }}
+            </div>
+
+            <div class="form-group">
+                {{ element.elements.year_of_passing }}
+            </div>
+
+            <div class="form-group">
+                {{ element.elements.industry }}
+            </div>
+
+            <div class="form-group" style="display: none" id="otherText">
+               {{ element.elements.other_text }}
+            </div>
+  
+            <!-- Copy -->
+            <div class="custom-control custom-checkbox text-left mb-4 policy_dec publish_checkboxall">
+                {{ element.elements.privacy_policy }} 
+            </div> 
+
+                {{ element.elements.theme }}
+                {{ element.form_token }}
+                {{ element.form_build_id }}
+                {{ element.form_id }}
+
+            <!-- Send button -->
+            {{ element.elements.actions }} 
+        </form>
+     <!-- Default form contact --> 

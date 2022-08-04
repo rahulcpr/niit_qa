@@ -1,0 +1,120 @@
+{% block paragraph %}
+ {% block content %}
+
+{% set field_drive_disclaimer=content.field_drive_disclaimer[0]['#context']['value'] %}
+{% set field_see_more_title=content.field_see_more[0]['#title'] %}
+{% set field_see_more_url=content.field_see_more[0]['#url']|render %}
+<section class="other_placement_drive">
+    <div class="container">
+        <div class="headding head50 text-center">
+            <h2>Other Placement Drives</h2>
+            <span class="underline"></span></div>
+        <!-- tab section -->
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Nav tabs -->
+                <div class="text-center">
+                    <ul class="nav nav-tabs" role="tablist">
+                        
+                        {% if '1' in content.field_in_india_drive[0] %}
+                        <li role="presentation" class="active"><a href="#inindia"
+                                aria-controls="inindia" role="tab"
+                                data-toggle="tab">In India</a></li>
+                        {% endif %}
+                        
+                        {% if '1' in content.field_in_your_city[0] %}        
+                        <li role="presentation"><a href="#inyourcity"
+                                aria-controls="inyourcity" role="tab"
+                                data-toggle="tab">In Your City</a></li>
+                         {% endif %}       
+
+                         {% if '1' in content.field_mega_drive_archive[0] %}
+                        <li role="presentation" ><a
+                                href="#archieve" aria-controls="archieve"
+                                role="tab" data-toggle="tab">Archive</a></li>
+                         {% endif %}       
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Tab panes -->
+    <div class="tab-content">
+
+       {% if '1' in content.field_in_india_drive[0] %}
+        
+        <div role="tabpanel" class="tab-pane fade  in active" id="inindia">
+            <div class="width100">
+                <div class="container">
+                    <div class="centre_event megakk">
+                        {% if content.field_in_india_drive %}
+                            {{ drupal_view('in_india_placement_drive', 'in_india_drive') }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+       
+       {% if '1' in content.field_in_your_city[0] %}
+        <div role="tabpanel" class="tab-pane fade {% if '0' in content.field_in_india_drive[0] %} in active {% endif %}" id="inyourcity">
+            <div class="width100">
+                <div class="container">
+                    <div class="centre_event megakk">
+                        {% if content.field_in_your_city %}
+                            {{ drupal_view('in_your_city', 'in_your_city') }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+       {% endif %}
+
+        {% if '1' in content.field_mega_drive_archive[0] %}
+        <div role="tabpanel" class="tab-pane fade {% if (('0' in content.field_in_india_drive[0]) and ('0' in content.field_in_your_city[0])) %} in active {% endif %}" id="archieve">
+
+            {% if content.field_mega_drive_archive %}
+                <div class="width100">
+                    <div class="container">
+                        <div class="centre_event megakk archivess">
+
+                                {{ drupal_view('mega_drive_archive', 'mega_drive_archive') }}
+                         </div>
+                    </div>
+                </div>
+
+
+                {#{{ drupal_view('mega_drive_archive', 'mega_drive_archive') }}#}
+            {% endif %}
+
+        </div>
+        {% endif %}
+
+        {{ drupal_view('in_india_placement_drive_modal', 'in_india_placement_drive_modal') }}
+    </div>
+    <div class="container">
+        <div class="row">
+
+            {% if(field_drive_disclaimer != '') %}
+            <div class="col-md-12 disclaimer text-center">
+                <strong>Disclaimer:</strong> {{ field_drive_disclaimer }}
+            </div>
+            {% endif %}
+
+            {% if  field_see_more_url != '#' and field_see_more_title != '' %}
+            <div class="col-md-12 text-center"><a id=""
+                    class="morebtn mrt-seemore"
+                    href="{{ field_see_more_url }}">{{ field_see_more_title }}</a>
+            </div
+            >
+           {% endif %} 
+
+        </div>
+    </div>
+    <!-- end tab section -->
+</section>
+
+{% endblock %}
+{% endblock paragraph %}
+

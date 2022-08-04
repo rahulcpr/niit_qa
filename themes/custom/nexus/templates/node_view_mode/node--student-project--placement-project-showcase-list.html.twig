@@ -1,0 +1,13 @@
+<div class="col-sm-4">
+    <div class="showcase_box">
+        <figure><img src="{{ content.field_project_image[0] }}" /></figure>
+        <div class="showcase_text">
+            <h4>{{ label }}</h4>
+            <p> {{ content.field_overview|length > 50 ? content.field_overview|slice(0, 50) ~ '...' : content.field_overview }}</p>
+            <p><a class="morebtn" href="javascript:void(0)" data-toggle="modal"
+                    data-target="#nid-project-showcase-{{ node.id }}"
+                    tabindex="0">See More</a>
+            </p>
+        </div>
+    </div>
+</div>

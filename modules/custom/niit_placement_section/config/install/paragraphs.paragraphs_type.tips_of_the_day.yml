@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: tips_of_the_day
+label: 'Tips of the day'
+icon_uuid: null
+description: 'Tips of the day'
+behavior_plugins: {  }

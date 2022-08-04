@@ -1,0 +1,160 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a menu.
+ *
+ * Available variables:
+ * - menu_name: The machine name of the menu.
+ * - items: A nested list of menu items. Each menu item contains:
+ *   - attributes: HTML attributes for the menu item.
+ *   - below: The menu item child items.
+ *   - title: The menu link title.
+ *   - url: The menu link url, instance of \Drupal\Core\Url
+ *   - localized_options: Menu link localized options.
+ *   - is_expanded: TRUE if the link has visible children within the current
+ *     menu tree.
+ *   - is_collapsed: TRUE if the link has children within the current menu tree
+ *     that are not currently visible.
+ *   - in_active_trail: TRUE if the link is in the active trail.
+ *
+ * @ingroup themeable
+ */
+#}
+{% import _self as menus %}
+
+{#
+  We call a macro which calls itself to render the full tree.
+  @see http://twig.sensiolabs.org/doc/tags/macro.html
+#}
+{{ menus.menu_links(items, attributes, 0) }}
+
+{% macro menu_links(items, attributes, menu_level) %}
+  {% import _self as menus %}
+  <section class="top_nav">
+    <div class="container">
+      <div class="row">
+        <div class="top_navigatio">
+          <div class="col-md-5 col-md-offset-7">
+            <ul class="list-unstyled">
+
+
+              {% for stage1Nav in items %}
+                  <li class="kc-topmenu"><a href="{{stage1Nav.url}}">{{stage1Nav.title}}</a></li>
+              {% endfor %}
+              <li class="dropdown">
+                <span class="dropbtn">Enterprise Training</span>
+                <ul class="list-unstyled dropdown-content corp-training" style="left:0;">
+
+                  {# <li class="dropdown-menu-bgcolor"><a href="#" class="megaMenuTitle">Training Outsourcing</a></li>
+                  <li><a href="/india/training/enterprise/training-outsourcing/advisory-services">Advisory Services</a></li>
+                  <li><a href="/india/training/enterprise/training-outsourcing/business-training-program">Business Training Program</a></li>
+                  <li><a href="/india/training/enterprise/training-outsourcing/content-development">Content Development</a></li>
+                  <li><a href="/india/training/enterprise/training-outsourcing/learning-administration">Learning Administration</a></li>
+                  <li><a href="/india/training/enterprise/training-outsourcing/learning-technology">Learning Technology</a></li>
+                  <li><a href="/india/training/enterprise/training-outsourcing/source-train-hire">Source Train Hire</a></li>
+                  <li class="dropdown-menu-bgcolor"><a href="/india/training/enterprise/governments" class="megaMenuTitle">Government Projects</a></li>
+                  <li><a href="/india/training/enterprises/government/Pages/government-projects.aspx#ebp">Employability Programs</a></li>
+                  <li><a href="/india/training/enterprise/governments/itec-scaap-colombo-plan-courses">ITEC/SCAAP &amp; Colombo Plan Courses</a></li>
+                  <li class="dropdown-menu-bgcolor"><a href="/india/training/enterprise/csr-project" class="megaMenuTitle">CSR Projects</a></li>
+                  <li><a href="/india/training/enterprise/csr-project#stc">Skill Training Centre</a></li>
+                  <li><a href="/india/training/enterprise/csr-project#sps">Sponsorship</a></li>
+                  <li><a href="/india/training/enterprise/csr-project#hwlc">Hole in the Wall Learning Stations</a></li> #}
+
+                  <li class="dropdown-menu-bgcolor"><a href="mailto: CorpTraining@niit.com" class="megaMenuTitle">Contact Us</a></li>
+                  {# <li><a href="mailto: CorpTraining@niit.com">Contact CorpTraining@niit.com</a></li> #}
+                </ul>
+              </li>
+              <li><a href="javascript:void(0)" data-toggle="modal" data-target="#counteryFlag">India <i class="fa fa-angle-down"></i></a></li>
+            </ul>
+
+             {#  {% if items %}
+                {% if menu_level == 0 %}
+                  <ul class="list-unstyled"{{ attributes }}>
+                {% else %}
+                  <ul class="list-unstyled">
+                {% endif %}
+                {% for item in items %}
+                  <li{{ item.attributes }}>
+                    
+                    {% if item.below %}
+                      {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+                    {% else %}
+                      {{ link(item.title, item.url) }}
+                    {% endif %}
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            
+
+            <ul class="list-unstyled">
+               <li><a href="javascript:void(0)" data-toggle="modal" data-target="#counteryFlag">India <i class="fa fa-angle-down"></i></a></li>
+            </ul> #}
+        </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{# ------------------ Mobile View ---------------- #}
+ <section class="mega_menu_new_mobile desktop-hide">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-2">
+        <div id="menuToggle">
+              <input type="checkbox" />
+                <span></span>
+                <span></span>
+                <span></span>
+                {# <ul id="menu">
+                  <li><a href="#">Knowledge Center</a></li>
+                  <li><a href="#">Corporate Training</a></li>
+                  <li><a href="#">India <i class="fa fa-angle-down"></i></a></li>
+                </ul> #}
+                <ul id="menu">
+                  <div id="mobileloginlink"></div>
+                {% for stage1Nav in items %}
+                    <li><a href="{{stage1Nav.url}}">{{stage1Nav.title}}</a></li>
+                {% endfor %}
+                <li class="dropdown">
+                  <span class="dropbtn">Enterprise Training</span>
+                  <ul class="list-unstyled dropdown-content" style="left:0;">
+                    {# <li class="dropdown-menu-bgcolor"><a href="#" class="megaMenuTitle">Training Outsourcing</a></li>
+                    <li><a href="/india/training/enterprise/training-outsourcing/advisory-services">Advisory Services</a></li>
+                    <li><a href="/india/training/enterprise/training-outsourcing/business-training-program">Business Training Program</a></li>
+                    <li><a href="/india/training/enterprise/training-outsourcing/content-development">Content Development</a></li>
+                    <li><a href="/india/training/enterprise/training-outsourcing/learning-administration">Learning Administration</a></li>
+                    <li><a href="/india/training/enterprise/training-outsourcing/learning-technology">Learning Technology</a></li>
+                    <li><a href="/india/training/enterprise/training-outsourcing/source-train-hire">Source Train Hire</a></li>
+                    <li class="dropdown-menu-bgcolor"><a href="/india/training/enterprise/governments" class="megaMenuTitle">Government Projects</a></li>
+                    <li><a href="/india/training/enterprises/government/Pages/government-projects.aspx#ebp">Employability Programs</a></li>
+                    <li><a href="/india/training/enterprise/governments/itec-scaap-colombo-plan-courses">ITEC/SCAAP &amp; Colombo Plan Courses</a></li>
+                    <li class="dropdown-menu-bgcolor"><a href="/india/training/enterprise/csr-project" class="megaMenuTitle">CSR Projects</a></li>
+                    <li><a href="/india/training/enterprise/csr-project#stc">Skill Training Centre</a></li>
+                    <li><a href="/india/training/enterprise/csr-project#sps">Sponsorship</a></li>
+                    <li><a href="/india/training/enterprise/csr-project#hwlc">Hole in the Wall Learning Stations</a></li> #}
+                    <li class="dropdown-menu-bgcolor"><a href="mailto: CorpTraining@niit.com" class="megaMenuTitle">Contact Us</a></li>
+                    {# <li><a href="mailto: CorpTraining@niit.com">Contact CorpTraining@niit.com</a></li> #}
+                  </ul>
+                </li>
+                <li><a href="javascript:void(0)" data-toggle="modal" data-target="#counteryFlag">India <i class="fa fa-angle-down"></i></a></li>
+              </ul>
+
+           </div>
+      </div>
+      <div class="col-xs-3 pl-0">
+        <a href="{{ path('<front>') }}"><img src="/india/themes/custom/nexus/assets/images/logo_1.png" alt="niit_logo" class="img-responsive niit_logo_pt"></a>
+      </div>
+      <div class="col-xs-7">
+        <div class="nav_left_block">
+          <ul class="list-unstyled text-right">
+            <li class="program_cta_mob" id="ham"><a href="#"><img src="/india/themes/custom/nexus/assets/images/course_icon.svg" alt="programs"> PROGRAMS</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+{% endmacro %}

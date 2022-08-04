@@ -1,0 +1,6 @@
+services:
+  rest_log_subscriber:
+    class: Drupal\rest_log\EventSubscriber\RestLogSubscriber
+    arguments: ['@current_route_match']
+    tags:
+      - { name: event_subscriber }

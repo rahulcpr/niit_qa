@@ -1,0 +1,75 @@
+name: Nexus Theme
+type: theme
+description: 'Nexus Theme is a premium Drupal 7 theme. Developed by <a href="http://www.devsaran.com">Devsaran.com</a>.'
+# core: 8.x
+
+# Regions
+regions:
+  strip_on_banner: 'Strip On Banner'
+  header: 'Header'
+  main_navigation: 'Main Navigation'
+  preface_first: 'Preface First'
+  preface_second: 'Preface Second'
+  preface_third: 'Preface Third'
+  highlighted: 'Highlighted'
+  sidebar_first: 'First Sidebar'
+  content_top: 'Content Top'
+  help: 'Help'
+  content: 'Content'
+  footer: 'Footer'
+  top_navigation: 'Top Navigation'
+  user_navigation: 'User Navigation'
+  highlighted: 'Highlighted'
+  content: 'Content'
+  related_courses: 'Related Courses'
+  star_faculty: 'Star faculty for Course Page'
+  star_alumni: 'Star Alumni for Course Page'
+  placement_section:  'Placement section'
+  popular_course_section: 'Most popular/trending/new courses'
+  advantages_with_niit_section: 'Advantages with NIIT section'
+  assured_job_section: 'Assured Job section'
+  community_network_section:  'Amazing Community Network'
+  knowledge_section: 'Knowledge section'
+  management: 'Management Section'
+  management_first: 'School Management'
+  management_second: 'Enterprises Management'
+  management_third: 'Career Management'
+  successful_career: 'successful career Section'
+  our_partners_section:   'Our Partners'
+  alumnis_work_section: 'Our alumnis work for amazing companies'
+  alumni_speak_section: 'Alumni speak/testimonials section '
+  why_it_is_booming: 'Why IT is Booming Section for Category Page'
+  share_everywhere: 'Share Course Page Section'
+  footer_newsletter: 'Footer Newsletter Section'
+  footer_social: 'Footer Social Section'
+  footer_first: 'Footer First Links'
+  footer_second: 'Footer Second Links'
+  footer_third: 'Footer Third Links'
+  footer_fourth: 'Footer fourth Links'
+  footer_fifth: 'Footer fifth Links'
+  copy_right: 'Copy Right'
+  copy_right_first: 'Copy Right (Information) Section First'
+  copy_right_second: 'Copy Right (Links) Section Second'
+  help: 'Help'
+  extra_block_section: 'Extra Block Sections'
+  fest_event_menu: 'Fest Event Menu'
+  user_profile_block: 'User Profile'
+
+# Assets
+libraries:
+  - nexus/global-css
+  - nexus/global-js
+  #- nexus/googlefonts-ptsans
+  - nexus/ecom-js
+
+
+  
+# libraries-override:
+  # Replace an entire library.
+  # core/jquery: nexus/jquery-custom
+
+# Information added by Drupal.org packaging script on 2018-06-08
+version: '8.x-1.4'
+core: '8.x'
+# project: 'nexus'
+datestamp: 1528444991

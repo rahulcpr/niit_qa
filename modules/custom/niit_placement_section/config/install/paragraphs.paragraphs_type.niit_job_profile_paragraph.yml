@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: niit_job_profile_paragraph
+label: 'Niit job profile paragraph'
+icon_uuid: null
+description: 'Niit job profile paragraph'
+behavior_plugins: {  }

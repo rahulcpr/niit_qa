@@ -1,0 +1,5 @@
+name: Mymodule
+description: 'My Module is another module is another custom form module for API'
+type: module
+core: 8.x
+package: Custom

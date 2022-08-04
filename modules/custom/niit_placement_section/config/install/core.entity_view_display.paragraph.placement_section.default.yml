@@ -1,0 +1,59 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.placement_section.field_disclaimer
+    - field.field.paragraph.placement_section.field_no_of_companies
+    - field.field.paragraph.placement_section.field_no_of_students
+    - field.field.paragraph.placement_section.field_placement_companies
+    - field.field.paragraph.placement_section.field_placement_header_label
+    - paragraphs.paragraphs_type.placement_section
+  module:
+    - entity_reference_revisions
+id: paragraph.placement_section.default
+targetEntityType: paragraph
+bundle: placement_section
+mode: default
+content:
+  field_disclaimer:
+    weight: 4
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_no_of_companies:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_no_of_students:
+    weight: 2
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_placement_companies:
+    type: entity_reference_revisions_entity_view
+    weight: 3
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_placement_header_label:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

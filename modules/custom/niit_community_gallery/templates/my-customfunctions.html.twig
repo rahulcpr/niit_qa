@@ -1,0 +1,143 @@
+{% set verticalleft =  arguments.vertical.0 %}
+{% set verticalright =  arguments.vertical.1 %}
+{% set horizontalData =  arguments.horizontal %}
+<!--Network Code updated By Prabhat Kumar Tiwari-->
+
+<section class="sliderinner-wrap networkinnerbg bgnoise">
+    <div class="container">
+        <div class="headding text-center">
+            <h2 id="alumni">The NIIT Community</h2>
+            <span class="underline"></span>
+        </div>
+        <div class="network-container achieve">
+            <div class="knowledge">
+
+
+
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="achieve-box">
+                            <div class="img-box square">
+
+                                <img data-src="{{ verticalleft.verticalImage }}" class="scale js-lazyload-image" src="/sites/default/files/transparentimg.jpg" alt="img">
+                                <div class="overlay">
+
+                                    <div class="head">
+
+                                        <h3>
+
+                                            {% if verticalleft.title is not null and verticalleft.title is not empty %} {{
+                                            verticalleft.title }} {% endif %}
+                                        </h3>
+
+                                        <p>{% if verticalleft.shortText is not null %} {{
+                                            verticalleft.shortText }} {% endif %}</p>
+                                    </div>
+
+                                    <div class="info">
+                                        <div class="detailsinfo">
+                                            {{verticalleft.body|raw}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-xs-12 col-sm-4">
+                    <div class="achieve-box">
+
+                        {% for horizontal in horizontalData %}
+                    <div class="img-box square">
+                        <img src="{{ horizontal.horizontalImage }}" class="scale" alt="img">
+                        <div class="overlay">
+                            <div class="head">
+                                <h3>
+
+                                    {% if horizontal.title is not null %} {{
+                                    horizontal.title }} {% endif %}
+                                </h3>
+                                <p>{% if horizontal.shortText is not null %} {{ horizontal.shortText
+                                    }} {% endif %}
+
+                                </p>
+                            </div>
+                            <div class="info">
+                                <div class="detailsinfo smallimgmrg">
+
+                                    {% if horizontal.body is not null %} {{
+                                    horizontal.body |raw }} {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                   {% endfor %}
+                        </div>
+                        </div>
+
+                <div class="col-xs-12 col-sm-4">
+                    <div class="achieve-box">
+                        <div class="img-box square video">
+                            {% if verticalright.networkYoutube != '' %}
+                            <iframe height="405px" src="{{ verticalright.networkYoutube }}" frameborder="0"
+                                    allow="autoplay; encrypted-media"></iframe>
+                            {% else %}
+                            <img src="{{ verticalright.verticalImage }}" class="scale" alt="img">
+
+                            <div class="overlay videoo">
+                                <div class="head">
+                                    <h3>
+
+                                        {% if verticalright.title is not null %} {{
+                                        verticalright.title }} {% endif %}
+                                    </h3>
+                                    <p>{% if verticalright.shortText is not null %} {{ verticalright.shortText
+                                        }} {% endif %}
+
+                                    </p>
+                                    <p>
+                                        {% if verticalright.natworkFacebook is not null %}
+                                            <a href="{{verticalright.natworkFacebook}}" rel="nofollow">
+                                                <i class="fab fa-facebook-f"></i>
+
+                                            </a>
+                                        {% endif %}
+
+                                        {% if verticalright.natworkTwitter is not null %}
+                                            <a href="{{verticalright.natworkTwitter}}" rel="nofollow">
+                                                <i class="fab fa-twitter"></i>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if verticalright.natworkInstagram is not null %}
+                                            <a href="{{verticalright.natworkInstagram}}" rel="nofollow">
+                                                <i class="fab fa-instagram"></i>
+                                            </a>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="info">
+                                    <div class="detailsinfo">
+
+                                        {% if verticalright.body is not null %} {{
+                                        verticalright.body |raw }} {% endif %}
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+                                {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+</section>
+<!--Network  End -->
+
+

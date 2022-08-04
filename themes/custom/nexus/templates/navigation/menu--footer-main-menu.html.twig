@@ -1,0 +1,123 @@
+{#
+/**
+ * @file
+ * Theme override to display a menu.
+ *
+ * Available variables:
+ * - menu_name: The machine name of the menu.
+ * - items: A nested list of menu items. Each menu item contains:
+ *   - attributes: HTML attributes for the menu item.
+ *   - below: The menu item child items.
+ *   - title: The menu link title.
+ *   - url: The menu link url, instance of \Drupal\Core\Url
+ *   - localized_options: Menu link localized options.
+ *   - is_expanded: TRUE if the link has visible children within the current
+ *     menu tree.
+ *   - is_collapsed: TRUE if the link has children within the current menu tree
+ *     that are not currently visible.
+ *   - in_active_trail: TRUE if the link is in the active trail.
+ */
+#}
+{% import _self as menus %}
+
+{#
+  We call a macro which calls itself to render the full tree.
+  @see http://twig.sensiolabs.org/doc/tags/macro.html
+#}
+
+{{ menus.menu_links(items, attributes, 0) }}
+
+{% macro menu_links(items, attributes, menu_level) %}
+    {% import _self as menus %}
+    {% if items %}
+                                    
+        <div class="col-md-12 allcourses_listing">                         
+			{% for stage1Nav in items %}
+				{% if menu_level == 0 and stage1Nav.is_expanded and stage1Nav.below %}
+				
+					<div class="col-md-3 col-sm-6">							
+						
+						{% if stage1Nav.below is not empty %}
+							
+								<h6>{{ stage1Nav.title }}</h6>
+								<ul>
+									{% for stage2Nav in stage1Nav.below %} 
+										{% if stage2Nav.below is empty %}
+											<li>{{ link(stage2Nav.title, stage2Nav.url ) }}</li>
+										{% endif %}
+									{% endfor %}								
+								</ul>
+							
+					   {% endif %}
+					</div>
+					{% endif %}
+			{% endfor %}
+		</div>
+		<div class="col-md-12 shortterm_listing">
+		
+			{% for stage1Nav in items %}
+				{% if menu_level == 0 and stage1Nav.is_expanded and stage1Nav.below %}
+												
+						
+						{% if stage1Nav.below is not empty %}
+								{% for stage2Nav in stage1Nav.below %}
+									{% if stage2Nav.below is not empty %}
+										<div class="col-md-3">
+											<h6> {{ stage2Nav.title }}</h6>
+											<ul>
+												{% for stage3Nav in stage2Nav.below %}
+												
+												 <li> {{ link(stage3Nav.title, stage3Nav.url ) }}</li>
+												
+												{% endfor %}
+											</ul>
+										</div>
+									{% endif %}
+								{% endfor %}
+					   {% endif %}
+				{% endif %}
+			{% endfor %}
+		</div>			
+					
+									        
+			        {# <div class="new_hp_header_mob_nav only-mob mb-5">
+						
+				<div>
+
+                    {% for stage1Nav in items %}
+                        {% if menu_level == 0 and stage1Nav.is_expanded and stage1Nav.below %}
+                            <div class="accord-blk">
+                                <div class="accord-btn">{{ stage1Nav.title }}</div>
+                                {% if stage1Nav.below %}
+                                    <div class="accord-content mob-2ndlevel-menu">
+                                        {% for stage2Nav in stage1Nav.below %}
+                                            {% if stage2Nav.below is not empty %}
+                                            {{ link(stage2Nav.title, stage2Nav.url, { 'class':['accord-value', 'moblevel3A']} ) }}
+                                                <div class="menu_categoryOpen footermenu_shortTerm">
+                                                    <span onclick="headerMenuOpenClose({{ stage2Nav.url.getRouteParameters()['node'] }});" class="clickToOpenMenu-{{ stage2Nav.url.getRouteParameters()['node'] }}">
+                                                    <i class="fa fa-angle-down"></i></span>
+                                                </div>
+                                                <ul class="accord-content-level-3 footermenu_shortTerm_thirdLevelMenu menu_categoryOpen-{{ stage2Nav.url.getRouteParameters()['node'] }}" style="display:none;">
+                                                    {% for stage3Nav in stage2Nav.below %}
+                                                        <li>{{ link(stage3Nav.title, stage3Nav.url) }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% else %}
+                                                {{ link(stage2Nav.title, stage2Nav.url, { 'class':['accord-value']} ) }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="menu-link">
+                                {{ link(stage1Nav.title, stage1Nav.url) }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+				</div>
+			
+		</div> #}
+			
+    {% endif %}
+{% endmacro %}

@@ -1,0 +1,61 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.star_alumni
+    - field.field.node.our_alumnis_work_for_amazing_com.body
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumni_work_category
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumni_work_top_category
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumnis_company_image
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumnis_company_name
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumnis_designation
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumnis_image
+    - field.field.node.our_alumnis_work_for_amazing_com.field_alumnis_name
+    - node.type.our_alumnis_work_for_amazing_com
+  module:
+    - image
+    - user
+id: node.our_alumnis_work_for_amazing_com.star_alumni
+targetEntityType: node
+bundle: our_alumnis_work_for_amazing_com
+mode: star_alumni
+content:
+  field_alumnis_company_name:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_alumnis_designation:
+    weight: 2
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_alumnis_image:
+    weight: 3
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+  field_alumnis_name:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  body: true
+  field_alumni_work_category: true
+  field_alumni_work_top_category: true
+  field_alumnis_company_image: true
+  links: true
+  share_everywhere: true

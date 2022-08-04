@@ -1,0 +1,1743 @@
+<?php
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Drupal\user\Entity\User;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\FormState;
+use Drupal\taxonomy\Entity\Term;    
+use Drupal\file\Entity\File;
+
+function sso_user_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'sso_user/sso_user.library';
+}
+/**
+ * Implements sso_user_theme().
+ */
+function sso_user_theme() {
+    return array(
+        'kc_search_page' => array(
+            'variables' => array( 
+                'searchDataArray' => NULL,
+                'searchVal' => NULL,
+                'path_to_theme' => NULL,
+                'page_num' => NULL,
+            ),
+        ),
+        'kc_categorysearch_page' => array(
+            'variables' => array( 
+                'searchDataArray' => NULL,
+                'searchVal' => NULL,
+                'path_to_theme' => NULL,
+                'page_num' => NULL,
+            ),
+        ),
+        'kc_events_page' => array(
+            'variables' => array( 
+                'searchDataArray' => NULL,
+                'searchValscgrp' => NULL,
+                'searchValevtyp' => NULL,
+                'searchValevdgt' => NULL,
+                'searchValevdlt' => NULL,
+                'path_to_theme' => NULL,
+                'page_num' => NULL,
+            ),
+        ),
+        'terms_n_condition_page' => array(
+            'variables' => array( 
+                'tncDataArray' => NULL,
+                'path_to_theme' => NULL,
+                'page_num' => NULL,
+            ),
+        ),
+    );   
+}
+/**
+ * Implementation of Form Alter()
+ */
+function sso_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  #Content Type blog post Add and Edit
+  
+  $uid = \Drupal::currentUser()->id();
+  if($uid > 0){
+  //print_r($form_id);
+    if ($form_id == 'RequestACallBackForm_form') {
+      // Bypass per user CSRF token check and allow cache.
+      unset($form['#token']);
+    }
+    if ($form_id == 'sso_user_RequestACallBack_form') {
+      // Bypass per user CSRF token check and allow cache.
+      unset($form['#token']);
+    }
+
+    if ($form_id == 'stackathon_lead_form_id') {
+      // Bypass per user CSRF token check and allow cache for Stackthon form
+      unset($form['#token']);
+    }
+    if ($form_id == 'HomePageMultistepFormFormId') {
+      // Bypass per user CSRF token check and allow cache for Stackthon form
+      unset($form['#token']);
+    }
+  }
+  
+  // if($form_id == 'node_blog_post_edit_form' || $form_id == 'node_blog_post_form'){
+  if($form_id == 'node_blog_post_edit_form'){
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+            $form['actions'][$action]['#submit'][] = 'blog_post_edit_form_custom_submit';
+        }
+    }
+  }
+  // if($form_id == 'node_webinar_edit_form' || $form_id == 'node_webinar_form'){
+  if($form_id == 'node_webinar_edit_form'){
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+            $form['actions'][$action]['#submit'][] = 'webinar_edit_form_custom_submit';
+        }
+    }
+  }
+  // if($form_id == 'node_author_edit_form' || $form_id == 'node_author_form'){
+  if($form_id == 'node_author_edit_form'){
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+            $form['actions'][$action]['#submit'][] = 'author_edit_form_custom_submit';
+        }
+    }
+  }
+
+  if($form_id == 'taxonomy_term_hierarchy_category_form'){
+    $tid = $form['tid']['#value'];
+    foreach (array_keys($form['actions']) as $action) {
+      if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+          if(!empty($tid) && $tid > 0){
+            $form['actions'][$action]['#submit'][] = 'hierarchy_category_edit_form_custom_submit';
+          }
+          else{
+            $form['actions'][$action]['#submit'][] = 'hierarchy_category_add_form_custom_submit';
+          }
+        }
+    }
+  }
+
+}
+
+/**
+ * Implementation of blog_post_form_custom_submit()
+ */
+function blog_post_edit_form_custom_submit(array $form, FormStateInterface $form_state){
+  $node = \Drupal::routeMatch()->getParameter('node');
+  $nid = $node->id();
+  $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Post');
+  if($tokenArray->status == 1){
+      $token = $tokenArray->data->token;
+      $urlDataSetArray = [
+              'module' => 'update-content',
+              // 'Cgrp' => 'Article',
+              // 'map_taxonomy' => $form_state->getValue('field_categories')[0]['target_id'],
+              'token' => $token
+          ];
+
+          # Get Tags Data
+          $tagIds = $form_state->getValue('field_blog_tags');
+          foreach ($tagIds as $key => $value) {
+            if(!empty($value['target_id'])){
+              $termLoad = Term::load($value['target_id']);
+              $tags .= $termLoad->name->value.', ';
+            }
+          }
+          $articleTags = rtrim($tags, ', ');
+          # Get Is Private/Public Data
+          if($form_state->getValue('field_is_private_')['value'] == 1){
+            $accessType = 'Private';
+          }else{
+            $accessType = 'Public';
+          }
+          # Get Img Url
+          $imgUrl = "";
+          if($form_state->getValue('field_image')[0]['fids'][0]){
+            $imgUrl = (\Drupal\file\Entity\File::load($form_state->getValue('field_image')[0]['fids'][0]))->url();
+          }
+          # print 
+        $node_alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$nid);
+        // $host_url = \Drupal::request()->getSchemeAndHttpHost();
+        // $article_url = $host_url.''.$node_alias;
+        $article_url = $_ENV['DRUPAL_PROTOCOL_DOMAIN'].'/india'.$node_alias;
+
+        $term_id = $form_state->getValue('field_categories')[0]['target_id'];
+
+        $level = 1;
+        $parent = 'taxonomy1';
+        $parent_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($term_id);
+        $parent_term = reset($parent_term);
+        if(!empty($parent_term) && $parent_term->ID() > 0 ){
+          $parent_id = $parent_term->ID();
+          $parent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_id);
+          $parent_load = reset($parent_load);
+          if(!empty($parent_load) && $parent_load->ID() > 0){
+            $parent_load_id = $parent_load->ID();
+            $subparent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_load_id);
+            $subparent_load = reset($subparent_load);
+            if(!empty($subparent_load) && $subparent_load->ID() > 0){
+              $subparent_load_id = $subparent_load->ID();
+              $level = 4;
+              $parent = $subparent_load_id;
+            }
+            else{
+              $level = 3;
+              $parent = $parent_load_id;
+            }
+          }
+          else{
+            $level = 2;
+            $parent = $parent_id;
+          }
+        }
+
+        $fieldDataSetArray = '{
+            "data":{ 
+              "ttl": "'.$form_state->getValue('title')[0]['value'].'", 
+              "vId": '.$nid.', 
+              "img": "'.$imgUrl.'", 
+              "dsc": "'.strip_tags($form_state->getValue('body')[0]['summary']).'", 
+              "cgrp": "Article", 
+              "scgrp": "'.(Term::load($form_state->getValue('field_blog_type')[0]['target_id']))->name->value.'", 
+              "src": "'.$article_url.'", 
+              "isA": "'.$form_state->getValue('status')['value'].'", 
+              "pbl": "'.$form_state->getValue('status')['value'].'", 
+              "athr": '.$form_state->getValue('field_author')[0]['target_id'].', 
+              "duration": "'.$form_state->getValue('field_duration')[0]['value'].'", 
+              "accs": "'.$accessType.'", 
+              "order_by" : "'.$form_state->getValue('field_counter_value')[0]['value'].'", 
+              "pubdt" : '.strtotime($form_state->getValue('created')[0]['value']).',
+              "map_taxonomy": [ 
+                {   
+                  "id" : "'.$term_id.'", 
+                  "value" : "'.(Term::load($term_id))->name->value.'", 
+                  "level" : '.$level.', 
+                  "taxonomy" : "'.$parent.'" 
+                  } 
+              ] 
+          }
+        }';
+      $contentCreateAPI = \Drupal::service('custom_campaign.niit_kc_services')->KMSCreateContentAPI($urlDataSetArray, $fieldDataSetArray);
+    }
+}
+/**
+ * Implementation of blog_post_form_custom_submit()
+ */
+function webinar_edit_form_custom_submit(array $form, FormStateInterface $form_state){
+  $node = \Drupal::routeMatch()->getParameter('node');
+  $nid = $node->id();
+  $check = $form_state->getValue('field_display_on_kc')['value'];
+  $check_status = $form_state->getValue('status')['value'];
+  if(!empty($check) && $check == 1 && !empty($check_status) && $check_status == 1){
+    $is_Active = 1;
+  }else{
+    $is_Active = 0;
+  }
+  // if($check == 1){
+    $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Post');
+    if($tokenArray->status == 1){
+      $token = $tokenArray->data->token;
+      $urlDataSetArray = [
+              'module' => 'update-content',
+              // 'Cgrp' => 'Event',
+              // 'map_taxonomy' => $form_state->getValue('field_categories')[0]['target_id'],
+              'token' => $token
+          ];
+
+          # Get Tags Data
+          $tagIds = $form_state->getValue('field_blog_tags');
+          foreach ($tagIds as $key => $value) {
+            if(!empty($value['target_id'])){
+              $termLoad = Term::load($value['target_id']);
+              $tags .= $termLoad->name->value.', ';
+            }
+          }
+          $articleTags = rtrim($tags, ', ');
+          # Get Is Private/Public Data
+          if($form_state->getValue('field_is_private_')['value'] == 1){
+            $accessType = 'Private';
+          }else{
+            $accessType = 'Public';
+          }
+          # Get Img Url
+          $imgUrl = "";
+          if($form_state->getValue('field_overview_image')[0]['fids'][0]){
+            $imgUrl = (\Drupal\file\Entity\File::load($form_state->getValue('field_overview_image')[0]['fids'][0]))->url();
+          }
+          # print 
+        $node_alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$nid);
+        // $host_url = \Drupal::request()->getSchemeAndHttpHost();
+        // $article_url = $host_url.''.$node_alias;
+        $article_url = $_ENV['DRUPAL_PROTOCOL_DOMAIN'].'/india'.$node_alias;
+
+        $term_id = $form_state->getValue('field_categories')[0]['target_id'];
+
+        $level = 1;
+        $parent = 'taxonomy1';
+        $parent_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($term_id);
+        $parent_term = reset($parent_term);
+        if(!empty($parent_term) && $parent_term->ID() > 0 ){
+          $parent_id = $parent_term->ID();
+          $parent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_id);
+          $parent_load = reset($parent_load);
+          if(!empty($parent_load) && $parent_load->ID() > 0){
+            $parent_load_id = $parent_load->ID();
+            $subparent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_load_id);
+            $subparent_load = reset($subparent_load);
+            if(!empty($subparent_load) && $subparent_load->ID() > 0){
+              $subparent_load_id = $subparent_load->ID();
+              $level = 4;
+              $parent = $subparent_load_id;
+            }
+            else{
+              $level = 3;
+              $parent = $parent_load_id;
+            }
+          }
+          else{
+            $level = 2;
+            $parent = $parent_id;
+          }
+        }
+
+        $fieldDataSetArray = '{
+            "data":{ 
+              "ttl": "'.$form_state->getValue('title')[0]['value'].'", 
+              "vId": '.$nid.', 
+              "img": "'.$imgUrl.'", 
+              "dsc": "'.strip_tags($form_state->getValue('body')[0]['summary']).'", 
+              "cgrp": "Event", 
+              "scgrp": "'.$form_state->getValue('field_webinar_type')[0]['value'].'", 
+              "src": "'.$article_url.'", 
+              "isA": "'.$is_Active.'", 
+              "pbl": "'.$is_Active.'",
+              "athr": '.$form_state->getValue('field_author')[0]['target_id'].', 
+              "evd" : '.strtotime($form_state->getValue('field_start_date')[0]['value']).',
+              "evt" : '.strtotime($form_state->getValue('field_start_date')[0]['value']).',
+              "evrdt" : '.strtotime($form_state->getValue('field_start_date')[0]['value']).',
+              "evrcdt" : '.strtotime($form_state->getValue('field_enad_date')[0]['value']).',
+              "evtyp" : "'.$form_state->getValue('field_webinar_category')[0]['value'].'",
+              "accs": "'.$accessType.'", 
+              "order_by" : "'.$form_state->getValue('field_counter_value')[0]['value'].'", 
+              "pubdt" : '.strtotime($form_state->getValue('created')[0]['value']).',
+              "map_taxonomy": [ 
+                {   
+                  "id" : "'.$term_id.'", 
+                  "value" : "'.(Term::load($term_id))->name->value.'", 
+                  "level" : '.$level.', 
+                  "taxonomy" : "'.$parent.'" 
+                  } 
+              ] 
+          }
+        }';
+      $contentCreateAPI = \Drupal::service('custom_campaign.niit_kc_services')->KMSCreateContentAPI($urlDataSetArray, $fieldDataSetArray);
+    }
+
+  // }
+}
+/**
+ * Implementation of author_edit_form_custom_submit()
+ */
+function author_edit_form_custom_submit(array $form, FormStateInterface $form_state){
+  $node = \Drupal::routeMatch()->getParameter('node');
+  $nid = $node->id();
+  $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Post');
+  if($tokenArray->status == 1){
+      $token = $tokenArray->data->token;
+      $urlDataSetArray = [
+              'module' => 'update-content',
+              // 'Cgrp' => 'Author',
+              // 'map_taxonomy' => $form_state->getValue('field_categories')[0]['target_id'],
+              'token' => $token
+          ];
+
+          # Get Author Data
+          $authorIds = $form_state->getValue('field_author_type');
+          foreach ($authorIds as $key => $value) {
+            if(!empty($value['target_id'])){
+              $termLoad = Term::load($value['target_id']);
+              $tags .= $termLoad->name->value.', ';
+            }
+          }
+          $authorTypes = rtrim($tags, ', ');
+          # Get Img Url
+          $imgUrl = "";
+          if($form_state->getValue('field_author_pic')[0]['fids'][0]){
+            $imgUrl = (\Drupal\file\Entity\File::load($form_state->getValue('field_author_pic')[0]['fids'][0]))->url();
+          }
+          # print 
+        $node_alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$nid);
+        // $host_url = \Drupal::request()->getSchemeAndHttpHost();
+        // $author_url = $host_url.''.$node_alias;
+        $author_url = $_ENV['DRUPAL_PROTOCOL_DOMAIN'].'/india'.$node_alias;
+        $fieldDataSetArray = '{
+            "data":{ 
+              "vId": '.$nid.', 
+              "ttl": "'.$form_state->getValue('field_designation')[0]['value'].'", 
+              "img": "'.$imgUrl.'", 
+              "nm": "'.$form_state->getValue('title')[0]['value'].'", 
+              "dsc": "'.strip_tags($form_state->getValue('body')[0]['summary']).'",
+              "type": "'.$authorTypes.'",
+              "cgrp": "Author", 
+              "scgrp": "Author",
+              "src": "'.$author_url.'", 
+              "isA": "'.$form_state->getValue('status')['value'].'", 
+              "pbl": "'.$form_state->getValue('status')['value'].'", 
+              "order_by" : "'.$form_state->getValue('field_counter_value')[0]['value'].'", 
+              "pubdt" : '.strtotime($form_state->getValue('created')[0]['value']).'
+          }
+        }';
+      $contentCreateAPI = \Drupal::service('custom_campaign.niit_kc_services')->KMSCreateContentAPI($urlDataSetArray, $fieldDataSetArray);
+    }
+}
+
+
+/**
+ * Implementation of hierarchy_category_add_form_custom_submit()
+ */
+function hierarchy_category_add_form_custom_submit(array $form, FormStateInterface $form_state){
+  $term_id = $form_state->getValues()['tid'];
+  $term_load = Term::load($term_id);
+  $img_id = $term_load->field_cat_image->target_id;
+  $img = '';
+  if(!empty($img_id)){
+     $img = File::load($img_id)->url();
+  }
+  
+ $level = 1;
+  $parent = 'taxonomy1';
+  $parent_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($term_id);
+  $parent_term = reset($parent_term);
+  if(!empty($parent_term) && $parent_term->ID() > 0 ){
+    $parent_id = $parent_term->ID();
+    $parent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_id);
+    $parent_load = reset($parent_load);
+    if(!empty($parent_load) && $parent_load->ID() > 0){
+      $parent_load_id = $parent_load->ID();
+      $subparent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_load_id);
+      $subparent_load = reset($subparent_load);
+      if(!empty($subparent_load) && $subparent_load->ID() > 0){
+        $subparent_load_id = $subparent_load->ID();
+        $level = 4;
+        $parent = $subparent_load_id;
+      }
+      else{
+        $level = 3;
+        $parent = $parent_load_id;
+      }
+    }
+    else{
+      $level = 2;
+      $parent = $parent_id;
+    }
+  }
+
+  // $url = $_SERVER['HTTP_ORIGIN'].'/india/taxonomy/term/'.$term_id;
+  $aliasManager = \Drupal::service('path.alias_manager');
+  $term_url = $aliasManager->getAliasByPath('/taxonomy/term/' . $term_id);
+  $url = $_ENV['DRUPAL_PROTOCOL_DOMAIN'].'/india'.$term_url;
+
+  $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Post');
+  if($tokenArray->status == 1){
+      $token = $tokenArray->data->token;
+      $urlDataSetArray = [
+              'module' => 'create-taxonomy',
+              'txn_id' => $term_id,
+              'txn_name' => $term_load->getName(),
+              'parent' => $parent,
+              'level' => $level,
+              'token' => $token
+          ];
+
+    // $fieldDataSetArray = '{
+    //       "txn_id":"'.$term_id.'",
+    //       "txn_name":"'.$term_load->getName().'",
+    //       "img":"'.$img.'",
+    //       "level":'.$level.',
+    //       "txn_desc":"'.strip_tags($term_load->description->value).'",
+    //       "src":"'.$url.'",
+    //       "parent":"'.$parent.'",
+    //       "is_active":"1"
+    //     }';
+        $fieldDataSetArray = [
+           'txn_id' => $term_id,
+           'txn_name' => $term_load->getName(),
+           'img' => $img,
+           'level' => $level,
+           'txn_desc' => strip_tags($term_load->field_cat_summary->value),
+           'dsc' => strip_tags($term_load->field_cat_summary->value),
+           'src' => $url,
+           'parent' => $parent,
+           'is_active' => (int)$term_load->field_is_active->value
+        ];
+      $contentCreateAPI = \Drupal::service('custom_campaign.niit_kc_services')->KMSCreateContentAPI($urlDataSetArray, json_encode($fieldDataSetArray));
+  }
+}
+
+/**
+ * Implementation of hierarchy_category_edit_form_custom_submit()
+ */
+function hierarchy_category_edit_form_custom_submit(array $form, FormStateInterface $form_state){
+  $term = \Drupal::routeMatch()->getParameter('taxonomy_term');
+  $term_id = $term->id();
+  $term_load = Term::load($term_id);
+  $img_id = $term_load->field_cat_image->target_id;
+  $img = '';
+  if(!empty($img_id)){
+     $img = File::load($img_id)->url();
+  }
+
+ $level = 1;
+  $parent = 'taxonomy1';
+  $parent_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($term_id);
+  $parent_term = reset($parent_term);
+  if(!empty($parent_term) && $parent_term->ID() > 0 ){
+    $parent_id = $parent_term->ID();
+    $parent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_id);
+    $parent_load = reset($parent_load);
+    if(!empty($parent_load) && $parent_load->ID() > 0){
+      $parent_load_id = $parent_load->ID();
+      $subparent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_load_id);
+      $subparent_load = reset($subparent_load);
+      if(!empty($subparent_load) && $subparent_load->ID() > 0){
+        $subparent_load_id = $subparent_load->ID();
+        $level = 4;
+        $parent = $subparent_load_id;
+      }
+      else{
+        $level = 3;
+        $parent = $parent_load_id;
+      }
+    }
+    else{
+      $level = 2;
+      $parent = $parent_id;
+    }
+  }
+
+  // $url = $_SERVER['HTTP_ORIGIN'].'/india/taxonomy/term/'.$term_id;
+  $aliasManager = \Drupal::service('path.alias_manager');
+  $term_url = $aliasManager->getAliasByPath('/taxonomy/term/' . $term_id);
+  $url = $_ENV['DRUPAL_PROTOCOL_DOMAIN'].'/india'.$term_url;
+  
+  $getTokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Get');
+  $checkTaxonomyData = '';
+  if($getTokenArray->status == 1){
+    $getToken = $getTokenArray->data->token;
+    $taxonomyDataFields = [
+            'module' => 'get_sub_child',
+            'txn_id' => $term_id,
+            'level' => 1,
+            'token' => $getToken
+        ];
+    $checkTaxonomyData = \Drupal::service('custom_campaign.niit_kc_services')->GetAPICallMethod($taxonomyDataFields);
+  }
+  $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Post');
+  if($tokenArray->status == 1){
+      $token = $tokenArray->data->token;
+      if(!empty($checkTaxonomyData->data[0])){
+        $urlDataSetArray = [
+              'module' => 'update-taxonomy',
+              'parent' => $parent,
+              'token' => $token
+          ];
+        }else{
+          $urlDataSetArray = [
+              'module' => 'create-taxonomy',
+              'txn_id' => $term_id,
+              'txn_name' => $term_load->getName(),
+              'parent' => $parent,
+              'level' => $level,
+              'token' => $token
+          ];
+        }
+      
+
+    // $fieldDataSetArray = '{
+    //       "txn_id":"'.$term_id.'",
+    //       "txn_name":"'.$term_load->getName().'",
+    //       "img":"'.$img.'",
+    //       "level":'.$level.',
+    //       "txn_desc":"'.strip_tags($term_load->description->value).'",
+    //       "src":"'.$url.'",
+    //       "parent":"'.$parent.'",
+    //       "is_active":"1"
+    //     }';
+        $fieldDataSetArray = [
+           'txn_id' => $term_id,
+           'txn_name' => $term_load->getName(),
+           'img' => $img,
+           'level' => $level,
+           'txn_desc' => strip_tags($term_load->field_cat_summary->value),
+           'dsc' => strip_tags($term_load->field_cat_summary->value),
+           'src' => $url,
+           'parent' => $parent,
+           'is_active' => (int)$term_load->field_is_active->value
+        ];
+      $contentCreateAPI = \Drupal::service('custom_campaign.niit_kc_services')->KMSCreateContentAPI($urlDataSetArray, json_encode($fieldDataSetArray));
+  }
+  // echo'<pre>'; print_r($data); die();
+
+}
+
+function  sso_user_node_insert(\Drupal\Core\Entity\EntityInterface $node) {
+  $nid = $node->id();
+  $node_type = $node->bundle();
+  if($node_type == 'blog_post'){
+    /********************************/
+    $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Post');
+    if($tokenArray->status == 1){
+        $token = $tokenArray->data->token;
+        $urlDataSetArray = [
+                'module' => 'update-content',
+                // 'Cgrp' => 'Article',
+                // 'map_taxonomy' => $node->get('field_categories')->getValue()[0]['target_id'],
+                'token' => $token
+            ];
+
+            # Get Tags Data
+            $tagIds = $node->get('field_blog_tags')->getValue();
+            foreach ($tagIds as $key => $value) {
+              if(!empty($value['target_id'])){
+                $termLoad = Term::load($value['target_id']);
+                $tags .= $termLoad->name->value.', ';
+              }
+            }
+            $articleTags = rtrim($tags, ', ');
+            # Get Is Private/Public Data
+            if($node->get('field_is_private_')->getValue()['value'] == 1){
+              $accessType = 'Private';
+            }else{
+              $accessType = 'Public';
+            }
+            # Get Img Url
+            $imgUrl = "";
+            if($node->get('field_image')->getValue()[0]['target_id']){
+              $imgUrl = (\Drupal\file\Entity\File::load($node->get('field_image')->getValue()[0]['target_id']))->url();
+            }
+            # print 
+          $node_alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$nid);
+          // $host_url = \Drupal::request()->getSchemeAndHttpHost();
+          // $article_url = $host_url.''.$node_alias;
+          $article_url = $_ENV['DRUPAL_PROTOCOL_DOMAIN'].'/india'.$node_alias;
+
+          $term_id = $node->get('field_categories')->getValue()[0]['target_id'];
+
+          $level = 1;
+          $parent = 'taxonomy1';
+          $parent_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($term_id);
+          $parent_term = reset($parent_term);
+          if(!empty($parent_term) && $parent_term->ID() > 0 ){
+            $parent_id = $parent_term->ID();
+            $parent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_id);
+            $parent_load = reset($parent_load);
+            if(!empty($parent_load) && $parent_load->ID() > 0){
+              $parent_load_id = $parent_load->ID();
+              $subparent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_load_id);
+              $subparent_load = reset($subparent_load);
+              if(!empty($subparent_load) && $subparent_load->ID() > 0){
+                $subparent_load_id = $subparent_load->ID();
+                $level = 4;
+                $parent = $subparent_load_id;
+              }
+              else{
+                $level = 3;
+                $parent = $parent_load_id;
+              }
+            }
+            else{
+              $level = 2;
+              $parent = $parent_id;
+            }
+          }
+
+          $fieldDataSetArray = '{
+              "data":{ 
+                "ttl": "'.$node->get('title')->getValue()[0]['value'].'", 
+                "vId": '.$nid.', 
+                "img": "'.$imgUrl.'", 
+                "dsc": "'.strip_tags($node->get('body')->getValue()[0]['summary']).'", 
+                "cgrp": "Article", 
+                "scgrp": "'.(Term::load($node->get('field_blog_type')->getValue()[0]['target_id']))->name->value.'", 
+                "src": "'.$article_url.'", 
+                "isA": "'.$node->get('status')->getValue()[0]['value'].'", 
+                "pbl": "'.$node->get('status')->getValue()[0]['value'].'", 
+                "athr": '.$node->get('field_author')->getValue()[0]['target_id'].', 
+                "duration": "'.$node->get('field_duration')->getValue()[0]['value'].'", 
+                "accs": "'.$accessType.'", 
+                "order_by" : "'.$node->get('field_counter_value')->getValue()[0]['value'].'", 
+                "pubdt" : '.$node->get('created')->getValue()[0]['value'].',
+                "map_taxonomy": [ 
+                  {   
+                    "id" : "'.$term_id.'", 
+                    "value" : "'.(Term::load($term_id))->name->value.'", 
+                    "level" : '.$level.', 
+                    "taxonomy" : "'.$parent.'" 
+                    } 
+                ] 
+            }
+          }';
+        $contentCreateAPI = \Drupal::service('custom_campaign.niit_kc_services')->KMSCreateContentAPI($urlDataSetArray, $fieldDataSetArray);
+      }
+    /********************************/
+  }
+  if($node_type == 'webinar'){
+    /*********************************/
+    $check = $node->field_display_on_kc->value;
+    $check_status = $node->get('status')->getValue()[0]['value'];
+    if(!empty($check) && $check == 1 && !empty($check_status) && $check_status == 1){
+      $is_Active = 1;
+    }else{
+      $is_Active = 0;
+    }
+    // if(!empty($check) && $check == 1){
+      $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Post');
+      if($tokenArray->status == 1){
+        $token = $tokenArray->data->token;
+        $urlDataSetArray = [
+                'module' => 'update-content',
+                // 'Cgrp' => 'Event',
+                // 'map_taxonomy' => $node->get('field_categories')->getValue()[0]['target_id'],
+                'token' => $token
+            ];
+
+            # Get Tags Data
+            $tagIds = $node->get('field_blog_tags')->getValue();
+            foreach ($tagIds as $key => $value) {
+              if(!empty($value['target_id'])){
+                $termLoad = Term::load($value['target_id']);
+                $tags .= $termLoad->name->value.', ';
+              }
+            }
+            $articleTags = rtrim($tags, ', ');
+            # Get Is Private/Public Data
+            // if($node->get('field_is_private_')->getValue()['value'] == 1){
+            //   $accessType = 'Private';
+            // }else{
+            $accessType = 'Public';
+            // }
+            # Get Img Url
+            $imgUrl = "";
+            if($node->get('field_overview_image')->getValue()[0]['target_id']){
+              $imgUrl = (\Drupal\file\Entity\File::load($node->get('field_overview_image')->getValue()[0]['target_id']))->url();
+            }
+            # print 
+          $node_alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$nid);
+          // $host_url = \Drupal::request()->getSchemeAndHttpHost();
+          // $article_url = $host_url.''.$node_alias;
+          $article_url = $_ENV['DRUPAL_PROTOCOL_DOMAIN'].'/india'.$node_alias;
+
+          $term_id = $node->get('field_categories')->getValue()[0]['target_id'];
+
+          $level = 1;
+          $parent = 'taxonomy1';
+          $parent_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($term_id);
+          $parent_term = reset($parent_term);
+          if(!empty($parent_term) && $parent_term->ID() > 0 ){
+            $parent_id = $parent_term->ID();
+            $parent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_id);
+            $parent_load = reset($parent_load);
+            if(!empty($parent_load) && $parent_load->ID() > 0){
+              $parent_load_id = $parent_load->ID();
+              $subparent_load = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_load_id);
+              $subparent_load = reset($subparent_load);
+              if(!empty($subparent_load) && $subparent_load->ID() > 0){
+                $subparent_load_id = $subparent_load->ID();
+                $level = 4;
+                $parent = $subparent_load_id;
+              }
+              else{
+                $level = 3;
+                $parent = $parent_load_id;
+              }
+            }
+            else{
+              $level = 2;
+              $parent = $parent_id;
+            }
+          }
+
+          $fieldDataSetArray = '{
+              "data":{ 
+                "ttl": "'.$node->get('title')->getValue()[0]['value'].'", 
+                "vId": '.$nid.', 
+                "img": "'.$imgUrl.'", 
+                "dsc": "'.strip_tags($node->get('body')->getValue()[0]['summary']).'", 
+                "cgrp": "Event", 
+                "scgrp": "'.$node->get('field_webinar_type')->getValue()[0]['value'].'", 
+                "src": "'.$article_url.'", 
+                "isA": "'.$is_Active.'", 
+                "pbl": "'.$is_Active.'", 
+                "athr": '.$node->get('field_author')->getValue()[0]['target_id'].', 
+                "evd" : '.strtotime($node->get('field_start_date')->getValue()[0]['value']).',
+                "evt" : '.strtotime($node->get('field_start_date')->getValue()[0]['value']).',
+                "evrdt" : '.strtotime($node->get('field_start_date')->getValue()[0]['value']).',
+                "evrcdt" : '.strtotime($node->get('field_enad_date')->getValue()[0]['value']).',
+                "evtyp" : "'.$node->get('field_webinar_category')->getValue()[0]['value'].'",
+                "accs": "'.$accessType.'", 
+                "order_by" : "'.$node->get('field_counter_value')->getValue()[0]['value'].'", 
+                "pubdt" : '.$node->get('created')->getValue()[0]['value'].',
+                "map_taxonomy": [ 
+                  {   
+                    "id" : "'.$term_id.'", 
+                    "value" : "'.(Term::load($term_id))->name->value.'", 
+                    "level" : '.$level.', 
+                    "taxonomy" : "'.$parent.'" 
+                    } 
+                ] 
+            }
+          }';
+        
+        $contentCreateAPI = \Drupal::service('custom_campaign.niit_kc_services')->KMSCreateContentAPI($urlDataSetArray, $fieldDataSetArray);
+      }
+    // }
+    /*********************************/
+  }
+  if($node_type == 'author'){
+    /********************************/
+    $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Post');
+    if($tokenArray->status == 1){
+        $token = $tokenArray->data->token;
+        $urlDataSetArray = [
+                'module' => 'update-content',
+                // 'Cgrp' => 'Author',
+                // 'map_taxonomy' => $form_state->getValue('field_categories')[0]['target_id'],
+                'token' => $token
+            ];
+
+            # Get Author Data
+            $authorIds = $node->get('field_author_type')->getValue();
+            foreach ($authorIds as $key => $value) {
+              if(!empty($value['target_id'])){
+                $termLoad = Term::load($value['target_id']);
+                $tags .= $termLoad->name->value.', ';
+              }
+            }
+            $authorTypes = rtrim($tags, ', ');
+            # Get Img Url
+            $imgUrl = "";
+            if($node->get('field_author_pic')->getValue()[0]['target_id']){
+              $imgUrl = (\Drupal\file\Entity\File::load($node->get('field_author_pic')->getValue()[0]['target_id']))->url();
+            }
+            # print 
+          $node_alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$nid);
+          // $host_url = \Drupal::request()->getSchemeAndHttpHost();
+          // $author_url = $host_url.''.$node_alias;
+          $author_url = $_ENV['DRUPAL_PROTOCOL_DOMAIN'].'/india'.$node_alias;
+          $fieldDataSetArray = '{
+              "data":{ 
+                "vId": '.$nid.', 
+                "ttl": "'.$node->get('field_designation')->getValue()[0]['value'].'", 
+                "img": "'.$imgUrl.'", 
+                "nm": "'.$node->get('title')->getValue()[0]['value'].'", 
+                "dsc": "'.strip_tags($node->get('body')->getValue()[0]['summary']).'",
+                "type": "'.$authorTypes.'",
+                "cgrp": "Author", 
+                "scgrp": "Author",
+                "src": "'.$author_url.'", 
+                "isA": "'.$node->get('status')->getValue()[0]['value'].'", 
+                "pbl": "'.$node->get('status')->getValue()[0]['value'].'", 
+                "order_by" : "'.$node->get('field_counter_value')->getValue()[0]['value'].'", 
+                "pubdt" : '.$node->get('created')->getValue()[0]['value'].'
+            }
+          }';
+        $contentCreateAPI = \Drupal::service('custom_campaign.niit_kc_services')->KMSCreateContentAPI($urlDataSetArray, $fieldDataSetArray);
+      }
+    /********************************/
+  }
+
+}
+
+
+
+function sso_user_preprocess_html(&$variables){
+
+  $variables['user_modal_form'] = '';
+  $variables['user_application_myModal'] = '';
+  $variables['myCourseUserPopUpModal'] = '';
+  $uid = \Drupal::currentUser()->id();
+  if ($uid > 0) {
+ 
+    $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+    $userName = $user->get('field_user_name')->value;
+
+    /**************************My Course modal***********************Start****************/
+    $userCustomerId = $user->get('field_customer_id')->value;
+
+    $c_email = $user->get('field_communication_emailid')->value;
+    $fieldUserEnrolled = $user->get('field_student_status')->value;
+    $userMyCourseLink = "";
+    if($fieldUserEnrolled == 'Enrolled'){
+      $variables['myCourseUserPopUpModal'] = studentMyCourseModalFormGenerate($userName, $c_email, $userCustomerId);
+    }
+    /**************************My Course modal***********************End****************/
+
+    $updatepassword_form = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\UpdatePassword');
+    $updatepassword_form_modal='<div id="update_password_modal_form" class="user-form-modal modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <!-- Modal content-->
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Update Password</h4>
+          </div>
+          <div class="modal-body">
+              '.render($updatepassword_form).'
+          </div>
+        </div>
+      </div>
+    </div>';
+    $variables['user_modal_form']=$updatepassword_form_modal;
+
+    $subtitle = "Here is a listing of programmes you have applied for. Click on 'Continue Application' to proceed to the next step in your admission process";
+    $variables['user_application_myModal'] = '<div class="user_application_myModal modal fade" id="user_application_myModal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Welcome back, '.$userName.'!</h4>
+          <p class="modalSubTitle">'.$subtitle.'</p>
+        </div>
+        <div class="modal-body">
+          <div id="myapplication-data">Application</div>
+        </div>
+      </div>
+    </div>
+  </div>';
+
+  } else {
+
+    // login register popup
+    $login_form = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\UserLoginForm');
+    $register_form = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\UserRegisterForm');
+    $forgot_password_form = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\ForgotPasswordForm');
+
+    $form_modal_html='
+    <div id="exTab1" class="form-container">	
+      <div class="tab-content clearfix">
+        <div class="tab-pane active" id="login">
+          '.render($login_form).'
+        </div>
+        <div class="tab-pane" id="register">
+          '.render($register_form).'
+        </div>
+      </div>
+    </div>';
+    $modal_login_form='
+    <div id="user_account_modal_form" class="user-form-modal modal fade" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <button type="button" class="close" data-dismiss="modal"></button>  
+          <div class="modal-body">
+              '.$form_modal_html.'
+          </div>
+        </div>
+      </div>
+    </div></div>
+    <div id="forgot_password_modal_form" class="user-form-modal modal fade" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>  
+          <div class="modal-body">
+              '.render($forgot_password_form).'
+          </div>
+        </div>
+      </div>
+    </div>';
+
+    $variables['user_modal_form']=$modal_login_form;
+
+  }
+}
+
+function sso_user_preprocess_menu(&$variables) {
+  $variables['user_info'] = '';
+  $variables['mob_user_info_signup'] = '';
+  $variables['mob_user_info_login'] = '';
+  $variables['course_brochure_url'] = '';
+
+
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node instanceof \Drupal\node\NodeInterface) {
+    if($node->bundle() == 'course'){
+      $node_id = $node->id();
+      // $cid = 'Course:course_brochure_url:'.$node->id();
+      // if ($cacheitem = \Drupal::cache()->get($cid)) {
+      //   $cacheData = $cacheitem->data;
+      //   $variables['course_brochure_url'] =  (array) $cacheData['course_brochure_url'];
+          
+      // }else{
+        $node_load = Node::load($node_id);
+        if(!empty($node_load->get('field_course_brochure')->getValue()[0]['target_id'])){
+          $course_brochure_url = (\Drupal\file\Entity\File::load($node_load->get('field_course_brochure')->getValue()[0]['target_id']))->url();
+          $variables['course_brochure_url'] = '<div class="col-xs-4 navDownloadBrochure" style="display: none;">
+              <a class="btn brochureDwnloadBtn" target="_blank" href="'.$course_brochure_url.'" download=""><i class="fa fa-download"></i> Brochure </a>
+          </div>';
+        }
+      //   $cacheObject = [
+      //         'course_brochure_url' => $variables['course_brochure_url'],
+      //   ];
+      //   \Drupal::cache()->set($cid, $cacheObject);
+      // }
+    }
+  }
+
+  $uid = \Drupal::currentUser()->id();
+  if ($uid > 0) {
+    $user_html = '';
+    $mob_user_html = '';
+    $currentAccount = \Drupal::currentUser();
+    $options_logout = [
+      'attributes' => ['class' => ['user-logout']]
+    ];
+    $options_account = [
+      'attributes' => ['class' => ['user-account']]
+    ];
+    // $logout_link = \Drupal\Core\Link::fromTextAndUrl(t('Sign out'), \Drupal\Core\Url::fromUri('internal:/user/logout', $options_logout))->toString();
+
+    $logout_redirect_uri = urlencode($_ENV['DRUPAL_PROTOCOL_DOMAIN']."/india/user/logout");
+    $logout_link = '<a href="'.$_ENV["keyclock_mainurl"].'/auth/realms/'.$_ENV["Keyclock_realm"].'/protocol/openid-connect/logout?redirect_uri='.$logout_redirect_uri.'">Sign Out</a>';
+
+    $my_account = \Drupal\Core\Link::fromTextAndUrl(t('My Account'), \Drupal\Core\Url::fromUri('internal:/user/'.$currentAccount->id(), $options_account))->toString();
+    $kc_my_profile_option = [
+      'attributes' => ['class' => ['kc-my-preferences']]
+    ];
+    $kc_my_profile = \Drupal\Core\Link::fromTextAndUrl(t('My Preferences'), \Drupal\Core\Url::fromUri('internal:/my-preferences', $kc_my_profile_option))->toString();
+
+    $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+   // echo '<pre>';print_r($user); die();
+    $userName = $user->get('field_user_name')->value;
+    $userName_array = explode(' ', $user->get('field_user_name')->value);
+    $userName_first = $userName_array[0];
+    if(empty($userName_first)){
+      if(!empty($user->get('field_communication_emailid')->value)){
+        $userName_first = $user->get('field_communication_emailid')->value;
+      }
+      else{
+        $userName_first = $user->get('mail')->value;
+      }
+    }
+
+    // $words = explode(" ", $userName_first);
+    // $short_name = "";
+    // foreach ($words as $w) {
+    //   $short_name .= $w[0];
+    // }
+    $short_name = substr($userName_first, 0 , 1);
+
+    $userCustomerId = $user->get('field_customer_id')->value;
+
+    $c_email = $user->get('field_communication_emailid')->value;
+    $fieldUserEnrolled = $user->get('field_student_status')->value;
+    $userMyCourseLink = "";
+    if($fieldUserEnrolled == 'Enrolled'){
+      $userMyCourseLink = studentMyCourseLinkGenerate($userName, $c_email, $userCustomerId);
+    }
+    $variables['userMyCourseLink'] = $userMyCourseLink;
+
+
+    $user_custom_role = $user->get('field_custom_roles')->value;
+    // $user_custom_role = "OLP,FAC_ADMIN,MENTOR";
+    $user_custom_role_array = explode(',', $user_custom_role);
+    $My_Batches_link = '';
+    if(!empty($user_custom_role) && in_array("MENTOR", $user_custom_role_array)){
+      $My_Batches_link = '<li><a href="javascript:void(0);" class="clsOpenMyBatchesLink">My Batches</a></li>'; 
+    }
+    if(!empty($user_custom_role) && in_array("MENTORNEW", $user_custom_role_array)){
+      $My_Batches_link = '<li><a href="javascript:void(0);" class="clsOpenMyBatchesLink">My Batches</a></li>';
+    }
+    if(!empty($user_custom_role) && in_array("TRIAL_USER", $user_custom_role_array)){
+      $My_Batches_link = '<li><a href="javascript:void(0);" class="clsOpenMyBatchesLink">My Trial Programs</a></li>';
+    }
+    // $UserService = \Drupal::service('sso_user.user');
+    // $response_menu = $UserService->UserMenuAPI($userCustomerId);
+    // $api_menu = '';
+    // foreach($response_menu as $val){
+    //   $api_menu .= '<li><a href="'.$val->SubMenuURL.'">'.$val->SubMenuDescription.'</a></li>';
+    // }
+    // $currentAccount->id(); //To get User ID
+    if(strlen($userName_first) > 12){
+        $firstUserName =  substr($userName_first, 0, 12)."...";
+    }else{
+        $firstUserName =  $userName_first;
+    }
+    $user_html.='<div class="user-menu-container dropdown">';
+        $user_html.='<span data-toggle="dropdown" class="welcome-user dropdown-toggle" ><img onclick="register_popup_info()" src="/india/themes/custom/nexus/assets/images/my-account.png" alt="my-account"> Hi '.$firstUserName.'</span>';
+        // $user_html.='<li class="user-avtor"><img class="img-responsive" alt="niit user" src="../img/user.jpeg"/>';
+          $user_html.='<ul class="dropdown-menu">';
+          $user_html.= $userMyCourseLink;
+          $user_html.= $My_Batches_link;
+          $user_html.='<li>'.$kc_my_profile.'</li>';
+          // $user_html.='<li id="myapplication_menu"><span id="current-app-user">My Application</span></li>';
+           $user_html.='<li data-toggle="modal" data-target="#update_password_modal_form"><a href ="javascript:void(0);">Change Password</a></li>';
+           $user_html.='<li>'.$logout_link.'</li>';
+       //   $user_html .= $api_menu;
+          $user_html.='</ul>';
+    $user_html.='</div>';
+    $variables['user_info']=$user_html;
+
+    $mob_user_html .='<div class="mobLogInUserNav col-xs-12"><ul><li class="user-menu-container dropdown menu-display-hide">';
+        $mob_user_html.='<span data-toggle="dropdown" class="welcome-user dropdown-toggle" ><span class="short-user"><i class="fa fa-user"></i></span> Hi '.$userName_first.'<i class="fa fa-chevron-down"></i></span>' ;
+        // $user_html.='<li class="user-avtor"><img class="img-responsive" alt="niit user" src="../img/user.jpeg"/>';
+          $mob_user_html.='<ul class="dropdown-menu">';
+          // $mob_user_html.='<li> Hi '.$userName_first.'</li>';
+          $mob_user_html.='<li id="myapplication_menu"><span id="current-app-user">My Application</span></li>';
+          $mob_user_html.= $userMyCourseLink;
+          $mob_user_html.= $My_Batches_link;
+          $mob_user_html.='<li>'.$kc_my_profile.'</li>';
+           $mob_user_html.='<li data-toggle="modal" data-target="#update_password_modal_form"><a href ="javascript:void(0);">Change Password</a></li>';
+
+           $mob_user_html.='<li>'.$logout_link.'</li>';
+         // $mob_user_html .= $api_menu;
+          $mob_user_html.='</ul>';
+    $mob_user_html.='</li></ul></div>';
+
+    $variables['mob_user_info_login'] = $mob_user_html;
+
+  } else {
+
+    $config = \Drupal::config('ms_ajax_form_example.settings');  
+    $niit_custom_login = $config->get('niit_custom_login');
+    if(!empty($niit_custom_login) && $niit_custom_login == 1){    
+
+      $user_login_form_btn = '<button type="type" class="btn btn-default signin_btn" data-toggle="modal" data-target="#user_account_modal_form">Sign In</button>';
+      $variables['user_info']=$user_login_form_btn;
+
+      $mob_user_login_form_btn = '<div class="m-signBtn row"><button type="type" class="btn btn-default signin_btn" data-toggle="modal" data-target="#user_account_modal_form">Sign In / Sign Up</button></div>';
+
+      $variables['mob_user_info_signup'] = $mob_user_login_form_btn;
+
+    }
+    else{
+
+      // $user_login_form_btn = '<a class="btn btn-default signin_btn" href="/india/moLogin">Sign In</a>';
+      $user_login_form_btn = '<li class="signin" onclick="register_popup_info()">
+          <a href="javascript:void(0);">
+              <img src="/india/themes/custom/nexus/assets/images/my-account.png" alt="my-account">
+              <b class="only-mob"> Sign In</b>
+          </a>
+      </li>';
+      $variables['user_info']=$user_login_form_btn;
+
+      $variables['register_info'] = '<p class="mb-0 text-right"><small><i>New User? Click here to <span onclick="register_popup_info()"><u>Register</u></span></i></small></p>';
+
+      $mob_user_login_form_btn = '<div class="m-signBtn row"><button type="type" class="btn btn-default signin_btn_reg" onclick="register_popup_info()">Sign Up</button><a href="/india/moLogin" class="btn btn-default signin_btn">Sign In</a></div>';
+
+      $variables['mob_user_info_signup'] = $mob_user_login_form_btn;
+
+    }
+
+  }
+
+}
+
+
+function sso_user_preprocess_page(&$variables) {
+
+  $variables['complete_app_btn'] = '<button type="type" class="btn btn-primary com-app" data-toggle="modal" data-target="#user_account_modal_form">Complete Application</button>';
+  if(!empty(\Drupal::currentUser()->id())){
+    $variables['complete_app_btn'] = '';
+  }
+
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if ($node instanceof \Drupal\node\NodeInterface) {
+	
+       $variables['nodeidfortemplate'] = $node->id();  // Using node id for template to handle to nid from url on nokia landing pages.
+      
+	  if($node->bundle() == 'self_assessment'){
+
+        $node_id = $node->id();
+        $node_load = Node::load($node_id);
+
+        $url = '';
+        if($node->hasField('field_proceed_button_link')){
+          if(!empty($node_load->get('field_proceed_button_link')->getValue()[0]['value'])){
+            $url=$node_load->get('field_proceed_button_link')->getValue()[0]['value'];
+          }
+        }
+
+        if(!empty(\Drupal::currentUser()->id())){
+
+          $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+          $currentUserid = $user->id();
+          if(!empty($user->get('field_communication_emailid')->value)){
+            $userMail = $user->get('field_communication_emailid')->value;
+          }
+          else{
+            $userMail = $user->get('mail')->value;
+          }
+          $userName = $user->get('field_user_name')->value;
+          $userCustomerId = $user->get('field_customer_id')->value;
+          $userMobileNo = $user->get('field_mobile_number')->value;
+
+
+          $campaignCode = $node->get('field_campaign_code')->getValue()[0]['value'];
+          $assestCode = $node->get('field_activity_code')->getValue()[0]['value'];
+          $deliverymode_code = $node->get('field_delivery_mode_code')->getValue()[0]['value'];
+          $course_code = $node->get('field_course_code')->getValue()[0]['value'];
+          $assestCode = $node->get('field_activity_code')->getValue()[0]['value'];
+
+          $takeResult = lead_form_status($campaignCode, $course_code);
+          if($takeResult['applctn_opn'] == 'Y'){
+
+            $batchIdWith = \Drupal::service('niit_common.niit_related_courses')->get_course_fee_and_details($deliverymode_code,$course_code);
+            $mainCoursedetails = $batchIdWith['courseBatchDetail'][0];
+
+            $takeResult = (array) $takeResult['json_data'];
+            $update_data = array(
+              'source' => 'NIITCOM',
+              'CustomerId' => $userCustomerId,
+              'RequestedURL'=> '',
+              'NewSignup' => 'true',
+              'orgid' => 1,
+              'CourseId' => $mainCoursedetails['courseID'],
+              'BatchId' => $mainCoursedetails['batchID'],
+              'enqry_crsspndnc_eml' => $userMail,
+              'create_application' => 1,
+              'campaign' => $campaignCode,
+              'AssessmentType' => 'APT',
+              'AssessmentCode' => $assestCode,
+            );
+            $new_json = array_merge($takeResult, $update_data);
+            $final_json_send = create_application($new_json);
+
+            $variables['assessentform'] = '<div class="row continue-data assess-data">
+                                             <div class="col-md-12 emb-img">
+                                              <img src= "/india/themes/custom/nexus/assets/images/confirm-popup.png" class="img-responsive">
+                                             </div>       
+                                             <div class="col-md-12 emb-data">
+                                              <span class="btn btn-primary btnApply" onclick="continuetest()">Continue Test</span>
+                                              </div>
+                                            </div>
+                                            <div class="not_display_continue"><form id="testaasest" name="form" method="post" action="'.$url.'" target="TheWindow" >
+                                        <input type="hidden" name="eventdata" value="">
+                                        <input type="hidden" name="token" value="'.$final_json_send.'" tabindex="0" id="token_assess">
+                                        <input type="submit" value="Continue Assessment" class="btn btn-primary continue-btn">
+                                        </form></div>';
+
+          }
+          else{
+            $assessentForm = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\AssessentForm');
+            $variables['assessentform'] = $assessentForm;
+            $variables['assessent_form_hidden'] = '<div class="assess-div"><form id="testaasest" name="form" method="post" action="'.$url.'" target="TheWindow" >
+                                          <input type="hidden" name="eventdata" value="">
+                                          <input type="hidden" name="token" value="" tabindex="0" id="token_assess">
+                                          <input type="submit" value="Continue Assessment" class="btn btn-primary continue-btn">
+                                          </form></div>';
+          }
+        }
+        else{
+          $assessentForm = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\AssessentForm');
+          $variables['assessentform'] = $assessentForm;
+          $variables['assessent_form_hidden'] = '<div class="assess-div"><form id="testaasest" name="form" method="post" action="'.$url.'" target="TheWindow" >
+                                        <input type="hidden" name="eventdata" value="">
+                                        <input type="hidden" name="token" value="" tabindex="0" id="token_assess">
+                                        <input type="submit" value="Continue Assessment" class="btn btn-primary continue-btn">
+                                        </form></div>';
+        }
+
+      }
+
+      if($node->bundle() == 'course_landing_page'){
+        $template_type = $node->field_select_course_landing_type->value; 
+        if($template_type == 'course_nokia'){
+          $node_id = $node->id();
+          $requestACallBackForm = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\SimpleAjaxLeadForm', $node_id);
+          $variables['requestACallBackForm'] = $requestACallBackForm;
+        }
+      }
+      
+
+      if($node->bundle() == 'course'){
+        $template_type = $node->field_select_template->value; 
+        if($template_type == 'course_wipro'){
+          $template_type = 'course_nokia';
+        }
+
+        $url = '';
+        if($node->hasField('field_proceed_button_link')){
+          if(!empty($node->get('field_proceed_button_link')->getValue()[0]['value'])){
+            $url=$node->get('field_proceed_button_link')->getValue()[0]['value'];
+          }
+        }
+
+        if($template_type == 'course_modular'){
+          $node_id = $node->id();
+
+          $variables['requestACallBackFormBtnMob'] = '<a class="career-btnrequest" data-toggle="modal" data-target="#RequestACallBackForm"><i class="fa fa-phone"></i> Call back</a>'; 
+          $variables['requestACallBackFormBtn'] = '<a class="btn btn-primary" data-toggle="modal" data-target="#RequestACallBackForm"><i class="fa fa-phone"></i> Talk to our expert</a>';
+
+
+          $requestACallBackForm = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\TalkToOurExpertForm', $node_id);
+          $requestACallBackFormModal ='<div id="RequestACallBackForm" class="modal fade" role="dialog">
+          <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content msg-succ">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title"><center>Talk To Our Expert</center></h4>
+                  
+                </div>
+                <div class="modal-body">
+                    '.render($requestACallBackForm).'
+                </div>
+              </div>
+            </div>
+          </div>';
+
+          $variables['requestACallBackForm'] = $requestACallBackFormModal;
+
+        }
+
+        if($template_type == 'course_new_modular' || $template_type == 'course_nokia' || $template_type == 'course_stackathon'){
+          $node_id = $node->id();
+          $courseNodeData = Node::load($node_id);
+
+          $course_delivery_mode_code = !empty($courseNodeData->field_delivery_mode_code->value)?$courseNodeData->field_delivery_mode_code->value:'';
+          $course_code = !empty($courseNodeData->field_course_code->value)?$courseNodeData->field_course_code->value:'';
+          $batchIdWith = \Drupal::service('niit_common.niit_related_courses')->get_course_fee_and_details($course_delivery_mode_code,$course_code);
+          $firstbatchdetails = $batchIdWith['courseBatchDetail'][0];
+
+          $campaignCode = $node->get('field_campaign_code')->getValue()[0]['value'];
+
+          //echo '<pre>'; print_r($firstbatchdetails); die();
+
+          $maincoursebatchfee = $batchIdWith['CenterBatchFee'];
+          $batchStartTime = $firstbatchdetails['BatchDD'].' '.$firstbatchdetails['BatchMM'];
+          $batchTimings = $firstbatchdetails['batchTimings'];
+
+          $variables['maincoursebasefeecheck'] = $variables['maincoursebasefee'] = '';
+          if(!empty($batchIdWith['centerBaseFee'])){
+          	$variables['maincoursebasefeecheck'] = $batchIdWith['centerBaseFee'];
+            $variables['maincoursebasefee'] = courseFeeNumberToCurrencyConvert($batchIdWith['centerBaseFee']);
+          }
+
+          $variables['maincoursebatchfee'] = courseFeeNumberToCurrencyConvert($maincoursebatchfee);
+          $variables['CoursebatchStartTime'] = $batchStartTime;
+          $variables['CoursebatchTimings'] = $batchTimings;
+
+          $variables['requestACallBackFormBtnMob'] = '<a class="career-btnrequest" data-toggle="modal" data-target="#RequestACallBackForm"><i class="fa fa-phone"></i> Call back</a>'; 
+          $variables['requestACallBackFormBtn'] = '<a data-toggle="modal" data-target="#RequestACallBackForm"><u>Talk to our expert</u></a>';
+
+          $variables['stillquery_connectwithus'] = '<span class="btn btn-primary btnApply" data-toggle="modal" data-target="#RequestACallBackForm">Connect with us</span>'; 
+
+          $requestACallBackForm = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\TalkToOurExpertForm', $node_id);
+          $requestACallBackFormModal ='<div id="RequestACallBackForm" class="modal fade" role="dialog">
+          <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content msg-succ">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title"><center>Talk To Our Expert</center></h4>
+                  
+                </div>
+                <div class="modal-body">
+                    '.render($requestACallBackForm).'
+                </div>
+              </div>
+            </div>
+          </div>';
+
+          $variables['requestACallBackForm'] = $requestACallBackFormModal;
+ 
+          $site_current_url = "https://".$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+          //Login user start
+          if(!empty(\Drupal::currentUser()->id())){
+
+            $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+            $currentUserid = $user->id();
+            if(!empty($user->get('field_communication_emailid')->value)){
+              $userMail = $user->get('field_communication_emailid')->value;
+            }
+            else{
+              $userMail = $user->get('mail')->value;
+            }
+            $userName = $user->get('field_user_name')->value;
+            $userCustomerId = $user->get('field_customer_id')->value;
+            $userMobileNo = $user->get('field_mobile_number')->value;
+
+            $formdata = [
+            	"CustomerID" => $userCustomerId,
+    			    "CourseCode" => $firstbatchdetails['courseCode'],
+    			    "BatchID" => $firstbatchdetails['batchID'],
+    			    "Centercode" => $firstbatchdetails['SRC_ICD'],
+    			    "Fee_Pttrn_Code" => $firstbatchdetails['patternCode'],
+    			    "Fee_Value" => $firstbatchdetails['batchFees'],
+            ];
+
+            $token = Enrollment_SaveUserProductInfo($formdata);
+
+            if(!empty($token)){
+              $continue_btn_form = '<form id="" name="form" method="post" action="'.$url.'" >
+                <input type="hidden" name="pCourseCode" value="'.$firstbatchdetails['courseCode'].'">
+                <input type="hidden" name="pModalId" value="'.$firstbatchdetails['batchType'].'">
+                <input type="hidden" name="pcollectionPlanId" value="'.$firstbatchdetails['patternCode'].'">
+                <input type="hidden" name="pbatchId" value="'.$firstbatchdetails['batchID'].'">
+                <input type="hidden" name="pSrcId" value="'.$firstbatchdetails['SRC_ICD'].'">
+                <input type="hidden" name="pDstId" value="'.$firstbatchdetails['DST_ICD'].'">
+                <input type="hidden" name="pisUserLoggedIn" value="N">
+                <input type="hidden" name="pBatchTimings" value="'.$firstbatchdetails['batchTimings'].'">
+                <input type="hidden" name="pBatchStartDate" value="'.$firstbatchdetails['batchStartDate'].'">
+                <input type="hidden" name="pBatchEndDate" value="'.$firstbatchdetails['batchEndDate'].'">
+                <input type="hidden" name="pFee" value="'.$firstbatchdetails['batchFees'].'">
+                <input type="hidden" name="CourseId" value="'.$firstbatchdetails['courseID'].'">
+                <input type="hidden" name="CourseVersion" value="1">
+                <input type="hidden" name="CategoryName" value="Digital Marketing">
+                <input type="hidden" name="SeoUrl" value="web-apps-development-courses-online/web-apps-development-using-node-js">
+                <input type="hidden" name="pcheckEnroll" value="ENROLL">
+                <input type="hidden" name="bthcurrencyCode" value="'.$firstbatchdetails['currencyCode'].'">
+                <input type="hidden" name="bthSymbolType" value="'.$firstbatchdetails['SymbolType'].'">
+                <input type="hidden" name="bthSymbolValue" value="'.$firstbatchdetails['SymbolValue'].'">
+                <input type="hidden" name="Minimum_Denomination" value="'.$firstbatchdetails['Minimum_Denomination'].'">
+                <input type="hidden" name="Minimum_Denomination_Value" value="'.$firstbatchdetails['Minimum_Denomination_Value'].'">
+                <input type="hidden" name="IsTax_IncludeIN_Collection" value="'.$firstbatchdetails['IsTax_IncludeIN_Collection'].'">
+                <input type="hidden" name="SourcePlatformName" value="NIITCOM">
+                <input type="hidden" name="RequestName" value="Enrollment">
+                <input type="hidden" name="eventdata" value="">
+                <input type="hidden" name="NIITCourseURL" value="'.$site_current_url.'">
+                <input type="hidden" name="Token" value="'.$token.'" id="ecomtoken_modular">
+                <input type="hidden" name="CustomerID" value="'.$userCustomerId.'" id="CustomerId_modular">
+                <input type="hidden" name="Campaign_Code" value="'.$campaignCode.'" tabindex="0">
+                <input type="hidden" name="Course_Type" value="'.$course_delivery_mode_code.'" tabindex="0">
+                <input type="submit" value="Enroll Now" class="btn btn-primary btnApply enroll-modular con-moduler-enrollnow">
+                </form>';
+
+              $variables['modular_enrollnow'] = '<span class="btn btn-primary btnApply" onclick="EnrollSubmitPreForm()">Enroll Now</span><div class="not_display_continue">'.$continue_btn_form.'</div>';
+
+            }
+            else{
+              $variables['modular_enrollnow'] = '<span class="btn btn-primary btnApply" disabled>Enroll Now</span>';
+
+            }
+
+            if($template_type == 'course_nokia'){
+
+              $finalResult = application_form_status($campaignCode, $course_code, $currentUserid, 'current_user');
+              $final_json_send = '';
+              if($finalResult['applctn_opn'] == 'Y'){
+                $final_json = (array) $finalResult['json_data'];
+                $update_data = array(
+                  'source' => 'NIITCOM',
+                  'CustomerId' => $userCustomerId,
+                  'RequestedURL'=> '',
+                  'NewSignup' => 'true',
+                  'TYPE' => 'I',
+                  'orgid' => 1,
+                  'CourseId' => $firstbatchdetails['courseID'],
+                  'BatchId' => $firstbatchdetails['batchID'],
+                  'enroll_link' => $url,
+                  'enqry_crsspndnc_eml' => $userMail,
+                  'create_application' => 1,
+                  'campaign' => $campaignCode,
+                );
+                $new_json = array_merge($final_json, $update_data);
+                $final_json_send = create_application($new_json);
+
+                $variables['nokia_enrollnow'] = '<span class="btn btn-primary btnApply" onclick="EnrollSubmitPreForm()">Enroll Now</span><div class="not_display_continue"><form id="" name="form" method="post" action="'.$url.'" class="nokiaEnrollnow">
+                <input type="hidden" name="eventdata" value="">
+                <input type="hidden" name="token" value="'.$final_json_send.'" tabindex="0" id="ecomtoken_modular">
+                <input type="submit" value="Enroll Now" class="btn btn-primary btnApply enroll-modular con-moduler-enrollnow">
+                </form></div>';    
+              }
+              else{
+
+                $variables['nokia_enrollnow'] = '<span class="btn btn-primary btnApply" onclick="leadtokencreate('.$currentUserid.', '.$node_id.')">Enroll Now</span><div class="not_display_continue"><form id="" name="form" method="post" action="'.$url.'" class="nokiaEnrollnow">
+                <input type="hidden" name="eventdata" value="">
+                <input type="hidden" name="token" value="'.$final_json_send.'" tabindex="0" id="ecomtoken_modular">
+                <input type="submit" value="Enroll Now" class="btn btn-primary btnApply enroll-modular con-moduler-enrollnow">
+                </form></div>';    
+
+              }
+
+              
+
+            }    
+
+          }
+          // Login user end
+          else{
+
+            if(!empty($firstbatchdetails['batchFees'])){
+
+              $continue_btn_form = '<form id="" name="form" method="post" action="'.$url.'" >
+                <input type="hidden" name="pCourseCode" value="'.$firstbatchdetails['courseCode'].'">
+                <input type="hidden" name="pModalId" value="'.$firstbatchdetails['batchType'].'">
+                <input type="hidden" name="pcollectionPlanId" value="'.$firstbatchdetails['patternCode'].'">
+                <input type="hidden" name="pbatchId" value="'.$firstbatchdetails['batchID'].'">
+                <input type="hidden" name="pSrcId" value="'.$firstbatchdetails['SRC_ICD'].'">
+                <input type="hidden" name="pDstId" value="'.$firstbatchdetails['DST_ICD'].'">
+                <input type="hidden" name="pisUserLoggedIn" value="N">
+                <input type="hidden" name="pBatchTimings" value="'.$firstbatchdetails['batchTimings'].'">
+                <input type="hidden" name="pBatchStartDate" value="'.$firstbatchdetails['batchStartDate'].'">
+                <input type="hidden" name="pBatchEndDate" value="'.$firstbatchdetails['batchEndDate'].'">
+                <input type="hidden" name="pFee" value="'.$firstbatchdetails['batchFees'].'">
+                <input type="hidden" name="CourseId" value="'.$firstbatchdetails['courseID'].'">
+                <input type="hidden" name="CourseVersion" value="1">
+                <input type="hidden" name="CategoryName" value="Digital Marketing">
+                <input type="hidden" name="SeoUrl" value="web-apps-development-courses-online/web-apps-development-using-node-js">
+                <input type="hidden" name="pcheckEnroll" value="ENROLL">
+                <input type="hidden" name="bthcurrencyCode" value="'.$firstbatchdetails['currencyCode'].'">
+                <input type="hidden" name="bthSymbolType" value="'.$firstbatchdetails['SymbolType'].'">
+                <input type="hidden" name="bthSymbolValue" value="'.$firstbatchdetails['SymbolValue'].'">
+                <input type="hidden" name="Minimum_Denomination" value="'.$firstbatchdetails['Minimum_Denomination'].'">
+                <input type="hidden" name="Minimum_Denomination_Value" value="'.$firstbatchdetails['Minimum_Denomination_Value'].'">
+                <input type="hidden" name="IsTax_IncludeIN_Collection" value="'.$firstbatchdetails['IsTax_IncludeIN_Collection'].'">
+                <input type="hidden" name="SourcePlatformName" value="NIITCOM">
+                <input type="hidden" name="RequestName" value="Enrollment">
+                <input type="hidden" name="eventdata" value="">
+                <input type="hidden" name="NIITCourseURL" value="'.$site_current_url.'">
+                <input type="hidden" name="CustomerID" value="" id="CustomerId_modular">
+                <input type="hidden" name="Token" value="" id="ecomtoken_modular">
+                <input type="hidden" name="Campaign_Code" value="'.$campaignCode.'" tabindex="0">
+                <input type="hidden" name="Course_Type" value="'.$course_delivery_mode_code.'" tabindex="0">
+                <input type="submit" value="Enroll Now" class="con-moduler-enrollnow">
+                </form>';
+
+              $user_login_form_btn = '<span class="btn btn-primary btnApply" onclick="modularpage_check()">Enroll Now</span><div class="not_display_continue">'.$continue_btn_form.'</div>';
+              $variables['modular_enrollnow']=$user_login_form_btn; 
+
+              $variables['nokia_enrollnow'] = '<span class="btn btn-primary btnApply" onclick="modularpage_check()">Enroll Now</span><div class="not_display_continue"><form id="" name="form" method="post" action="'.$url.'" class="nokiaEnrollnow">
+              <input type="hidden" name="eventdata" value="">
+              <input type="hidden" name="token" value="" tabindex="0" id="ecomtoken_modular">
+              <input type="submit" value="Enroll Now" class="btn btn-primary btnApply enroll-modular con-moduler-enrollnow">
+              </form></div>';  
+
+            }
+            else{
+              $variables['modular_enrollnow'] = '<span class="btn btn-primary btnApply" disabled>Enroll Now</span>';
+
+              $variables['nokia_enrollnow'] = '<span class="btn btn-primary btnApply" disabled>Enroll Now</span>';
+
+            }
+            
+          }
+
+        }
+
+
+      }
+      if($node->bundle() == 'webinar'){
+
+        $node_id = $node->id();
+
+        $join_form = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\JoinWebinarForm', $node_id);
+        $join_form_modal='<div id="join_webniar_modal_form" class="join-webniar-form modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+          <!-- Modal content-->
+          <div class="modal-content msg-succ">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Enter your details</h4>
+              </div>
+              <div class="modal-body">
+                  '.render($join_form).'
+              </div>
+            </div>
+          </div>
+        </div>';
+
+        $variables['join_webinar_form'] = $join_form_modal;
+
+      }
+    }
+
+}
+
+function sso_user_user_logout(){
+  // $account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+  //       $cid=$account->get('field_customer_id')->getValue()[0]['value'];
+  // $service=Drupal::service('sso_user.user');
+  // $service->userLogoutAPI($cid);
+}
+
+
+function studentMyCourseLinkGenerate($name, $email, $cid){
+  $output = '';
+  $status = '';
+  $get_student_array = myCourseGenerateStudentArray($cid);
+  // print_r($get_student_array);
+  if($get_student_array->ErrorYN == 'N'){
+      if(!empty($get_student_array->data)){
+          $studentCount = count($get_student_array->data);
+          if($studentCount == 1){
+            $student_customer_id = $get_student_array->data[0]->customerid;              
+              $output = '<li class="userMyCourseMenu"><a href="javascript:void(0);" id="my-course-menu-link-single" class="my-course-menu-link-single" user_cid="'.$student_customer_id.'" user_email="'.$email.'" user_name="'.$name.'" lnkVer="'.$get_student_array->data[0]->IsStudentDigital.'@@'.$get_student_array->data[0]->LMSDestination.'">My Programs</a></li>';
+          }else if($studentCount > 1){
+            $output = '<li class="userMyCourseMenu"><a data-toggle="modal" data-target="#user_mycourse_modal_box">My Programs</a>
+                                </li>'; 
+          }else{
+            $output = '';
+          }
+      }
+  }  
+  return $output;
+}
+
+function studentMyCourseModalFormGenerate($name, $email, $cid){
+  $output = '';
+  $status = '';
+  $get_student_array = myCourseGenerateStudentArray($cid);
+  // print_r($get_student_array);
+  if($get_student_array->ErrorYN == 'N'){
+      if(!empty($get_student_array->data)){
+          $studentCount = count($get_student_array->data);
+          if($studentCount > 1){
+            foreach ($get_student_array->data as $studentData) {
+              $option_output .= '<div class="form-check">
+                <input class="form-check-input" type="radio" name="my_course_generate_token" user_cid="'.$studentData->customerid.'" user_email="'.$email.'" user_name="'.$name.'" lnkVer="'.$studentData->IsStudentDigital.'@@'.$studentData->LMSDestination.'" required>
+                <label class="form-check-label">
+                  '.$studentData->loginid.'
+                </label>
+              </div>';
+            }
+          $output = '<div id="user_mycourse_modal_box" class="user-form-modal modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+              <!-- Modal content-->
+              <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Select EMAIL/Student ID</h4>
+                    Please select one to continue.
+                  </div>
+                  <div class="modal-body">
+
+                  <form>
+                    <div class="col-md-12 form-group">
+                      <div class="unplanErrorClass"></div>
+                      '.$option_output.'
+                    </div> 
+                    <div class="row mb-2 btn-signup">
+                      <div class="col-md-6 mb-2">
+                        <input class="btn btn-block btn-primary my-course-cancel-btn" type="button" value="Cancel">
+                      </div>
+                      <div class="col-md-6">
+                        <input class="btn btn-block btn-primary my-course-continue-btn" type="button" value="Continue">
+                      </div>
+                    </div>
+                  </form>
+
+                  </div>
+                </div>
+              </div>
+            </div>'; 
+
+          }
+      }
+  } 
+  
+  return $output;
+}
+              
+function myCourseGenerateStudentArray($cid){
+  // $url = 'https://qa.training.com/NIITDigitalPlatformAPI/api/digital/enrollment/v1/enrolledusers';
+  $url = $_ENV['DOMAIN_TRAINING_COM'].'NIITDigitalPlatformAPI/api/digital/enrollment/v1/enrolledusers';
+
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL,$url);
+  curl_setopt($ch, CURLOPT_HTTPGET, 1);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      'CustomerID: '.$cid
+  ));
+  $response = curl_exec($ch);
+  curl_close($ch);
+  $output = json_decode($response);
+
+  return $output;
+}
+function myCourseGenerateUserEncryptedData($student_customer_id){
+  // $url = 'https://qa.training.com/NiitDigitalPlatformAPI/api/encryption/aes256';
+  $url = $_ENV['DOMAIN_TRAINING_COM'].'NiitDigitalPlatformAPI/api/encryption/aes256';
+
+  $curl = curl_init();
+  curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => '',
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => 'POST',
+      CURLOPT_POSTFIELDS =>'{
+                 "InputData":"{\\"CustomerId\\":'.$student_customer_id.'}"
+      }',
+      CURLOPT_HTTPHEADER => array(
+          'Content-Type: application/json'
+      ),
+  ));
+  $response = curl_exec($curl);
+
+  curl_close($curl);
+  $output = json_decode($response);
+  return $output;
+}
+function myCourseGenerateJWTToken($name, $email, $userData){
+  $url = $_ENV['TrainingTokenAuthURL'];
+  // $url = 'https://tokenauthdev.training.com/5915e7a1de21462b5c818648/login';
+
+  $curl = curl_init();
+  curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => '',
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_SSL_CIPHER_LIST => 'DEFAULT@SECLEVEL=1',
+      CURLOPT_CUSTOMREQUEST => 'POST',
+      CURLOPT_POSTFIELDS =>'{ 
+          "name":"'.$name.'", 
+          "email":"'.$email.'", 
+          "userdata":"'.$userData.'"
+      }',
+      CURLOPT_HTTPHEADER => array(
+          'x-access-token: 8080808080808080',
+          'Content-Type: application/json'
+      ),
+  ));
+  $response = curl_exec($curl);
+  curl_close($curl);
+  $output = json_decode($response);
+
+  return $output;
+}
+
+function myProgrammeGenerateJWTToken($user_cid){
+  // $exp_timestamp = time() + 60*60; // now + 1 hour
+        $exp_timestamp = time() + 60; 
+
+        $headers = [
+            'alg'=>'HS256',
+            'typ'=>'JWT'
+        ];
+        $headers_encoded = rtrim(strtr(base64_encode(json_encode($headers)), '+/', '-_'), '=');
+        // $domain = explode('//', 'https://iv17-niit-digital.niit-mts.com');
+        $domain = explode('//', $_ENV['lms_niit_digital']);
+        $payload = [
+            'ruid'=> $user_cid, 
+            'domain'=> $domain[1],
+            'exp' => $exp_timestamp
+        ];
+
+        $payload_encoded = rtrim(strtr(base64_encode(json_encode($payload)), '+/', '-_'), '=');
+
+
+        // $key = '6161#6WDfP$#%qPjyMKMPJKJK12523$#!BSF45';
+        $key = $_ENV['lms_niit_digital_secret'];
+
+        $signature = hash_hmac('SHA256',"$headers_encoded.$payload_encoded",$key,true);
+        // $signature_encoded = base64url_encode($signature);
+        $signature_encoded = rtrim(strtr(base64_encode($signature), '+/', '-_'), '=');
+
+        //build  the token
+        $token = "$headers_encoded.$payload_encoded.$signature_encoded";
+      return $token;
+}

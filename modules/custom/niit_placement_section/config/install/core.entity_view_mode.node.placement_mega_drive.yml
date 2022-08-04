@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.placement_mega_drive
+label: 'Placement Mega Drive'
+targetEntityType: node
+cache: true

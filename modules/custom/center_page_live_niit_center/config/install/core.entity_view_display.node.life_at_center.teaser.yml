@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.life_at_center.field_gallery_image
+    - node.type.life_at_center
+  module:
+    - user
+id: node.life_at_center.teaser
+targetEntityType: node
+bundle: life_at_center
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden:
+  field_gallery_image: true

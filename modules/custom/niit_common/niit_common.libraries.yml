@@ -1,0 +1,10 @@
+common-js:
+  version: 1.x
+  js:
+    js/slick.js: {minified: true}
+    js/custom.js: {minified: true}
+    js/lazyload-images.js: {minified: true}
+mentors_advice_mega_drive-js:
+  js:
+    js/optimize/lodash.min.js: {minified: true}
+    js/optimize/lozad.min.js: {minified: true}

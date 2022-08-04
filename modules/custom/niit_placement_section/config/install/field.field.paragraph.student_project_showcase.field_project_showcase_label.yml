@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_project_showcase_label
+    - paragraphs.paragraphs_type.student_project_showcase
+id: paragraph.student_project_showcase.field_project_showcase_label
+field_name: field_project_showcase_label
+entity_type: paragraph
+bundle: student_project_showcase
+label: 'Project showcase label'
+description: 'Project showcase label'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

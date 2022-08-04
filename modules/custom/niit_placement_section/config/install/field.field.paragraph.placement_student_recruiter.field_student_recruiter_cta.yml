@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_student_recruiter_cta
+    - paragraphs.paragraphs_type.placement_student_recruiter
+  module:
+    - link
+id: paragraph.placement_student_recruiter.field_student_recruiter_cta
+field_name: field_student_recruiter_cta
+entity_type: paragraph
+bundle: placement_student_recruiter
+label: 'Student/Recruiter CTA'
+description: 'Student/Recruiter CTA'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 1
+field_type: link

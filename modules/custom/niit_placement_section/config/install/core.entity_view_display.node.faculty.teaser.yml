@@ -1,0 +1,38 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.faculty.body
+    - field.field.node.faculty.field_faculty_image
+    - field.field.node.faculty.field_faculty_name
+    - field.field.node.faculty.field_faculty_qualification
+    - field.field.node.faculty.field_facutly_course_category
+    - node.type.faculty
+  module:
+    - text
+    - user
+id: node.faculty.teaser
+targetEntityType: node
+bundle: faculty
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden:
+  field_faculty_image: true
+  field_faculty_name: true
+  field_faculty_qualification: true
+  field_facutly_course_category: true

@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.placement_testimonial.field_testimonial_label
+    - field.field.paragraph.placement_testimonial.field_testimonials_reference
+    - paragraphs.paragraphs_type.placement_testimonial
+id: paragraph.placement_testimonial.default
+targetEntityType: paragraph
+bundle: placement_testimonial
+mode: default
+content:
+  field_testimonial_label:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_testimonials_reference:
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

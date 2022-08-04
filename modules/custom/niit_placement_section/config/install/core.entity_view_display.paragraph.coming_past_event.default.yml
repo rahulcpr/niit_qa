@@ -1,0 +1,51 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.coming_past_event.field_past_event_tab_label
+    - field.field.paragraph.coming_past_event.field_show_past_events
+    - field.field.paragraph.coming_past_event.field_show_upcoming_events
+    - field.field.paragraph.coming_past_event.field_upcoming_event_tab_label
+    - paragraphs.paragraphs_type.coming_past_event
+id: paragraph.coming_past_event.default
+targetEntityType: paragraph
+bundle: coming_past_event
+mode: default
+content:
+  field_past_event_tab_label:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_show_past_events:
+    weight: 3
+    label: hidden
+    settings:
+      format: boolean
+      format_custom_true: ''
+      format_custom_false: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_show_upcoming_events:
+    weight: 2
+    label: hidden
+    settings:
+      format: boolean
+      format_custom_true: ''
+      format_custom_false: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_upcoming_event_tab_label:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

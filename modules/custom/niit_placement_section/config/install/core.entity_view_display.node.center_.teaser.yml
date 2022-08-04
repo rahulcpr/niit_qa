@@ -1,0 +1,70 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.center_.body
+    - field.field.node.center_.field_center_businesspartnercode
+    - field.field.node.center_.field_center_businessunitcode
+    - field.field.node.center_.field_center_city
+    - field.field.node.center_.field_center_code
+    - field.field.node.center_.field_center_contact_person
+    - field.field.node.center_.field_center_country
+    - field.field.node.center_.field_center_email
+    - field.field.node.center_.field_center_latitude
+    - field.field.node.center_.field_center_location
+    - field.field.node.center_.field_center_longitude
+    - field.field.node.center_.field_center_page_components
+    - field.field.node.center_.field_center_phone
+    - field.field.node.center_.field_center_regioncode
+    - field.field.node.center_.field_center_state
+    - field.field.node.center_.field_center_status
+    - field.field.node.center_.field_center_zipcode
+    - field.field.node.center_.field_location
+    - field.field.node.center_.field_slider_and_expert_form
+    - node.type.center_
+  module:
+    - text
+    - user
+id: node.center_.teaser
+targetEntityType: node
+bundle: center_
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 2
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  share_everywhere:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_center_businesspartnercode: true
+  field_center_businessunitcode: true
+  field_center_city: true
+  field_center_code: true
+  field_center_contact_person: true
+  field_center_country: true
+  field_center_email: true
+  field_center_latitude: true
+  field_center_location: true
+  field_center_longitude: true
+  field_center_page_components: true
+  field_center_phone: true
+  field_center_regioncode: true
+  field_center_state: true
+  field_center_status: true
+  field_center_zipcode: true
+  field_location: true
+  field_slider_and_expert_form: true

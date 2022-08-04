@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_recruiter_job
+    - node.type.niit_job_profile
+    - paragraphs.paragraphs_type.niit_job_profile_paragraph
+id: paragraph.niit_job_profile_paragraph.field_recruiter_job
+field_name: field_recruiter_job
+entity_type: paragraph
+bundle: niit_job_profile_paragraph
+label: 'Recruiter Job'
+description: 'Recruiter Job'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      niit_job_profile: niit_job_profile
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

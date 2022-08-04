@@ -1,0 +1,70 @@
+global-css:
+  css:
+    theme:
+      assets/bootstrap/css/bootstrap.min.css: {}  
+      assets/css/animations.css: {minified: true}    
+      assets/css/slick_theme.css: {minified: true}
+      assets/css/niit.css: {minified: true}     
+      assets/css/custom.css: {minified: true}
+      assets/css/app.css: {minified: true}
+      assets/css/course-page.css: {minified: true}
+      assets/css/responsive.css: {minified: true}      
+      assets/css/knowledge_center.css: {minified: true}
+      assets/css/accessible-slick-theme.min.css: { minified: true}      
+      assets/css/slick.min.css: { minified: true}
+      assets/css/homepage.css: { minified: true}
+      assets/css/category-page.css: {minified: true}
+      assets/css/program-page.css: {minified: true}
+      
+
+global-js:
+  js:
+#   assets/js/bootstrap.min.js : {}
+    assets/bootstrap/js/bootstrap.min.js: {} #not using transpiled version for bootstrap
+    # assets/dist/js/superfish.js : {minified: true}
+    assets/dist/js/jquery.slicknav.min.js : {}
+    assets/dist/js/slightbox.min.js : {scope: footer}
+    # assets/dist/js/lozad.min.js: {}
+    assets/dist/js/function.js: {minified: true, attributes: { defer: true } }
+    assets/dist/js/custom.js : {minified: true, attributes: { defer: true } }
+    #assets/dist/js/owl.carousel.js : {}
+    #assets/dist/js/complex.min.js : {}
+    # assets/dist/js/lodash.min.js : {}
+    # assets/dist/js/slick.js: {minified: true}
+    assets/common_js/slick.min.js: {minified: true, attributes: { defer: true } }
+    #assets/dist/js/rating_simple.js: {}
+    assets/dist/js/jquery.responsiveTabs.js : {minified: true, attributes: { defer: true } }
+    assets/common_js/custom.js: {minified: true, attributes: { defer: true } }
+    assets/js/accordion.js: {minified: true, attributes: { defer: true } }
+    assets/js/multislider.min.js: {}
+    assets/js/custom.js: {minified: true, attributes: { defer: true } }
+    assets/js/homepage.js: {}
+    assets/js/jquery-ui.js: {minified: true, attributes: { defer: true } }
+    assets/common_js/ga_event_datalayer.js: {minified: true, attributes: { defer: true } }
+    assets/common_js/star-rating.js: {minified: true, attributes: { defer: true } }
+    assets/js/jquery.md5.js : {minified: true, attributes: { defer: true }  }
+    assets/js/custom_form.js: {minified: true, attributes: { defer: true } }
+    
+
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/drupal.ajax
+    - core/drupal.progress
+
+jquery-custom:
+  js:
+     assets/js/jquery-3.3.1.min.js: { minified: true, weight: -20 }
+    # assets/js/jquery-3.5.1.min.js: { minified: true, weight: -20 }
+
+slider-js:
+  js:
+    assets/js/jquery.flexslider.js : {minified: true, attributes: { defer: true } }
+    assets/js/slide.js : {minified: true, attributes: { defer: true } }
+
+ecom-js:
+  version: 1.x
+  header: true
+  js:
+    assets/common_js/common.js: {minified: true, attributes: { defer: true } }

@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: mega_drive_image_video_gallery
+label: 'Mega Drive Image & Video Gallery'
+icon_uuid: null
+description: 'Mega Drive Image & Video Gallery'
+behavior_plugins: {  }

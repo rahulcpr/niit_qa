@@ -1,0 +1,54 @@
+{% set field_center_complete_address=content.field_center_complete_address[0]['#context']['value'] %} 
+
+{% set field_center_address_detail_labe = content.field_center_address_detail_labe[0]['#context']['value'] %}
+
+{% set field_center_contact_person = content.field_center_contact_person[0]['#context']['value'] %}
+
+{% set field_center_email = content.field_center_email[0]['#context']['value'] %}
+
+{% set field_center_phone_extension = content.field_center_phone_extension[0]['#context']['value'] %}
+
+{% set connect_now = content.field_connect_now[0]['#context']['value'] %} 
+ 
+
+
+        <div class="center_block">
+            <h2>{{ field_center_address_detail_labe }}</h2>
+            <h5></h5>
+            <div class="addresswrap">
+                <ul>
+                
+                 {% if field_center_complete_address is not empty %}
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i> {{ field_center_complete_address }}
+                    </li>
+                 {% endif %}
+                     
+                    {% if field_center_email is not empty %}
+                    <li><i class="far fa-envelope"></i>{{ field_center_email }}
+                    </li>
+                     {% endif %}
+                    
+
+                    {% if field_center_phone_extension is not empty %}
+                        <li class="phncenter"><i
+                                class="fas fa-phone"></i>{{ field_center_phone_extension }}
+                        </li>
+                     {% endif %}
+
+                    {% if connect_now is not empty %}
+                    <li class="phncenter phncentermob">
+                    <a href="tel:{{ connect_now }}"><i class="fas fa-phone"></i>{{ connect_now }}</a>
+                    </li> 
+                    {% endif %}
+
+                    {% if field_center_contact_person is not empty %}
+                    <li><i class="fas fa-user"></i>
+                            {{ field_center_contact_person }}
+                    </li>
+                    {% endif %}
+                </ul>
+            </div> 
+            
+        </div> 
+   

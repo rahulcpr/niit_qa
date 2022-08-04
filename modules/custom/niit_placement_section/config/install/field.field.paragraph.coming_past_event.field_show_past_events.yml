@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_show_past_events
+    - paragraphs.paragraphs_type.coming_past_event
+id: paragraph.coming_past_event.field_show_past_events
+field_name: field_show_past_events
+entity_type: paragraph
+bundle: coming_past_event
+label: 'Show Past Events'
+description: 'Show Upcoming Events'
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

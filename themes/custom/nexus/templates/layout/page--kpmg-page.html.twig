@@ -1,0 +1,61 @@
+<section class="header-container" style="padding: 10px 0px;">
+  <div class="container">
+    <div class="row">
+      
+      <div class="headerSection col-md-6 col-xs-6">
+        <div class="logo">
+          <a href="/">
+            <img src="/india/themes/custom/nexus/assets/images/NIIT_logomobile.png" alt="NIIT" title="NIIT" class="scale hide600">
+            <img src="/india/themes/custom/nexus/assets/images/NIIT_logomobile.png" alt="NIIT" title="NIIT" class="scale show600">
+          </a>
+        </div>
+      </div>
+      <div class="headerSection col-md-6 col-xs-6">
+        <div class="logo">
+          <a href="#">
+            <img src="/india/themes/custom/nexus/assets/images/kpmg.jpg" alt="KPMG" title="KPMG" class="scale hide600 pull-right">
+            <img src="/india/themes/custom/nexus/assets/images/kpmg.jpg" alt="KPMG" title="KPMG" class="scale show600 pull-right">
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Img Section Start -->
+{% if node.field_kpmg_banner.entity.fileuri is not empty %}
+  <section class="img-section-data kpmg-banner">
+  	<img src="{{ file_url(node.field_kpmg_banner.entity.fileuri) }}" alt="{{ node.field_kpmg_banner.alt  }}"  class="img-responsive webimg">
+  </section>
+  <div class="sliderinnerbg">
+    <img alt="niit" src="{{ request_path }}themes/custom/nexus/assets/images/banner-inner.jpg" width="1366" height="11">
+  </div>
+{% endif %}
+
+{# <div class="slider-container">
+  <div class="chatandconslr">
+    <ul class="mobilechatcon">
+        <li>
+          <a href="javascript://" id="getc"><span>Get Counseled</span></a>
+        </li>
+        <div class="clearfix"></div>
+        </ul>
+  </div>
+{{ drupal_entity('webform','kpmg_contact_us') }}
+</div> #}
+<!-- Img Section End -->
+<!-- Content Start -->
+<section class="webinar-data kpmg-section">
+	<div class="container">
+		<div class="col-md-12 web-content">
+      {% if node.title.value is not empty %}
+        <h2 class="kpmg-title">{{node.title.value}}</h2>
+      {% endif %}
+			{{ node.body.value|raw }}
+		</div>
+	</div>
+</section>
+<!-- Content end -->
+
+{% include directory ~ '/templates/layout/footer.html.twig' %}

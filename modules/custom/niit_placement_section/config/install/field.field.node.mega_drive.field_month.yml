@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_month
+    - node.type.mega_drive
+    - taxonomy.vocabulary.month
+id: node.mega_drive.field_month
+field_name: field_month
+entity_type: node
+bundle: mega_drive
+label: Month
+description: Month
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      month: month
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,11 @@
+services:
+    niit_common.twig.TwigExtension:
+        class: Drupal\niit_common\TwigExtension
+        tags:
+        - {name: twig.extension}
+    niit_common.niit_related_courses:
+        class: Drupal\niit_common\RelatedCourseService
+    niit_common.http_response_headers:
+        class: '\Drupal\niit_common\EventSubscriber\AddHTTPHeaders'
+        tags:
+          - { name: 'event_subscriber' }

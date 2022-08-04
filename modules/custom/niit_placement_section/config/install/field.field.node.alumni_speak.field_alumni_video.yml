@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_alumni_video
+    - node.type.alumni_speak
+  module:
+    - video_embed_field
+id: node.alumni_speak.field_alumni_video
+field_name: field_alumni_video
+entity_type: node
+bundle: alumni_speak
+label: 'Alumni Video Link'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_providers:
+    youtube: youtube
+    vimeo: '0'
+    youtube_playlist: '0'
+field_type: video_embed_field

@@ -1,0 +1,15 @@
+name: SendGrid Newsletter
+type: module
+description: Integrates SendGrid api to signup newsletter.
+# core: 8.x
+package: Mail
+
+configure: sendgrid_newsletter.config
+
+dependencies:
+  - ctools:ctools
+# Information added by Drupal.org packaging script on 2017-07-09
+version: '8.x-1.x-dev'
+core: '8.x'
+project: 'sendgrid_newsletter'
+datestamp: 1499588650

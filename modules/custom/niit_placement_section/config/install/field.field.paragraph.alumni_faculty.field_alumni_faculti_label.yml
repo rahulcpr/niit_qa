@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_alumni_faculti_label
+    - paragraphs.paragraphs_type.alumni_faculty
+id: paragraph.alumni_faculty.field_alumni_faculti_label
+field_name: field_alumni_faculti_label
+entity_type: paragraph
+bundle: alumni_faculty
+label: Label
+description: Label
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

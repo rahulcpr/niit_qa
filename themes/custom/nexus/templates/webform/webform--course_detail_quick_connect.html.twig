@@ -1,0 +1,49 @@
+{{ element.elements.form_token }}
+{{ element.elements.form_build_id }}
+{{ element.elements.form_id }}
+{{ element.elements.form_description }}
+
+<form class="getproduct " {{ attributes }} onsubmit="jQuery('#quickformResponse').fadeIn();">
+            <div class="col-md-3">
+                <div class="input-connect">
+                    {{ element.elements.name }}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="input-connect">
+                   {{ element.elements.mobile }}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="input-connect ">
+                     {{ element.elements.email }}
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="input-connect connectBtn">
+                {{ element.elements.actions }}
+                </div>
+            </div>
+
+    {{ element.elements.theme }}
+    {{ element.form_token }}
+    {{ element.form_build_id }}
+    {{ element.form_id }}
+    {{ title_suffix }}
+</form>
+<div id="quickformResponse" class="overlay5" style="display:none;"> 
+    <div class="errorbox" id="errorb"> 
+        <a href="javascript:void(0)" class="closepop">&times;</a> 
+        <div class="popbox"> 
+            <h3 class="sucess"><i class="far fa-check-circle"></i> 
+            </h3> 
+            <h2 class="success">Thank you for writing to us.</h2> 
+            <p>Thank you for your interest in our Programme!<br />Please 
+                expect a call from our expert shortly. 
+            </p> 
+            <div class="clr"></div> 
+        </div> 
+    </div> 
+</div>

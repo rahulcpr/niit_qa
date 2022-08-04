@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_label_title
+    - paragraphs.paragraphs_type.assured_job_section
+id: paragraph.assured_job_section.field_label_title
+field_name: field_label_title
+entity_type: paragraph
+bundle: assured_job_section
+label: Label
+description: 'Title of section '
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

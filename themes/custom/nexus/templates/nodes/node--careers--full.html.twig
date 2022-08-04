@@ -1,0 +1,513 @@
+{#
+/**
+ * @file
+ * Theme override to display a node.
+ *
+ * Available variables:
+ * - node: The node entity with limited access to object properties and methods.
+     Only "getter" methods (method names starting with "get", "has", or "is")
+     and a few common methods such as "id" and "label" are available. Calling
+     other methods (such as node.delete) will result in an exception.
+ * - label: The title of the node.
+ * - content: All node items. Use {{ content }} to print them all,
+ *   or print a subset such as {{ content.field_example }}. Use
+ *   {{ content|without('field_example') }} to temporarily suppress the printing
+ *   of a given child element.
+ * - author_picture: The node author user entity, rendered using the "compact"
+ *   view mode.
+ * - metadata: Metadata for this node.
+ * - date: Themed creation date field.
+ * - author_name: Themed author name field.
+ * - url: Direct URL of the current node.
+ * - display_submitted: Whether submission information should be displayed.
+ * - attributes: HTML attributes for the containing element.
+ *   The attributes.class element may contain one or more of the following
+ *   classes:
+ *   - node: The current template type (also known as a "theming hook").
+ *   - node--type-[type]: The current node type. For example, if the node is an
+ *     "Article" it would result in "node--type-article". Note that the machine
+ *     name will often be in a short form of the human readable label.
+ *   - node--view-mode-[view_mode]: The View Mode of the node; for example, a
+ *     teaser would result in: "node--view-mode-teaser", and
+ *     full: "node--view-mode-full".
+ *   The following are controlled through the node publishing options.
+ *   - node--promoted: Appears on nodes promoted to the front page.
+ *   - node--sticky: Appears on nodes ordered above other non-sticky nodes in
+ *     teaser listings.
+ *   - node--unpublished: Appears on unpublished nodes visible only to site
+ *     admins.
+ * - title_attributes: Same as attributes, except applied to the main title
+ *   tag that appears in the template.
+ * - content_attributes: Same as attributes, except applied to the main
+ *   content tag that appears in the template.
+ * - author_attributes: Same as attributes, except applied to the author of
+ *   the node tag that appears in the template.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the main title tag that appears in the template.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ * - view_mode: View mode; for example, "teaser" or "full".
+ * - teaser: Flag for the teaser state. Will be true if view_mode is 'teaser'.
+ * - page: Flag for the full page state. Will be true if view_mode is 'full'.
+ * - readmore: Flag for more state. Will be true if the teaser content of the
+ *   node cannot hold the main body content.
+ * - logged_in: Flag for authenticated user status. Will be true when the
+ *   current user is a logged-in member.
+ * - is_admin: Flag for admin user status. Will be true when the current user
+ *   is an administrator.
+ *
+ * @see template_preprocess_node()
+ *
+ * @todo Remove the id attribute (or make it a class), because if that gets
+ *   rendered twice on a page this is invalid CSS for example: two lists
+ *   in different view modes.
+ */
+#}
+{% set classes = [
+    'node',
+    'node--type-' ~ node.bundle|clean_class,
+    node.isPromoted() ? 'node--promoted',
+    node.isSticky() ? 'node--sticky',
+    not node.isPublished() ? 'node--unpublished',
+    view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
+    'clearfix',
+] %}
+
+  <style type="text/css">
+.carrer-page{background: #f2f2f2; padding-top: 30px; font-family: sans-serif;}
+.carrer-page p.mb-20 {    margin-bottom: 20px;}
+.carrer-page .bg-white {    background: #fff;    padding-top: 15px;    padding-bottom: 15px; display: flow-root;}
+.carrer-page .carrer-page p.text-career {    padding-left: 15px;    padding-right: 15px;     margin-top: 10px;}
+.carrer-page a.heading-carrer { text-align: center; color: #000; display: block; font-size: 22px; padding: 5px 0;}
+.carrer-page .mb-25{margin-bottom: 25px;}
+.carrer-page .clr-1801{background: #00b0f0;}
+.carrer-page .clr-1804{background: #ffc000;}
+.carrer-page .clr-1802{background: #92d050;}
+.carrer-page .clr-1805{background: #ff9500;}
+.carrer-page .clr-1806{background: #ff40f1;}
+.carrer-page .clr-1803{background: #c162ff;}
+.carrer-page .clr-1807{background: #00d6ff;}
+.carrer-page .pl-0{padding-left:0;}
+.carrer-page .pr-0{padding-right:0;}
+.carrer-page .pb-0{padding-bottom: 0 !important;}
+p.text-career {
+    height: 110px;
+    overflow: hidden;
+    padding-left: 15px;
+    padding-top: 15px;
+}
+@media (max-width:1200px){
+ .carrer-page a.heading-carrer {    font-size: 14px;}
+}
+
+
+  </style>
+
+<section class="ProductBox blog-details-wrp">
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumbs">
+                    <ul>
+                        <li><a href="\">Home </a> </li> 
+                        <li> -> {{label}} </li>  
+                    </ul>
+                </div>
+            </div>     
+        </div> 
+ 
+{#       {% if (content.field_is_form_display[0]['#markup'] == '1') %}
+
+        <div class="row">
+            <div class="col-md-9"> 
+                <div class="blog-details">
+                    <div class="imgmain">
+                      {{ content.field_banner_image }} 
+                    </div> 
+                </div> 
+            </div>
+
+            <div class="col-md-3">
+                <div class="GetinTouch">
+                    {{ drupal_entity('webform','get_in_touch') }}
+                </div> 
+            </div> 
+        </div>
+    
+    {% else %}
+
+        <div class="row">
+            <div class="col-md-12"> 
+                <div class="blog-details">
+                    <div class="imgmain">
+                      {{ content.field_banner_image }} 
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+
+       {% endif %}  #}
+
+    </div>          
+</section>
+
+{{ content.field_banner_carousel }}  
+
+<section class="ProductBox ProductBoxbottom bgColorOffWhite">
+    <div class="container">
+        <div class="row">  
+            <div class="col-md-12">
+                <div id="horizontalTab2">
+                    <ul class="resp-tabs-list">  
+                        
+                          {% for item in node.field_career_component %}
+
+                        <li>
+                            <a class="active refreshSlider"  href="#{{ item.target_id }}">{{ item.entity.field_label_title.value }}</a>
+                        </li>
+                        {% endfor %}  
+                    </ul> 
+ 
+                    <div class="resp-tab"> 
+                        {% for key, item in node.field_career_component %}
+
+                            {% if item.entity.field_tab_type.value == 'normal' %}
+                            <div id="{{ item.target_id }}">
+                                <div class="row">  
+                                  
+                                  {% if item.entity.field_video_link[0].value['title'] != "" %}
+                                    <div class="col-md-9"> 
+                                  {% else %} 
+                                   <div class="col-md-12"> 
+                                  {% endif %}  
+                                      
+                                 {{ item.entity.field_career_description.value|raw  }} 
+                                  </div> 
+                              
+                                 {% if item.entity.field_video_link[0].value['title'] != "" %}
+
+                                    <div class="col-md-3 testimonial_parent_stu">                                   
+                                        <div class="achieve">
+
+                                        <div class="achieve-box">
+                                        <div class="img-box square video">  
+                                        <img src="{{file_url(item.entity.field_icon_image.entity.fileuri)}}" class="scale"
+                                        alt="img">
+                                        <div class="overlay videoo">
+                                        <div class="head">
+                                        <p class="carrer_p">{{ item.entity.field_video_link[0].value['title'] }}</p>
+                                        </div>
+                                        {% if item.entity.field_video_link[0].value['title'] %}
+                                        <a class="play career_play" data-id="{{  item.entity.field_video_link[0].value['uri']}}" href="javascript:void(0)"
+                                        data-toggle="modal"
+                                        data-target="#career_play-{{ item.target_id }}"><i
+                                        class="far fa-play-circle"></i></a>
+
+
+                                 <div class="modal fade testimonials" id="career_play-{{ item.target_id }}"
+                                    role="dialog">
+                                    <div class="modal-dialog">
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                    <button type="button" class="close careervideoclose" data-dismiss="modal">
+                                    &times;
+                                    </button>
+                                    </div>
+                                    <div class="modal-body career_model_body">
+                                    <iframe class="lozadsingle" data-index="1" width="100%" height="100%"   data-src="{{  item.entity.field_video_link[0].value['uri']}}"  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    </div> 
+
+                                        {% endif %}
+                                        </div>
+                                        </div>
+                                        </div>
+                                    </div>
+
+                                    
+                                    </div>  
+                                
+                                {% endif %} 
+
+                               </div>
+                             
+                            <div class="row">  
+                                <div class="col-md-12"> 
+
+                                     <section class="sliderinner-wrap sliderinnerbg cat-popular slidetrending job_courses">
+                                        
+
+                                            <div class="headding text-center">
+                                                <h2> 
+                                          {{ item.entity.field_label.value }} 
+                                                </h2> 
+
+                                           {% if item.entity.field_content_title.value != "" %} 
+                                            
+                                             {{ item.entity.field_content_title.value|raw }}
+                                        
+                                            {% endif %}
+
+                                           </div>
+
+                                            <div class="carousel carousel-showmanymoveone slide custom-page-sliders" id="jobcarousel-{{key }}">
+                                              <div class="carousel-inner">
+                                                {% for jobkey, items in item.entity.field_award_component %}
+                                                  {% if jobkey == 0 %}
+                                                   <div class="item active">
+                                                  {% else %}
+                                                   <div class="item">
+                                                  {% endif %}
+                                                  
+                                                    {% set awards_link = items.entity.field_awards_link.value %}
+
+                                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                                      {% if awards_link is not empty %}
+                                                        <a href="{{awards_link}}" target="_blank">
+                                                        <img src ="{{ file_url(items.entity.field_image.entity.fileuri) }}" class="img-responsive">
+                                                        <h3>{{ items.entity.title.value }}</h3>
+                                                        </a>   
+                                                      {% else %}
+                                                        <img src ="{{ file_url(items.entity.field_image.entity.fileuri) }}" class="img-responsive">
+                                                        <h3>{{ items.entity.title.value }}</h3>
+                                                      {% endif %}          
+                                                          
+                                                      {% set text = items.entity.body.value|render|striptags %}
+                                                      <p>{{ text|length > 250 ? text|slice(0, 250) ~ '...' : text|raw }}</p>
+                                                      {% set know_more_check = items.entity.field_know_more_popup.value %}
+                                                      {% if know_more_check is not empty %}
+                                                        <div class="know-more-life" data-toggle="modal" data-target="#myModal-{{ items.entity.id }}">Know More</div>
+                                                      {% endif %} 
+                                                    </div>
+                                                  </div> 
+                                                  {% endfor %}                                                     
+                                              </div>
+                                              <a class="left carousel-control" href="#jobcarousel-{{key }}" data-slide="prev"><i class="glyphicon glyphicon-chevron-left"></i></a>
+                                              <a class="right carousel-control" href="#jobcarousel-{{key }}" data-slide="next"><i class="glyphicon glyphicon-chevron-right"></i></a>
+                                            </div>
+
+                                            {% for items in item.entity.field_award_component %}
+                                             {% set know_more_check = items.entity.field_know_more_popup.value %}
+                                              {% if know_more_check is not empty %}
+
+                                              <div class="know-more-popup modal fade" id="myModal-{{ items.entity.id }}" role="dialog">
+											    <div class="modal-dialog">
+											    
+											      <!-- Modal content-->
+											      <div class="modal-content">
+											        <div class="modal-header">
+											          <button type="button" class="close" data-dismiss="modal">&times;</button>
+											          <h4 class="modal-title">{{ items.entity.title.value }}</h4>
+											        </div>
+											        <div class="modal-body">
+											          <p>{{ items.entity.body.value|raw }}</p>
+											        </div>
+											      </div>
+											      
+											    </div>
+											  </div>
+											  {% endif %}
+											{% endfor %}    
+                                        {#     <div id="exampleSlider-awards" class="">
+                                                <div class="MS-content">
+                                                    {% for items in item.entity.field_award_component %}
+                                                    <div class="item"> 
+                                                        <div class="awards-data">
+                                                            <img src ="{{ file_url(items.entity.field_image.entity.fileuri) }}" class="img-responsive">
+                                                            <h3>{{ items.entity.title.value }}</h3>             
+                                                          
+                                                            {% set text = items.entity.body.value|render|striptags %}
+                                                            {{ text|length > 200 ? text|slice(0, 100) ~ '...' : text }} 
+                                                         </div>            
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                <div class="MS-controls">
+                                                    <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                                                    <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                                                </div>
+                                            </div> #}
+
+                                           {#  <div  class="tab-content">
+                                                <div class="arrowslick slider6aply">
+                                                 
+                                                {% for items in item.entity.field_award_component.value %}
+
+                                                    {{ drupal_entity('node', items.target_id, 'award_view') }}
+                                                                    
+                                                {% endfor %}
+
+                                                </div>
+                                            </div>  #}
+                                       
+                                      </section>
+                                </div> 
+                             </div> 
+                         
+                           </div>
+						   {% elseif item.entity.field_tab_type.value == 'life_niit' %}
+						   <div class="carrer-page">
+						                               <div id="{{ item.target_id }}">
+                                 
+
+                                 
+                                    <div class="row">
+                                    <div class="col-md-12 p-5 pt-0 mb-3">  
+                                       
+                                 {{ item.entity.field_career_description.value|raw  }}    
+
+                                    
+                                </div>
+							</div>
+                                {% for jobkey, items in item.entity.field_award_component %}
+                                
+
+   {% set awards_link = items.entity.field_awards_link.value %}
+   
+
+                                                   <div class="col-sm-4 mb-25">
+      <div class="bg-white">
+                                                      {% if awards_link is not empty %}
+                                                        <a href="{{awards_link}}" target="_blank">
+                                                        <img src ="{{ file_url(items.entity.field_image.entity.fileuri) }}" class="img-responsive" width="100%">
+                                                        
+														<a href="#" class="heading-carrer clr-{{ items.entity.id }}" data-toggle="modal" data-target="#myModal-{{ items.entity.id }}">{{ items.entity.title.value}}</a>
+                                                        </a>   
+                                                      {% else %}
+                                                        <img src ="{{ file_url(items.entity.field_image.entity.fileuri) }}" class="img-responsive" width="100%">
+                                                        
+														<a href="#" class="heading-carrer clr-{{ items.entity.id }}" data-toggle="modal" data-target="#myModal-{{ items.entity.id }}">{{ items.entity.title.value}}</a>
+                                                      {% endif %}          
+                                                          
+                                                      {% set text = items.entity.body.value|render|striptags %}
+                                                      <p class="text-career">{{ text|length > 250 ? text|slice(0, 250) ~ '...' : text|raw }}</p>
+                                                      {% set know_more_check = items.entity.field_know_more_popup.value %}
+                                                      {% if know_more_check is not empty %}
+                                                        
+                                                      {% endif %} 
+                                                    </div>
+                                
+
+                            </div>
+							{% endfor %}
+							{% for jobkey, items in item.entity.field_award_component.1 %}
+						
+    <div class="col-sm-12">
+      <div class="bg-white pb-0">
+      <div class="col-sm-4 pl-0"><img src="/india/themes/custom/nexus/assets/images/diversity.jpg" width="100%">
+      <a href="#" class="heading-carrer clr-1807" data-toggle="modal" data-target="#myModal-1807">DIVERSITY @ NIIT</a>
+</div>
+      <div class="col-sm-8 pl-0 pr-0"><p class="text-career">NIIT is committed to strengthening equality, advancement and diversity across every role.  In line with our values and beliefs that states our growth is the derivative of the growth of each one of us, we foster a non-discriminatory environment that nurtures and supports people from all backgrounds, nationalities, cultures, genders, and orientation.  We have positive regard for each one of us and embrace gender, culture, and social diversity.</p>
+</div>
+
+    </div>
+  </div>
+  <div class="know-more-popup modal fade" id="myModal-1807" role="dialog">
+											    <div class="modal-dialog">
+											    
+											      <!-- Modal content-->
+											      <div class="modal-content">
+											        <div class="modal-header">
+											          <button type="button" class="close" data-dismiss="modal">&times;</button>
+											          <h4 class="modal-title">DIVERSITY @ NIIT</h4>
+											        </div>
+											        <div class="modal-body">
+											          <p>NIIT is committed to strengthening equality, advancement and diversity across every role.  In line with our values and beliefs that states our growth is the derivative of the growth of each one of us, we foster a non-discriminatory environment that nurtures and supports people from all backgrounds, nationalities, cultures, genders, and orientation.  We have positive regard for each one of us and embrace gender, culture, and social diversity.</p>
+											        </div>
+											      </div>
+											      
+											    </div>
+											  </div>
+
+							
+							{% endfor %}
+							
+							  </div>
+							 
+
+
+
+						
+							 </div>
+							 {% for items in item.entity.field_award_component %}
+                                             {% set know_more_check = items.entity.field_know_more_popup.value %}
+                                              {% if know_more_check is not empty %}
+
+                                              <div class="know-more-popup modal fade" id="myModal-{{ items.entity.id }}" role="dialog">
+											    <div class="modal-dialog">
+											    
+											      <!-- Modal content-->
+											      <div class="modal-content">
+											        <div class="modal-header">
+											          <button type="button" class="close" data-dismiss="modal">&times;</button>
+											          <h4 class="modal-title">{{ items.entity.title.value }}</h4>
+											        </div>
+											        <div class="modal-body">
+											          <p>{{ items.entity.body.value|raw }}</p>
+											        </div>
+											      </div>
+											      
+											    </div>
+											  </div>
+											  {% endif %}
+											{% endfor %}   
+						   
+                           {% else %}
+
+                            <div id="{{ item.target_id }}">
+                               
+                                <div class="row">  
+                                    
+                                    <div class="col-md-12">  
+                                       
+                                 {{ item.entity.field_career_description.value|raw  }}    
+
+                                    </div>   
+                                </div>
+                                
+                                <div class="row">  
+                                    
+                                    <div class="col-md-12">  
+                                        {{ career_job_filter.first|raw }}
+
+                                        {# <div class="career-job-vacancy-data">{{ career_job_vacancy_data|raw }}</div> #}
+
+                                     {# {{ drupal_view('career_jobs', 'block_1') }} #}
+                                    </div>   
+                                </div>
+                                <div class="row hr-career-jobList mt-4 ml-2 mr-2">
+                                  <div class="col-md-3 border-right">
+                                     <div class="hr-job-filter">
+                                        {{ career_job_filter.second|raw }}
+                                      </div>
+                                  </div>
+                                  <div class="col-md-9 career-jobMobilePad">
+                                    <div class="career-job-vacancy-data">{{ career_job_vacancy_data|raw }}</div>
+                                  </div>
+                                </div>
+                                <div class="row">  
+                                    
+                                    <div class="col-md-12">  
+                                       
+                            {{ item.entity.field_footer_description.value|raw }}  
+                                            
+                                    </div>   
+                                </div>
+
+                            </div>   
+
+                           {% endif %}
+
+                        {% endfor %} 
+                    </div> 
+
+                </div>
+            </div> 
+
+        </div>
+    </div>
+</section> 

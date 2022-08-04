@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: show_appointment_form
+label: 'Show APPOINTMENT Form'
+icon_uuid: null
+description: 'Show APPOINTMENT Form'
+behavior_plugins: {  }

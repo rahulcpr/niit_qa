@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: header_slider_section
+label: 'Header Slider Images Section'
+icon_uuid: null
+description: 'Header Slider'
+behavior_plugins: {  }

@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.upcoming_past_event
+label: 'Upcoming & Past Event'
+targetEntityType: node
+cache: true

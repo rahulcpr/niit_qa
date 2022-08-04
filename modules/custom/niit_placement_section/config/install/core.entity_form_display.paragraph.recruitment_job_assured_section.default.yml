@@ -1,0 +1,58 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.recruitment_job_assured_section.field_icons
+    - field.field.paragraph.recruitment_job_assured_section.field_image
+    - field.field.paragraph.recruitment_job_assured_section.field_job_assured_body
+    - field.field.paragraph.recruitment_job_assured_section.field_job_assured_title
+    - image.style.thumbnail
+    - paragraphs.paragraphs_type.recruitment_job_assured_section
+  module:
+    - image
+    - paragraphs
+id: paragraph.recruitment_job_assured_section.default
+targetEntityType: paragraph
+bundle: recruitment_job_assured_section
+mode: default
+content:
+  field_icons:
+    type: entity_reference_paragraphs
+    weight: 3
+    settings:
+      title: Icons
+      title_plural: Icons
+      edit_mode: closed
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: recruitment_job_assured_icons
+    third_party_settings: {  }
+    region: content
+  field_image:
+    weight: 2
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+    region: content
+  field_job_assured_body:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_job_assured_title:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_mega_drive_name
+    - node.type.mega_drive
+    - paragraphs.paragraphs_type.placement_mega_drive
+id: paragraph.placement_mega_drive.field_mega_drive_name
+field_name: field_mega_drive_name
+entity_type: paragraph
+bundle: placement_mega_drive
+label: 'Mega Drive Name'
+description: 'Mega Drive Name'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      mega_drive: mega_drive
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

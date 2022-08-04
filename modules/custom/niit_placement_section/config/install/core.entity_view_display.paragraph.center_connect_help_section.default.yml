@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.center_connect_help_section.field_connect_help
+    - paragraphs.paragraphs_type.center_connect_help_section
+  module:
+    - entity_reference_revisions
+id: paragraph.center_connect_help_section.default
+targetEntityType: paragraph
+bundle: center_connect_help_section
+mode: default
+content:
+  field_connect_help:
+    type: entity_reference_revisions_entity_view
+    weight: 0
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content
+hidden: {  }

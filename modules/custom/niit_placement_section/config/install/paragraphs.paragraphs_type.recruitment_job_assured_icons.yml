@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: recruitment_job_assured_icons
+label: 'Recruitment Job Assured Icons'
+icon_uuid: null
+description: 'it is used for recruitment job assured icons.'
+behavior_plugins: {  }

@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_question
+    - paragraphs.paragraphs_type.faqs
+  module:
+    - faqfield
+id: paragraph.faqs.field_question
+field_name: field_question
+entity_type: paragraph
+bundle: faqs
+label: FAQs
+description: 'FAQs question answer.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  default_format: plain_text
+field_type: faqfield

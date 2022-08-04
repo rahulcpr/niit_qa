@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: after_event_gallery
+label: 'After Event Gallery'
+icon_uuid: null
+description: 'After Event Gallery'
+behavior_plugins: {  }

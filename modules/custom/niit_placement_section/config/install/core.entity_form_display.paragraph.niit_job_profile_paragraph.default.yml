@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.niit_job_profile_paragraph.field_recruiter_job
+    - field.field.paragraph.niit_job_profile_paragraph.field_recruiter_job_label
+    - paragraphs.paragraphs_type.niit_job_profile_paragraph
+id: paragraph.niit_job_profile_paragraph.default
+targetEntityType: paragraph
+bundle: niit_job_profile_paragraph
+mode: default
+content:
+  field_recruiter_job:
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_recruiter_job_label:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

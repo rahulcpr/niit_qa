@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_job_assured_body
+    - paragraphs.paragraphs_type.recruitment_job_assured_section
+id: paragraph.recruitment_job_assured_section.field_job_assured_body
+field_name: field_job_assured_body
+entity_type: paragraph
+bundle: recruitment_job_assured_section
+label: Body
+description: 'Recruitment job assured description.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

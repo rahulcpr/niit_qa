@@ -1,0 +1,57 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.assured_job_section.field_assured_cta
+    - field.field.paragraph.assured_job_section.field_assured_job_slider
+    - field.field.paragraph.assured_job_section.field_description
+    - field.field.paragraph.assured_job_section.field_label_title
+    - paragraphs.paragraphs_type.assured_job_section
+  module:
+    - link
+    - paragraphs
+id: paragraph.assured_job_section.default
+targetEntityType: paragraph
+bundle: assured_job_section
+mode: default
+content:
+  field_assured_cta:
+    weight: 3
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    type: link_default
+    region: content
+  field_assured_job_slider:
+    type: entity_reference_paragraphs
+    weight: 1
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_description:
+    weight: 2
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_label_title:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

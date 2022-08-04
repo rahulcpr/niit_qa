@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_gallery_video
+    - paragraphs.paragraphs_type.mega_drive_image_video_gallery
+id: paragraph.mega_drive_image_video_gallery.field_gallery_video
+field_name: field_gallery_video
+entity_type: paragraph
+bundle: mega_drive_image_video_gallery
+label: 'Gallery Video''s URL'
+description: 'Gallery Video'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

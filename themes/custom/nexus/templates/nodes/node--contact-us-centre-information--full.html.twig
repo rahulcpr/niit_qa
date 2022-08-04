@@ -1,0 +1,64 @@
+<section class="ProductBox blog-details-wrp">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumbs">
+                    <ul>
+                        <li> 
+                            <a href="/">Home / </a>
+                        </li>
+                        <li> Contact Us /</li> 
+                        <li>{{ label }}</li> 
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+           {% if (content.field_is_form_display[0]['#markup'] == '1') %}
+
+        <div class="row">
+            <div class="col-md-9"> 
+                <div class="blog-details">
+                    <div class="imgmain">
+                      {{ content.field_banner_image }} 
+                    </div> 
+                </div> 
+            </div>
+
+            <div class="col-md-3">
+                <div class="GetinTouch">
+                    {{ drupal_entity('webform','get_in_touch') }}
+                </div> 
+            </div> 
+        </div>
+    
+    {% else %}
+
+        <div class="row">
+            <div class="col-md-12"> 
+                <div class="blog-details">
+                    <div class="imgmain">
+                      {{ content.field_banner_image }} 
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+
+       {% endif %} 
+
+            <div class="row">
+                <div class="col-md-12">
+                 {{ content.body }}
+                </div>
+            </div>  
+            
+            <div class="row">
+                <div class="col-md-12">
+                 {{ drupal_view('centre_contact_information', 'block_1') }} 
+                </div>
+            </div>  
+
+            
+ 
+</section>

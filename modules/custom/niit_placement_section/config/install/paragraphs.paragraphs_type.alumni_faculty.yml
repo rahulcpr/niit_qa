@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: alumni_faculty
+label: 'STAR ALUMNI'
+icon_uuid: null
+description: 'Alumni & Faculty'
+behavior_plugins: {  }

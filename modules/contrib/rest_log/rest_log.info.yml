@@ -1,0 +1,14 @@
+name: 'Rest log'
+type: module
+description: 'Logs all REST responses and errors.'
+package: Web services
+core: 8.x
+core_version_requirement: ^8 || ^9
+dependencies:
+  - drupal:rest
+  - drupal:views
+
+# Information added by Drupal.org packaging script on 2021-12-20
+version: '2.0.3'
+project: 'rest_log'
+datestamp: 1640038635

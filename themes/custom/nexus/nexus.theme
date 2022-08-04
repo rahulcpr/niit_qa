@@ -1,0 +1,3120 @@
+<?php
+
+    /**
+     * Replace the Search Submit Button with a Font Awesome Character.
+     */
+    use Drupal\file\Entity\File;
+    use Drupal\node\Entity\Node;
+    use Drupal\taxonomy\Entity\Term;
+    use Drupal\views\Views;
+    use Drupal\Core\Form\FormState;
+    use Symfony\Component\HttpFoundation;
+    use Drupal\paragraphs\Entity\Paragraph;
+    use Drupal\Core\Entity\Query\QueryInterface;
+    use Drupal\user\Entity\User;
+    use Drupal\Core\Url; 
+    use Drupal\Core\Path\AliasManager;
+    use Drupal\image\Entity\ImageStyle;
+
+
+    function response_logger_microtime($function_call,$lineNO,$message){
+        date_default_timezone_set('Asia/Kolkata');
+        $duration = microtime(true);
+        $hours = (int)($duration/60/60);
+        $minutes = (int)($duration/60)-$hours*60;
+        $seconds = $duration-$hours*60*60-$minutes*60;
+        $time_response = date('H:i:').number_format((float)$seconds, 2, ':', '');
+        
+        \Drupal::logger('course_loadtime')->notice('@response: %lineNO ,  %time --message:-'.$message,
+            array(
+            '@response' => $function_call,
+            '%lineNO' => $lineNO,
+            '%time' => $time_response,
+        ));
+    }
+
+
+    function nexus_preprocess_menu(array &$variables) {
+        // echo 'hellllo';
+        if($variables['menu_name'] == 'main'){
+            foreach ($variables['items'] as $key => $item) {
+                $entity = \Drupal::entityTypeManager()->getStorage('menu_link_content')->loadByProperties(array('uuid'=>$item['original_link']->getDerivativeId()));
+                foreach($entity as $idMenu){
+                    if($idMenu->get('field_icon') != "") {
+                        $field_icon_id = $idMenu->get('field_icon')->getValue()[0]['target_id'];
+                        if(!empty($field_icon_id)){
+                            $img_url = file_create_url(File::load($field_icon_id)->getFileUri());
+                        }else{
+                            $img_url = "";
+                        }
+                        $variables['items'][$key]['field_icon'] = $img_url;
+                    }
+                        $myField = $idMenu->get('field_brand_menu_colour');
+                        $variables['items'][$key]['brand_colour_list'] = $myField->value;
+                }
+            }
+        }
+    }
+    /**
+     * @param $variables
+     */
+    function nexus_preprocess_webform(&$variables) {
+        ########################################################################
+        // Get Base URL.
+        $url = (isset($_ENV['DRUPAL_PROTOCOL_DOMAIN']) && !is_null($_ENV['DRUPAL_PROTOCOL_DOMAIN'] )) ? $_ENV['DRUPAL_PROTOCOL_DOMAIN']."/india/" : \Drupal::urlGenerator()
+        ->generateFromRoute('<front>', [], ['absolute' => TRUE]);
+        $variables['base_url'] = $url;
+        /* for lead form schools & enterprises, get type from url*/
+        $req = \Drupal::request()->query->get('ref');
+        $form_type = isset($req) && ($req == 'school' || $req == 'enterprises') ? $req : 'school';
+        $variables['school_enterprises'] = ucfirst($form_type);
+        ### This Parameter comes from ecommerce page
+        $centerName = \Drupal::request()->get('centerName');
+        $cityName = \Drupal::request()->get('cityName');
+        $ecomRelFeidSow = 0;
+        if(isset($centerName)&& !empty($centerName) && isset($cityName) && !empty($cityName)){
+        $ecomRelFeidSow = 1;    
+        }
+        $variables['ecomRelFeidSow'] = $ecomRelFeidSow; 
+        #End Ecommerce  
+        /*end lead form (school / enterprise)*/  
+    }
+    /**
+     * @param $form
+     * @param $form_state
+     */
+    function nexus_form_search_block_form_alter(&$form, &$form_state) {
+
+        $form['keys']['#attributes']['placeholder'][] = t('Type here');
+        $form['actions']['submit']['#value'] = html_entity_decode('&#128270;');
+        $form['actions']['submit']['#attributes']['class'][] = 'search-button';
+    }
+
+    
+    function nexus_theme_suggestions_page_alter(&$suggestions, &$vars) {
+        $http_error_suggestions = [
+            'system.403' => 'page__403',
+            'system.404' => 'page__404',
+        ];
+        $route_name = \Drupal::routeMatch()->getRouteName();
+        $vars['homepageform'] = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\HomePageMultistepForm');
+        if (isset($http_error_suggestions[$route_name])) {
+          $suggestions[] = $http_error_suggestions[$route_name];
+        }
+        if (\Drupal::routeMatch()->getRouteName() == 'entity.taxonomy_term.canonical' && $tid = \Drupal::routeMatch()->getRawParameter('taxonomy_term')) {
+            $term = Term::load($tid); 
+            $suggestions[] = 'page__taxonomy__' . $term->getVocabularyId();
+            $vars['termids'] = $tid;  
+
+            if($term->getVocabularyId() == 'hierarchy_category'){
+                $termChildArray =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadChildren($tid);
+                $termChildTid = [];
+                foreach($termChildArray as $key => $termChild) {
+                    if($termChild->get('field_is_active')->value == 1){
+                        
+                        if(!empty($termChild->get('field_cat_image')->target_id)){
+                            $img_url = (\Drupal\file\Entity\File::load($termChild->get('field_cat_image')->target_id))->url();
+                        }else{
+                            $img_url = '';
+                        }
+                        
+                        $termChildTid[$key]['txn_id'] = $termChild->get('tid')->value;
+                        $termChildTid[$key]['txn_name'] = $termChild->get('name')->value;
+                        $termChildTid[$key]['dsc'] = strip_tags($termChild->get('field_cat_summary')->value);
+                        $termChildTid[$key]['img'] = $img_url;
+                        $aliasManager = \Drupal::service('path.alias_manager');
+                        $term_url = $aliasManager->getAliasByPath('/taxonomy/term/' . $termChild->get('tid')->value);
+                        $termChildTid[$key]['url'] = $_ENV['DRUPAL_PROTOCOL_DOMAIN'].'/india'.$term_url;
+                    }
+                }
+                $vars['termChildTid'] = $termChildTid;
+                $vars['term_description'] = $term->description[0]->value;
+                $vars['term_sign_up_content'] = $term->field_sign_up_content[0]->value;
+                $uid = \Drupal::currentUser()->id();
+                if ($uid > 0) {
+                    $vars['user_signup_form_kc'] = 'Already_login';
+                    $roles = \Drupal::currentUser()->getRoles();
+                    if($roles[1] == 'niit' || $roles[1] == 'administrator'){
+                        $vars['current_user_id'] = $uid;
+                    }else{
+                        $vars['current_user_id'] = '';
+                    }
+                }else{
+                    $register_form = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\UserRegisterForm', 'KC');
+                    $vars['user_signup_form_kc'] = $register_form;
+                }
+                /*********************************************/
+
+                $cid = 'KMS:GetEventsData';
+                if ($cacheitem = \Drupal::cache()->get($cid)) {
+
+                    $cacheData = $cacheitem->data;
+                    $vars['getEventsData'] =  (array) $cacheData['getEventsData'];
+                    
+                }else{
+                    $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Get');
+                    if($tokenArray->status == 1){
+                        $token = $tokenArray->data->token;
+                        $eventsDataFields = [
+                                    'module' => 'content_data_by_field',
+                                    'field' => 'cgrp',
+                                    'val' => 'Event',
+                                    'order_by' => 'order_by',
+                                    'token' => $token
+                                ];
+                        $vars['getEventsData'] = \Drupal::service('custom_campaign.niit_kc_services')->GetAPICallMethod($eventsDataFields);
+
+                        $cacheObject = [
+                            'getEventsData' => $vars['getEventsData'],
+                        ];
+                        \Drupal::cache()->set($cid, $cacheObject);
+
+                    }
+
+                }
+
+                $catBanner = $term->field_cat_banner_section->getValue();
+                $termBannerArr = [];
+                $termBannerCount = 0;
+                foreach ( $catBanner as $element ) {
+                    $termBannerData = \Drupal\paragraphs\Entity\Paragraph::load( $element['target_id'] );
+                    $termBannerArr[$termBannerCount]['banner_image'] = (\Drupal\file\Entity\File::load($termBannerData->field_slider_image->getValue()[0]['target_id']))->url();
+                    if(!empty($termBannerData->field_mobile_image->getValue()[0]['target_id'])){
+                    $termBannerArr[$termBannerCount]['mobile_image'] = (\Drupal\file\Entity\File::load($termBannerData->field_mobile_image->getValue()[0]['target_id']))->url();
+                    }
+                    $termBannerArr[$termBannerCount]['banner_image_alt'] = $termBannerData->field_slider_image->getValue()[0]['alt'];
+                    $termBannerArr[$termBannerCount]['banner_title'] = $termBannerData->field_label->getValue()[0]['value'];
+                    $termBannerArr[$termBannerCount]['banner_discription'] = $termBannerData->field_image_description->getValue()[0]['value'];
+                    $termBannerArr[$termBannerCount]['banner_link'] = $termBannerData->field_slider_cta->getValue()[0]['uri'];
+                    $termBannerArr[$termBannerCount]['publish_details'] = $termBannerData->field_image_publish_details->getValue()[0]['value'];
+                    $termBannerCount ++;
+                }
+                $vars['termBannerData'] = $termBannerArr;
+                /*********************************************/
+            }
+
+            if(!is_null($term->field_cat_image[0])){
+                $vars['imagePath'] =  file_create_url($term->field_cat_image->entity->getFileUri()); 
+            }else{
+                $vars['imagePath']  = '';  
+            }     
+            $vars['term_name'] = $term->getName();
+     
+        }
+
+        /* Course page code start here */
+        $node = \Drupal::routeMatch()->getParameter('node');
+        $base_url = (isset($_ENV['DRUPAL_PROTOCOL_DOMAIN']) && !is_null($_ENV['DRUPAL_PROTOCOL_DOMAIN'] )) ? $_ENV['DRUPAL_PROTOCOL_DOMAIN']."/india/" : \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
+        if(!empty($node)) {
+           //$node_type = $node->getType();
+            if (is_object($node)) {
+             $node_type = $node->getType();
+            }
+            if($node_type == 'renniite_webpage'){
+                $suggestions[] = 'page__'.$node_type;
+                $vars['imageBroadcast'] = \Drupal\file\Entity\File::load($node->get('field_image_broadcast')->getValue()[0]['target_id'])->url();
+                $vars['youtubeLink'] =$node->get('field_youtube_link')->getValue()[0]['value'];
+            }
+            /******* Summer Fest event Content type *******Start*****/
+            if($node_type == 'fest_event'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+                $templateType = $node->field_select_template_fest->value;
+                switch ($templateType) {
+                    case 'summer_fest':
+                        $suggestions[] = 'page__summer_fest';
+                    break;
+                    default:
+                    break;
+                }
+            }
+            /******* Summer Fest event Content type *******End*****/
+            /** KPMG Page start **/
+            if($node_type == 'kpmg_page'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+                $suggestions[] = 'page__kpmg_page';
+            }
+            /** KPMG Page end **/
+            /** Interview Page start **/
+            if($node_type == 'interview_page'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+                $suggestions[] = 'page__interview';
+            }
+            /** Interview Page end **/
+            /** Self Paced Page start **/
+            if($node_type == 'self_paced_landing_page'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+                $suggestions[] = 'page__selfpacedlanding';
+
+                if(!empty($node->field_start_date->date)){
+                    $start_time = $node->field_start_date->date->getTimestamp();
+                }
+                if(!empty($node->field_enad_date->date)){
+                    $end_time = $node->field_enad_date->date->getTimestamp();
+                }
+
+                $stackathonLeadForm = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\StackathonLeadForm', $node->id());
+                        $vars['StackathonLeadForm'] = '<div id="StackathonLeadForm" class="modal fade leadLightBox StackathonLeadFormCls" role="dialog">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <button type="button" class="close leadCusCloseBtn" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>  
+                                  <div class="modal-body p-0">
+                                     '.render($stackathonLeadForm).'
+                                  </div>
+                                </div>
+                              </div>
+                            </div>';
+                $vars['timeinterval'] = date('h:i A', $start_time) .' - '. date('h:i A', $end_time);
+
+                $vars['getEventsData'] = '';
+
+                $cid = 'KMS:GetEventsData';
+                if ($cacheitem = \Drupal::cache()->get($cid)) {
+
+                    $cacheData = $cacheitem->data;
+                    $vars['getEventsData'] =  (array) $cacheData['getEventsData'];
+                    
+                }
+                else{
+
+                    $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Get');
+                    if($tokenArray->status == 1){
+                        $token = $tokenArray->data->token;
+                        $eventsDataFields = [
+                                    'module' => 'content_data_by_field',
+                                    'field' => 'cgrp',
+                                    'val' => 'Event',
+                                    'order_by' => 'order_by',
+                                    'token' => $token
+                                ];
+                        $vars['getEventsData'] = \Drupal::service('custom_campaign.niit_kc_services')->GetAPICallMethod($eventsDataFields);
+
+                        $cacheObject = [
+                            'getEventsData' => $vars['getEventsData'],
+                        ];
+                        \Drupal::cache()->set($cid, $cacheObject);
+
+                    }
+
+                }
+                
+            } 
+            /** Self Paced Page end **/
+            /** Listing Page start **/
+            if($node_type == 'listing_page'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+                $suggestions[] = 'page__listing_page';
+            }
+            /** Listing Page end **/
+            /** Knowledge center Home Page start **/
+            if($node_type == 'knowledge_center_slider'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+
+                $uid = \Drupal::currentUser()->id();
+                if ($uid > 0) {
+                    $vars['user_signup_form_kc'] = 'Already_login';
+                    $roles = \Drupal::currentUser()->getRoles();
+                    if($roles[1] == 'niit' || $roles[1] == 'administrator'){
+                        $vars['current_user_id'] = $uid;
+                    }else{
+                        $vars['current_user_id'] = '';
+                    }
+                
+                }else{
+                    $register_form = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\UserRegisterForm', 'KC');
+                    $vars['user_signup_form_kc'] = $register_form;
+                }
+                /***********************************************/
+
+                $cid = 'KMS:GetKC:Fullpage';
+                if ($cacheitem = \Drupal::cache()->get($cid)) {
+
+                    $cacheData = $cacheitem->data;
+
+                    $vars['getTaxonomyData'] =  (array) $cacheData['getTaxonomyData'];
+                    $vars['getArticleData'] =  (array) $cacheData['getArticleData'];
+                    $vars['getAuthorData'] =  (array) $cacheData['getAuthorData'];
+                    
+                }
+                else{
+
+                    $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Get');
+                    if($tokenArray->status == 1){
+                        $token = $tokenArray->data->token;
+                        
+                        $taxonomyDataFields = [
+                                'module' => 'taxonomy_data_by_name',
+                                'txn_name' => 'taxonomy1',
+                                'token' => $token
+                            ];
+                        $vars['getTaxonomyData'] = \Drupal::service('custom_campaign.niit_kc_services')->GetAPICallMethod($taxonomyDataFields);
+
+                        $articleDataFields = [
+                                'module' => 'content_data_by_field',
+                                'field' => 'cgrp',
+                                'val' => 'Article',
+                                'order_by' => 'order_by',
+                                'token' => $token
+                            ];
+                        $getArticleDataArray = \Drupal::service('custom_campaign.niit_kc_services')->GetAPICallMethod($articleDataFields);
+                        $vars['getArticleData'] = $getArticleDataArray;
+
+                        $authorDataFields = [
+                                'module' => 'content_data_by_field',
+                                'field' => 'cgrp',
+                                'val' => 'Author',
+                                'order_by' => 'order_by',
+                                'token' => $token
+                            ];
+                        $vars['getAuthorData'] = \Drupal::service('custom_campaign.niit_kc_services')->GetAPICallMethod($authorDataFields);
+
+                        $cacheObject = [
+                            'getTaxonomyData' => $vars['getTaxonomyData'],
+                            'getArticleData' => $vars['getArticleData'],
+                            'getAuthorData' => $vars['getAuthorData'],
+                        ];
+                        \Drupal::cache()->set($cid, $cacheObject);
+                    }
+
+                }
+
+                $cid = 'KMS:GetEventsData';
+                if ($cacheitem = \Drupal::cache()->get($cid)) {
+
+                    $cacheData = $cacheitem->data;
+                    $vars['getEventsData'] =  (array) $cacheData['getEventsData'];
+                    
+                }
+                else{
+
+                    $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Get');
+                    if($tokenArray->status == 1){
+                        $token = $tokenArray->data->token;
+                        $eventsDataFields = [
+                                    'module' => 'content_data_by_field',
+                                    'field' => 'cgrp',
+                                    'val' => 'Event',
+                                    'order_by' => 'order_by',
+                                    'token' => $token
+                                ];
+                        $vars['getEventsData'] = \Drupal::service('custom_campaign.niit_kc_services')->GetAPICallMethod($eventsDataFields);
+
+                        $cacheObject = [
+                            'getEventsData' => $vars['getEventsData'],
+                        ];
+                        \Drupal::cache()->set($cid, $cacheObject);
+
+                    }
+
+                }
+            
+                /***********************************************/
+                $suggestions[] = 'page__knowledge_center_home_page';
+            }
+            /** Knowledge center Home Page end **/
+            /** Niit Home Page start **/
+            if($node_type == 'home_page'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+                $vars['getKCArray'] = \Drupal::service('custom_campaign.niit_kc_services')->HomePageKCData();
+                // $cid = 'HomePage:GetEventsData';
+                // if ($cacheitem = \Drupal::cache()->get($cid)) {
+
+                //     $cacheData = $cacheitem->data;
+                //     $vars['getEventsData'] =  (array) $cacheData['getEventsData'];
+
+                // }
+                // else{
+
+                //     $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Get');
+                //     if($tokenArray->status == 1){
+                //         $token = $tokenArray->data->token;
+                //         $eventsDataFields = [
+                //                     'module' => 'content_data_by_field',
+                //                     'field' => 'cgrp',
+                //                     'val' => 'Event',
+                //                     'order_by' => 'order_by',
+                //                     'token' => $token
+                //                 ];
+                //         $vars['getEventsData'] = \Drupal::service('custom_campaign.niit_kc_services')->GetAPICallMethod($eventsDataFields);
+
+                //         $cacheObject = [
+                //             'getEventsData' => $vars['getEventsData'],
+                //         ];
+                //         \Drupal::cache()->set($cid, $cacheObject);
+
+                //     }
+
+                // }
+                $courseDataArr = [];
+    			$courseDataIds = $node->get('field_course_sec')->getValue();
+                if(!empty($courseDataIds)){
+                    foreach($courseDataIds as $key => $value){
+       					$courseData1 = Paragraph::load($value['target_id']);
+                        if(!empty($courseData1->field_course_category->getValue()[0]['target_id'])){
+                            $term = Term::load($courseData1->field_course_category->getValue()[0]['target_id']);
+                            $courseDataArr[$key]['categoryName'] = $term->get('name')->value;
+                        }else{
+                            $courseDataArr[$key]['categoryName'] = "";
+                        }
+       					$courseDataArr[$key]['categoryId'] = $courseData1->field_course_category->getValue()[0]['target_id'];
+       					$courseDataArr[$key]['courseIds'] = $courseData1->field_course->getValue();
+       				}
+                }
+				$vars['getCourseDataArr'] = $courseDataArr;
+
+
+
+                //$RequestACallBackForm = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\RequestACallBackForm');
+                //$vars['RequestACallBackForm'] = render($RequestACallBackForm);
+
+                $suggestions[] = 'page__homepage';
+            }
+            /** Niit Home Page end **/
+            /** Niit category Page Start **/
+            if($node_type == 'course_category'){
+				
+				$nid = $node->id();
+				$vars['top_category_filter'] = top_category_filter();
+				$vars['NiitCourseCategoryDetails'] = NiitCourseCategoryDetails('', '', '',$nid);               		
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+
+                $suggestions[] = 'page__course_category';
+            }
+            /** Niit category Page End **/
+            
+            /** Contact Us Page start **/
+            //line 333 to 337 not found in preoduction theme file
+            // if($node_type == 'contact_us'){
+            //     $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+            //     $vars['path_to_theme'] = $path_to_theme;
+            //     $suggestions[] = 'page__contact_us';
+            // }
+            /** Contact Us Page end **/
+            /*************************************
+             * merge code from production start  *
+             * **********************************/
+
+            /** Niit Privacy and policy Page start **/
+            if($node_type == 'niit_privacy_policy'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+                $suggestions[] = 'page__prvcy_plcy';
+            }
+            /** Niit Privacy and policy Page end **/
+            /***********************************
+             * merge code from production end  *
+             * ********************************/
+
+            /** Course Landing Page start **/
+            if($node_type == 'course_landing_page'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+
+                $course_template_type = $node->field_select_course_landing_type->value; //print_r($course_template_type); die();
+                switch ($course_template_type) {
+                    case 'course_icici':
+                        $suggestions[] = 'page__landing__course_icici';
+                    break;
+                    case 'course_axis':
+                        $vars['landing_page_type']='course_axis';
+                        $suggestions[] = 'page__landing__course_axis';
+                    break;
+                    case 'course_stack_route':
+                        $suggestions[] = 'page__landing__course_stackroute';
+                    break;
+                    case 'course_nokia':
+                        $vars['landing_page_type']='course_nokia';
+                        $suggestions[] = 'page__landing__course_axis';
+                        //$suggestions[] = 'page__landing__nokia_course';
+                	break;
+                    default:
+                    break;
+                }
+
+
+                $refernid = $node->field_related_course_reference->target_id;
+                
+                if (!empty($refernid) && is_numeric($refernid)){
+                    $noderefer = Node::load($refernid);
+                    $content_type_refer = $noderefer->getType();
+
+                    if($content_type_refer == 'course'){                        
+                        $vars['course_post_id'] = $refernid;
+                    }
+                }
+
+                
+
+
+                /* Testimonial  Start **/
+                $testimonialResult = [];
+                $nodeTesitmonialIds = $node->get('field_course_testimonials')->getValue();
+                if(!empty($nodeTesitmonialIds)){
+                    foreach ($nodeTesitmonialIds as $nodeTesitmonialId) {
+                        $nodeTesitmonialData = Node::load($nodeTesitmonialId['target_id']);
+                        if(!empty($nodeTesitmonialData->field_testimonial_type_new->target_id)){
+                            // $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$nodeTesitmonialId['target_id']]['testimonial_type'] = (Term::load($nodeTesitmonialData->field_testimonial_type_new->target_id))->getName();
+                            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$nodeTesitmonialId['target_id']]['title'] = $nodeTesitmonialData->getTitle();
+                            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$nodeTesitmonialId['target_id']]['video'] = $nodeTesitmonialData->field_testimonial_video->value;
+                            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$nodeTesitmonialId['target_id']]['about_testimonial'] = $nodeTesitmonialData->field_about_testimonial->value;
+                            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$nodeTesitmonialId['target_id']]['image_uri'] = (\Drupal\file\Entity\File::load($nodeTesitmonialData->field_testimonial_image->target_id))->url();
+                            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$nodeTesitmonialId['target_id']]['testimonial_description'] = $nodeTesitmonialData->field_testimonial_description->value;
+                            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$nodeTesitmonialId['target_id']]['testimonial_placement_company'] = $nodeTesitmonialData->field_placement_company->value;
+                        }
+                    }
+                }
+    
+                $iciciTestimonialTabOutput = '';
+                $iciciTestimonialTabDataOutput = '';
+                $iciciTestimonialCount = 0;
+                foreach ($testimonialResult as $key => $value) {
+                    $testimonialTypeName = (Term::load($key))->getName();
+                    if($iciciTestimonialCount == 0){
+                        $iciciTestimonialTabOutput .= '<li class="active"><a data-toggle="tab" href="#toggleTabIcici-'.$key.'">'.$testimonialTypeName.'</a></li>';
+                        $iciciTestimonialTabDataOutput .= '<div id="toggleTabIcici-'.$key.'" class="tab-pane fade in active">
+                        <div id="exampleSlider111-'.$iciciTestimonialCount.'" class="">
+                        <div class="MS-content">';   
+                    }else{
+                        $iciciTestimonialTabOutput .= '<li><a data-toggle="tab" href="#toggleTabIcici-'.$key.'">'.$testimonialTypeName.'</a></li>';
+                        $iciciTestimonialTabDataOutput .= '<div id="toggleTabIcici-'.$key.'" class="tab-pane fade">
+                        <div id="exampleSlider111-'.$iciciTestimonialCount.'" class="">
+                        <div class="MS-content">';   
+                    }                 
+                    foreach ($value as $key1 => $value1) {
+                        if (strlen($value1['testimonial_description']) > 150){
+                            $newTestimonialData = substr($value1['testimonial_description'], 0, 150) . '...';  
+                        }else{
+                            $newTestimonialData = $value1['testimonial_description'];  
+                        }
+                        if(!empty($value1['video'])){
+                            $iciciTestimonialTabDataOutput .= '<div class="item">
+                                <iframe width="100%" height="271" src="'.$value1['video'].'?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>';
+                        }else{
+                            $iciciTestimonialTabDataOutput .= '<div class="item landing-page">
+                                <a class="thumbnail" href="javascript:void(0);">
+                                    <img src="'.$value1['image_uri'].'" class="img-responsive" alt="'.$value1['title'].'">
+                                    <p class="mt-3">
+                                    '.$newTestimonialData.'
+                                    </p>
+                                    <h5 class="mt-5">-'.$value1['title'].'</h5>
+                                    <h6>'.$value1['testimonial_placement_company'].'</h6>
+                                </a>
+                            </div>';
+                        }
+                        
+                    }   
+                    $iciciTestimonialTabDataOutput .= '</div>
+                        <div class="MS-controls">
+                            <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                            <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                        </div>
+                        </div>
+                    </div>';
+                    $iciciTestimonialCount++;
+                }
+                $vars['iciciTestimonialTabOutput'] = $iciciTestimonialTabOutput;
+                $vars['iciciTestimonialTabDataOutput'] = $iciciTestimonialTabDataOutput;
+                /* Testimonial  Start **/
+            }
+            /** Course Landing Page end **/
+            /** Blog Page start **/
+            if($node_type == 'blog_post'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+                $suggestions[] = 'page__blogpost';
+                $vars['newsLetter'] = \Drupal::formBuilder()->getForm('Drupal\sso_user\Form\NewsLetterSubscribe');
+
+                $vars['not_logged'] = 0;
+                if(!empty($node->field_is_private_->value) && $node->field_is_private_->value = 1 && \Drupal::currentUser()->isAnonymous() ){
+                    $vars['not_logged'] = 1;
+                }
+
+                $vars['logged_user'] = 0;
+                $uid = \Drupal::currentUser()->id();
+                if ($uid > 0) {
+                    $vars['logged_user'] = $uid;
+                }
+            
+
+                $breadcrub = '';
+                $vars['main_category'] = '';
+                if(!empty($node->field_categories[0])){
+                    $category_id = $node->field_categories[0]->target_id;
+                    $term = Term::load($category_id);
+                    $term_path = \Drupal::service('path.alias_manager')->getAliasByPath('/taxonomy/term/'.$term->ID());
+                    $parent_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($term->ID());
+                    $parent_term = reset($parent_term);
+                    if(!empty($parent_term) && $parent_term->ID() > 0 ){
+                        $parent_id = $parent_term->ID();
+                        $parent_term_path = \Drupal::service('path.alias_manager')->getAliasByPath('/taxonomy/term/'.$parent_id);
+                        $subparent_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($parent_id);
+                        $subparent_term = reset($subparent_term);
+                        if(!empty($subparent_term) && $subparent_term->ID() > 0){
+                        $subparent_id = $subparent_term->ID();
+                        $subparent_term_path = \Drupal::service('path.alias_manager')->getAliasByPath('/taxonomy/term/'.$subparent_id);
+                        $subsubparent_term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($subparent_id);
+                        $subsubparent_term = reset($subsubparent_term);
+                        if(!empty($subsubparent_term) && $subsubparent_term->ID() > 0){
+                            $superparent_id = $subsubparent_term->ID();
+                            $susubparent_term_path = \Drupal::service('path.alias_manager')->getAliasByPath('/taxonomy/term/'.$superparent_id);
+
+                            $breadcumb = '<li><a href="/india'.$susubparent_term_path.'">'.$subsubparent_term->getName().'</a></li>
+                                        <li><a href="/india'.$subparent_term_path.'">'.$subparent_term->getName().'</a></li>
+                                        <li><a href="/india'.$parent_term_path.'">'.$parent_term->getName().'</a></li>
+                                        <li><a href="/india'.$term_path.'">'.$term->getName().'</a></li>';
+
+                            $vars['main_category'] = '<a href="/india'.$term_path.'">'.$term->getName().'</a>';
+
+                        }
+                        else{
+                            $breadcumb = '<li><a href="/india'.$subparent_term_path.'">'.$subparent_term->getName().'</a></li>
+                                        <li><a href="/india'.$parent_term_path.'">'.$parent_term->getName().'</a></li>
+                                        <li><a href="/india'.$term_path.'">'.$term->getName().'</a></li>';
+
+                            $vars['main_category'] = '<a href="/india'.$term_path.'">'.$term->getName().'</a>';
+                        }
+                        }
+                        else{
+                        $breadcumb = '<li><a href="/india'.$parent_term_path.'">'.$parent_term->getName().'</a></li>
+                                        <li><a href="/india'.$term_path.'">'.$term->getName().'</a></li>';
+
+                        $vars['main_category'] = '<a href="/india'.$term_path.'">'.$term->getName().'</a>';
+
+                        }
+                    }
+                    else{
+                        $vars['main_category'] = '<a href="/india'.$term_path.'">'.$term->getName().'</a>';
+                        $term_path = \Drupal::service('path.alias_manager')->getAliasByPath('/taxonomy/term/'.$term->id());
+                        $breadcumb = '<li><a href="/india'.$term_path.'">'.$term->getName().'</a></li>';
+                    }
+                }else{
+                    $vars['main_category'] = '';
+                    $breadcumb = '';
+                }
+
+                $vars['blog_breadcumb'] = $breadcumb;
+
+            }
+            /** Blog Page end **/
+            /** Webniar Page start **/
+            if($node_type == 'webinar'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+                $suggestions[] = 'page__webinar';
+
+                if(!empty($node->field_start_date->date)){
+                    $start_time = $node->field_start_date->date->getTimestamp();
+                }
+                if(!empty($node->field_enad_date->date)){
+                    $end_time = $node->field_enad_date->date->getTimestamp();
+                }
+
+                $vars['timeinterval'] = date('h:i A', $start_time) .' - '. date('h:i A', $end_time);
+
+                $vars['getEventsData'] = '';
+
+                $cid = 'KMS:GetEventsData';
+                if ($cacheitem = \Drupal::cache()->get($cid)) {
+
+                    $cacheData = $cacheitem->data;
+                    $vars['getEventsData'] =  (array) $cacheData['getEventsData'];
+                    
+                }
+                else{
+
+                    $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Get');
+                    if($tokenArray->status == 1){
+                        $token = $tokenArray->data->token;
+                        $eventsDataFields = [
+                                    'module' => 'content_data_by_field',
+                                    'field' => 'cgrp',
+                                    'val' => 'Event',
+                                    'order_by' => 'order_by',
+                                    'token' => $token
+                                ];
+                        $vars['getEventsData'] = \Drupal::service('custom_campaign.niit_kc_services')->GetAPICallMethod($eventsDataFields);
+
+                        $cacheObject = [
+                            'getEventsData' => $vars['getEventsData'],
+                        ];
+                        \Drupal::cache()->set($cid, $cacheObject);
+
+                    }
+
+                }
+                
+            }
+            /** Webniar Page end **/
+            /** Assessment Page start **/
+            // line 578 to 582 not used in production theme file
+            // if($node_type == 'self_assessment'){
+            //     $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+            //     $vars['path_to_theme'] = $path_to_theme;
+            //     $suggestions[] = 'page__self_assessment';
+            // }
+            /** Assessment Page end **/
+            /*******************************************/
+            /******* Niit Digital Page ******** Start **/
+            /*******************************************/
+            if($node_type == 'niit_digital'){
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $vars['path_to_theme'] = $path_to_theme;
+                $suggestions[] = 'page__niit_digital';
+            }
+            /*******************************************/
+            /******* Niit Digital  Page ********* End **/
+            /*******************************************/
+            if($node_type == 'course'){
+                $course_template_type = $node->field_select_template->value;
+                switch ($course_template_type) {
+                    case 'course_modular':
+                        $suggestions[] = 'page__'.$course_template_type.'_led'; // veriable call career_imageVideo_div
+                    break;
+                    case 'course_new_modular': 
+                        $suggestions[] = 'page__course_new_modular';
+                    break;
+                    case 'course_online_ilt':
+                        $suggestions[] = 'page__'.$course_template_type.'_course'; // veriable call career_imageVideo_div
+                    break;
+                    case 'course_career':
+                        $suggestions[] = 'page__'.$course_template_type.'_course';
+                    break;
+                    case 'course_stack_route_ilt':
+                        $suggestions[] = 'page__'.$course_template_type.'_course';
+                    break;
+                    case 'course_online_self':
+                        $suggestions[] = 'page__'.$course_template_type.'_course'; // veriable call career_imageVideo_div
+                    break;
+                    case 'course_icici':
+                        $suggestions[] = 'page__'.$course_template_type.'_course';
+                    break;
+                    case 'course_axis':
+                        $suggestions[] = 'page__'.$course_template_type;
+                    break;
+                    case 'course_nokia':
+                        $suggestions[] = 'page__'.$course_template_type;
+                    break;
+                    case 'course_wipro':
+                        $suggestions[] = 'page__course_nokia';
+                        $course_template_type = 'course_nokia';
+                    break;
+                    case 'course_new_stack_route':
+                        $vars['course_page_type']='course_new_stack_route';
+                        $suggestions[] = 'page__course_new_stack_route';
+                        $course_template_type = 'course_stack_route_ilt';
+                        $course_template_type_new ='course_new_stack_route';
+                    break;
+                    case 'course_stackathon':
+                        $vars['course_page_type']='course_stackathon';
+                        $suggestions[] = 'page__course_new_stack_route';
+                        $course_template_type = 'course_stack_route_ilt';
+                        $course_template_type_new ='course_new_stack_route';
+                    break;
+                    case 'course_selfpaced':
+                        $vars['course_page_type']='course_selfpaced';
+                        $suggestions[] = 'page__course_self_paced';
+                        $course_template_type = 'course_stack_route_ilt';
+                        $course_template_type_new ='course_self_paced';
+                    break;
+                    case 'course_campaign_page_template':
+                        $vars['course_page_type']='course_campaign_page_template';
+                        $suggestions[] = 'page__course_campaign_page_template';
+                        $course_template_type = 'course_stack_route_ilt';
+                        $course_template_type_new ='course_campaign_page_template';
+                    break;
+                    case 'course_new_landing_page':
+                        $vars['course_page_type']='course_new_landing_page';
+                        $suggestions[] = 'page__course_new_landing_page';
+                        $course_template_type = 'course_icici';
+                        $course_template_type_new ='course_new_landing_page';
+                    break;
+                    case 'course_program2022_page_template':
+                        $vars['course_page_type']='course_program2022_page_template';
+                        $suggestions[] = 'page__course_program2022_page_template';
+                        $course_template_type = 'course_stack_route_ilt';
+                        $course_template_type_new ='course_program2022_page_template';
+                    break;
+                    case 'course_icici_2022_template':
+                    $vars['course_page_type']='course_icici_2022_template';
+                    $suggestions[] = 'page__course_program2022_page_template';
+                    $course_template_type = 'course_icici';
+                    $course_template_type_new ='course_program2022_page_template';
+                    break;
+                    case 'course_landing2022_page_template':
+                    $vars['course_page_type']='course_landing2022_page_template';
+                    $suggestions[] = 'page__course_program2022_page_template';
+                    $course_template_type = 'course_stack_route_ilt';
+                    $course_template_type_new ='course_program2022_page_template';
+                    break;
+                    default:
+                    break;
+                }
+    
+                $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+                $current_path = \Drupal::request()->getRequestUri();
+                /* Preparing the varibales for templates */
+                $vars['related_courses'] =  views_embed_view('related_courses', 'related_course');				
+                $vars['path_to_theme'] = $path_to_theme;
+                $vars['course_post_title'] = $node->title->value;
+                $vars['course_post_short_desc'] = $node->field_course_summary->value;
+                $vars['course_field_why_niit_content'] = $node->field_why_niit_content->value;
+                $vars['course_post_id'] = $node->id();
+                $vars['course_details'] = $node->field_course_details->value;
+                $vars['course_eligibility'] = $node->field_course_eligibility->value;
+                $vars['course_image_desc'] = $node->field_testimonial_desc_moduler->value;
+                $vars['course_video_desc'] = $node->field_testimonial_video_desc->value;
+                $vars['main_course_code'] = (!empty($node->field_course_code->value))?$node->field_course_code->value:'';
+                $vars['courseCMSFee'] = '<del class="discountPriceSelf"><i class="fa fa-rupee"></i>  '.$node->field_course_fee->value.'</del>/- ';
+                $vars['courseFeeInformation'] = (!empty($node->field_fee_information->value))?'<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="'.$node->field_fee_information->value.'"></i>':'';
+                $vars['courseFAQTitle'] = (!empty($node->field_faq_title->value))?$node->field_faq_title->value:'';
+                $vars['coursefeeinr'] = niit_common_moneyFormatIndia( $node->field_course_fee->value );
+                $courseType = $node->field_delivery_mode_code->value;
+                $courseCode = $node->field_course_code->value;
+                $EnrollNowLink = $node->field_enroll_now_link->value;
+                $emitextprodpage = $node->field_no_cost_emi_text->value;
+                $presavingtext = $node->field_pre_total_saving_text->value;
+
+                if($node->field_select_template->value == 'course_stackathon'){
+                    $generateEnrollNowAndAccessBtn = \Drupal::service('niit_common.twig.TwigExtension')->generateEnrollNowAndAccessBtn($node->id(), $courseCode, 'Access Your Challenge', 'Participate Now', 'DetailPage');
+                    $vars['StackathonLeadForm'] = $generateEnrollNowAndAccessBtn['stackathonLeadForm'];
+                    $vars['StackathonLeadFormBtn'] = $generateEnrollNowAndAccessBtn['stackathonLeadFormBtn'];
+                    $vars['SelfpacedEmbedLeadForm'] = $generateEnrollNowAndAccessBtn['selfpacedEmbedLeadForm'];
+                }else if($node->field_select_template->value == 'course_selfpaced'){
+                    $generateEnrollNowAndAccessBtn = \Drupal::service('niit_common.twig.TwigExtension')->generateEnrollNowAndAccessBtn($node->id(), $courseCode, 'Access Your Course', 'Enroll Now', 'DetailPage');
+                    $vars['StackathonLeadForm'] = $generateEnrollNowAndAccessBtn['stackathonLeadForm'];
+                    $vars['StackathonLeadFormBtn'] = $generateEnrollNowAndAccessBtn['stackathonLeadFormBtn'];
+                    $vars['SelfpacedEmbedLeadForm'] = $generateEnrollNowAndAccessBtn['selfpacedEmbedLeadForm'];
+                }
+                else if($node->field_select_template->value == 'course_new_stack_route'){
+                    $generateEnrollNowAndAccessBtn = \Drupal::service('niit_common.twig.TwigExtension')->generateEnrollNowAndAccessBtn($node->id(), $courseCode, 'Access Your Course', 'Enroll Now', 'DetailPage');
+                    $vars['StackathonLeadForm'] = $generateEnrollNowAndAccessBtn['stackathonLeadForm'];
+                    $vars['StackathonLeadFormBtn'] = $generateEnrollNowAndAccessBtn['stackathonLeadFormBtn'];
+                }else{
+                    $vars['StackathonLeadForm'] = "";
+                    $vars['StackathonLeadFormBtn'] = "";
+                    $vars['SelfpacedEmbedLeadForm'] = "";
+                }
+                
+            
+            if($course_template_type_new == 'course_self_paced'){    
+                if(!empty($node->field_start_date->date)){
+                    $start_time = $node->field_start_date->date->getTimestamp();
+                }
+                if(!empty($node->field_enad_date->date)){
+                    $end_time = $node->field_enad_date->date->getTimestamp();
+                }
+
+                $vars['timeinterval'] = date('h:i A', $start_time) .' - '. date('h:i A', $end_time);
+
+                $vars['getEventsData'] = '';
+
+                $cid = 'KMS:GetEventsData';
+                if ($cacheitem = \Drupal::cache()->get($cid)) {
+
+                    $cacheData = $cacheitem->data;
+                    $vars['getEventsData'] =  (array) $cacheData['getEventsData'];
+                    
+                }
+                else{
+
+                    $tokenArray = \Drupal::service('custom_campaign.niit_kc_services')->generateJWTToken('Get');
+                    if($tokenArray->status == 1){
+                        $token = $tokenArray->data->token;
+                        $eventsDataFields = [
+                                    'module' => 'content_data_by_field',
+                                    'field' => 'cgrp',
+                                    'val' => 'Event',
+                                    'order_by' => 'order_by',
+                                    'token' => $token
+                                ];
+                        $vars['getEventsData'] = \Drupal::service('custom_campaign.niit_kc_services')->GetAPICallMethod($eventsDataFields);
+
+                        $cacheObject = [
+                            'getEventsData' => $vars['getEventsData'],
+                        ];
+                        \Drupal::cache()->set($cid, $cacheObject);
+
+                    }
+
+                }
+
+             }
+
+
+                $programCurriculumArr = [];
+                if($course_template_type == 'course_stack_route_ilt' && !empty($node->get('field_program_curriculum_1')->getValue()[0]['target_id'])){
+                    $programCurriculum = Node::load($node->get('field_program_curriculum_1')->getValue()[0]['target_id'])->field_main_curriculum_sec->getValue();
+
+                    $cid = 'Course:GetProgramCurriculum:'.$node->id();
+                    if ($cacheitem = \Drupal::cache()->get($cid)) {
+
+                        $cacheData = $cacheitem->data;
+                        $vars['programCurriculumArr'] =  (array) $cacheData['programCurriculumArr'];
+                        
+                    }else{
+
+                        foreach ( $programCurriculum as $key => $value ) {
+                            $paragraphsLoad = Paragraph::load( $value['target_id'] );
+
+                            $field_main_section = $paragraphsLoad->field_heading->getValue();
+                            $field_program_curriculum_sprints = $paragraphsLoad->field_program_curriculum_sprints->getValue();
+                            foreach($field_main_section as $key1 => $value1){
+                                $paragraphsLoad2 = Paragraph::load( $value1['target_id'] );
+                                $programCurriculumArr[$key]['title'] = $paragraphsLoad2->field_c_title->getValue()[0]['value'];
+                                $programCurriculumArr[$key]['Duration'] = $paragraphsLoad2->field_duration->getValue()[0]['value'];
+                            }
+                            foreach ($field_program_curriculum_sprints as $key2 => $value2) {
+                                $paragraphsLoad3 = Paragraph::load( $value2['target_id'] );
+                                $field_sprint_title = $paragraphsLoad3->field_sprint_title->getValue();
+                                $field_step = $paragraphsLoad3->field_step->getValue();
+                                foreach ($field_sprint_title as $key3 => $value3) {
+                                    $paragraphsLoad4 = Paragraph::load( $value3['target_id'] );
+                                    $programCurriculumArr[$key]['sprint'][$key2]['title'] = $paragraphsLoad4->field_c_title->getValue()[0]['value'];
+                                    $programCurriculumArr[$key]['sprint'][$key2]['Duration'] = $paragraphsLoad4->field_duration->getValue()[0]['value'];
+                                }
+                                foreach ($field_step as $key4=> $value4) {
+                                    $paragraphsLoad5 = Paragraph::load( $value4['target_id'] );
+                                    $field_1 = $paragraphsLoad5->field_1->getValue();
+                                    $field_2 = $paragraphsLoad5->field_2->getValue();
+                                    foreach ($field_1 as $key5 => $value5){
+                                        $paragraphsLoad6 = Paragraph::load( $value5['target_id'] );
+                                        $programCurriculumArr[$key]['sprint'][$key2]['step'][$key4]['title'] = $paragraphsLoad6->field_c_title->getValue()[0]['value'];
+                                        $programCurriculumArr[$key]['sprint'][$key2]['step'][$key4]['Duration'] = $paragraphsLoad6->field_duration->getValue()[0]['value'];
+                                    }
+                                    foreach ($field_2 as $key6 => $value6){
+                                        $paragraphsLoad7 = Paragraph::load( $value6['target_id'] );
+                                        $programCurriculumArr[$key]['sprint'][$key2]['step'][$key4]['activity'][$key6]['text'] = $paragraphsLoad7->field_text->getValue()[0]['value'];
+                                        $term = Term::load($paragraphsLoad7->field_c_icon->getValue()[0]['target_id']); 
+                                        $img_url = '';
+                                        if(!empty($term->field_cat_image->target_id)){
+                                            $img_url = (\Drupal\file\Entity\File::load($term->field_cat_image->target_id))->url();
+                                        }
+                                        $programCurriculumArr[$key]['sprint'][$key2]['step'][$key4]['activity'][$key6]['icon'] = $img_url;
+                                    }
+                                    
+                                }
+                            }
+                        }
+                        $vars['programCurriculumArr'] = $programCurriculumArr;
+                        $cacheObject = [
+                            'programCurriculumArr' => $vars['programCurriculumArr'],
+                        ];
+                        \Drupal::cache()->set($cid, $cacheObject);
+                    }
+                }
+
+                
+                /* Pass Course ID in simple array to get information about it like below */ 
+               
+                $MainEnrollmentdetails = \Drupal::service('niit_common.niit_related_courses')->coursePageAndFeeDetail($node);
+                $CourseEnrollNow = $MainEnrollmentdetails[0];
+                $vars['MainEnrollFee'] = (isset($CourseEnrollNow['course_api_fee']) && !empty($CourseEnrollNow['course_api_fee']))?courseFeeNumberToCurrencyConvert($CourseEnrollNow['course_api_fee']):'';
+                $vars['MainEnrollBaseFee'] = (isset($CourseEnrollNow['course_api_base_fee']) && !empty($CourseEnrollNow['course_api_base_fee']))?$CourseEnrollNow['course_api_base_fee'].'/-':'';
+                $CourseTotalReview = (isset($CourseEnrollNow['course_total_review']) && !empty($CourseEnrollNow['course_total_review']))?'| '.$CourseEnrollNow['course_total_review'].' Student reviews':'';
+                $CourseStudentEnrolled = (!empty($node->field_course_student_enrolled->value))?'| '.$node->field_course_student_enrolled->value.'':'';
+                $CourseRating = (!empty($node->field_course_newly_star_rating->value))? $node->field_course_newly_star_rating->value.' Rating':'';
+                $vars['mobileCourseRating'] = $CourseRating;
+                $CourseStarRatingValue = $node->field_course_newly_star_rating->value;
+                /* Course Star Rating Start: */
+                $CourseStarRating = '';
+                if(!empty($CourseStarRatingValue)){
+                    $CourseStarRating .= '<span class="mainCourseRating">';
+                    $CourseStarRating .= genarateStarRating($CourseStarRatingValue);
+                    $CourseStarRating .= '</span>';
+                }
+                $vars['CourseStarRating'] = $CourseStarRating;
+                /* Course star rating End: */
+                $vars['CourseReview'] = $CourseRating.' '.$CourseTotalReview.' '.$CourseStudentEnrolled;
+
+                if($node->field_select_template->value == 'course_stackathon' || $node->field_select_template->value == 'course_selfpaced' || $node->field_select_template->value == 'course_campaign_page_template' || $node->field_select_template->value == 'course_new_stack_route'){
+                    $field_course_batch_date = $node->get('field_course_batch_date')->getValue()[0]['value'];
+                    if(!empty($field_course_batch_date))
+                        {
+                        $vars['courseBatchStartDate'] = date('dS F Y', strtotime($field_course_batch_date));
+                        $vars['courseBatchStartDateTimeCounter'] = getCourseBatchStartDateTimeTimer(date('M d, Y H:i:s', strtotime($field_course_batch_date)));
+                        }
+                    else{
+                        $vars['courseBatchStartDate'] = date('dS F Y', strtotime($CourseEnrollNow['courseBatchDetail'][0]['batchStartDate']));
+                        $vars['courseBatchStartDateTimeCounter'] = getCourseBatchStartDateTimeTimer(date('M d, Y H:i:s', strtotime($CourseEnrollNow['courseBatchDetail'][0]['batchStartDate'])));
+                        }       
+                }
+
+
+
+                if($node->field_select_template->value == 'course_program2022_page_template'){
+                    $field_course_batch_date = $node->get('field_course_batch_date')->getValue()[0]['value'];
+                    if(!empty($field_course_batch_date))
+                        {
+                        $vars['courseBatchStartDate'] = date('F d, Y', strtotime($field_course_batch_date));
+                        $todaytm=strtotime("today");
+                        $todaydy=  date("Y-m-d", $todaytm);
+                        $date1=date_create($todaydy);
+                        $date2=date_create($field_course_batch_date);
+                        $diff=date_diff($date1,$date2);
+                        $signactualdays = $diff->format("%R%a");
+                        if ($signactualdays > 0){
+                        $actualdays = $diff->format("%a");    
+                        $vars['courseBatchRemainDays'] =  $actualdays.' days remaining';
+                        }
+                        else{
+                           $vars['courseBatchRemainDays'] = '0 days remaining'; 
+                        }
+                        }
+                    
+                        
+                        $vars['courseBatchStartDateTimeCounter'] = date('F d, Y', strtotime($CourseEnrollNow['courseBatchDetail'][0]['batchStartDate']. ' - 7 days'));
+                               
+                }
+
+
+
+                if($node->field_select_template->value == 'course_icici_2022_template'){
+                    
+                    
+                        $vars['courseBatchStartDate'] = date('F d, Y', strtotime($CourseEnrollNow['courseBatchDetail'][0]['batchStartDate']));
+                        $todaytm=strtotime("today");
+                        $todaydy=  date("Y-m-d", $todaytm);
+                        $date1=date_create($todaydy);
+                        $date2=date_create($CourseEnrollNow['courseBatchDetail'][0]['batchStartDate']);
+                        $diff=date_diff($date1,$date2);
+                        $signactualdays = $diff->format("%R%a");
+                        if ($signactualdays > 0){
+                        $actualdays = $diff->format("%a");    
+                        $vars['courseBatchRemainDays'] =  $actualdays.' days remaining';
+                        }
+                        else{
+                           $vars['courseBatchRemainDays'] = '0 days remaining'; 
+                        }
+                                 
+                               
+                }
+                
+                // $vars['courseBatchStartDate'] = date('dS F Y', strtotime($CourseEnrollNow['courseBatchDetail'][0]['batchStartDate']));
+                // $vars['courseBatchStartDateTimeCounter'] = getCourseBatchStartDateTimeTimer(date('M d, Y H:i:s', strtotime($CourseEnrollNow['courseBatchDetail'][0]['batchStartDate'])));
+
+                /* Main Enroll Now start: */
+                
+                if($course_template_type == 'course_modular' || $course_template_type == 'course_career'){
+                    $mainEnroll = '';
+                    if($course_template_type =='course_modular'){  
+                        if($CourseEnrollNow['course_enrollment_open'] == 1){
+                            if(!empty($CourseEnrollNow['course_api_fee']) && $CourseEnrollNow['course_api_fee'] != 0) {
+                                $mainEnroll .= '<p class="cust-btnEnrolNow"><a href="javascript:void(0);" class="btn btn-block btn-danger '.$CourseEnrollNow['course_id'].'" onclick="showEcomPoPup(\''.$CourseEnrollNow['course_id'].'\');">Enroll Now</a></p>';
+                                }else{
+                                    $mainEnroll .= '<p class="cust-btnEnrolNow"><a href="javascript:void(0);" class="btn btn-block btn-danger" disabled>Enroll Now</a></p>';
+                                }
+                            }
+                        else{
+                            if(!empty($CourseEnrollNow['course_api_fee']) && $CourseEnrollNow['course_api_fee'] != 0) {
+                                $mainEnroll .= '<p class="cust-btnEnrolNow"><a href="'.$CourseEnrollNow['course_enroll_now_link'].'" class="btn btn-block btn-danger">Enroll Now</a></p>';
+                            }else{
+                                $mainEnroll .= '<p class="cust-btnEnrolNow"><a href="javascript:void(0);" class="btn btn-block btn-danger">Enroll Now</a></p>';
+                            }
+                        }
+                    }else if($course_template_type =='course_career'){
+                        $mainEnroll .= '<p class="cust-btnEnrolNow career-btnEnrolNow"><a class="btn btn-danger career-btnEnrolNow cust-btnEnrolNow use-ajax" data-dialog-type="modal" href="/india/form/career-page-enquire-now?course_code='.$vars['main_course_code'].'&campaign_code='.$vars['campaign_code'].'&destination='.$current_path.'">Enquire Now</a></p>';
+                    }
+                    $vars['mainEnroll'] = $mainEnroll;
+                }
+                /* Main Enroll Now End: */ 
+                $vars['current_path'] = $current_path;
+                /**course image style load */
+                //course_axis 
+                $field_background_video_image = $node->get('field_background_video_image')->getValue()[0]['target_id']; 
+                if($field_background_video_image){
+                    $file = \Drupal\file\Entity\File::load($field_background_video_image);
+                    $vars['banner_image'] = ImageStyle::load('course')->buildUrl($file->getFileUri());
+                }
+                
+                $field_career_opportunity_image = $node->get('field_career_opportunity_image')->getValue()[0]['target_id']; 
+                if($field_career_opportunity_image){
+
+                    $file = \Drupal\file\Entity\File::load($field_career_opportunity_image);
+                    $vars['field_career_opportunity_image'] = ImageStyle::load('course')->buildUrl($file->getFileUri());
+                }
+
+                $field_3_step_process_mob_image = $node->get('field_3_step_process_mob_image')->getValue()[0]['target_id']; 
+                if($field_3_step_process_mob_image){
+
+                    $file = \Drupal\file\Entity\File::load($field_3_step_process_mob_image);
+                    $vars['field_3_step_process_mob_image'] = ImageStyle::load('course_banner_mobile')->buildUrl($file->getFileUri());
+                }
+
+                $field_program_overview_image = $node->get('field_program_overview_image')->getValue()[0]['target_id']; 
+                if($field_program_overview_image){
+
+                    $file = \Drupal\file\Entity\File::load($field_program_overview_image);
+                    $vars['field_program_overview_image'] = ImageStyle::load('course_style_800_500')->buildUrl($file->getFileUri());
+                }
+                
+                if($course_template_type == 'course_axis'){
+                    //path to success
+                    $paragraph_success = $node->field_path_to_success->getValue();
+                    $tab_active = 'active';
+                    foreach ( $paragraph_success as $key => $element ) {
+                        $paragraphs_load = Paragraph::load( $element['target_id'] );
+                        $file = file::load($paragraphs_load->field_image->getValue()[0]['target_id']);
+                        $image_src = ImageStyle::load('path_to_success')->buildUrl($file->getFileUri());
+	                    $tab_item.='<div role="tabpanel" class="tab-pane '.$tab_active.'" id="Section'.$key.'">';
+                            $tab_item.='<div class="col-md-4">';
+                                $tab_item.='<img src="'.$image_src.'" class="img-responsive" alt="field_path_to_success_title">
+	                        </div>';
+                            $tab_item.='<div class="col-md-8">'.$paragraphs_load->field_describe->getValue()[0]['value'].'</div>';
+                        $tab_item.='</div>';
+                        $tab_active = '';
+                    }
+                    $vars['field_path_to_success'] = $tab_item;
+
+
+                    $paragraph = $node->field_life_niit_university->getValue();
+                    $slider_active = 'active';
+                    foreach ( $paragraph as $element ) {
+                        $paragraphs_load = \Drupal\paragraphs\Entity\Paragraph::load( $element['target_id'] );
+                        $slider.='<div class="item '.$slider_active.'">';
+                                if(isset($paragraphs_load->field_video_url) && $paragraphs_load->field_video_url->getValue()[0]['value']){
+                                    $slider.='<iframe width="100%" src="'.$paragraphs_load->field_video_url->getValue()[0]['value'].'?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'; 
+                                }elseif(isset($paragraphs_load->field_image) && $paragraphs_load->field_image->getValue()[0]['target_id']){
+                                    $file = file::load($paragraphs_load->field_image->getValue()[0]['target_id']);
+                                    $image_src = ImageStyle::load('niit_university')->buildUrl($file->getFileUri());
+                                    $slider.='<img src="'.$image_src.'" alt="niit" class="img-responsive">';
+                                }
+                            $slider.='</div>';
+                        $slider_active = '';	
+                    }
+                    $vars['field_invest_future_now'] = $slider;
+                }
+
+
+                /* Course Center start here
+                    course_icici,
+                *course_modular,course_new_modular,course_online_ilt,course_career,course_stack_route_ilt,
+                *course_online_self,course_icici,course_axis,course_nokia
+                */
+                $batch_template = array(
+                    'course_modular' => 'course_modular',
+                    'course_online_ilt' => 'course_online_ilt',
+                    'course_online_self' => 'course_online_self',
+                    'course_icici' => 'course_icici',
+                );
+                if (in_array($course_template_type,$batch_template)) {
+                    $batchIdWith = $CourseEnrollNow;
+                    $course_center =\Drupal::service('niit_common.niit_related_courses')->GetBatchesUsingLocation();
+                    $batcheCourseCode =  !empty(($batchIdWith['courseBatchDetail']))?array_column($batchIdWith['courseBatchDetail'],'SRC_ICD'):'';
+                    if($course_template_type =='course_stack_route_ilt' || $course_template_type =='course_new_stack_route' || $course_template_type =='course_campaign_page_template' || $course_template_type =='course_program2022_page_template' || $course_template_type =='course_icici_2022_template'){ 
+                        $vars['batchAvailable'] = (!empty($batchIdWith['batchStartTime'][0]) && isset($batchIdWith['batchStartTime'][0]))?'New batches in '.$batchIdWith['courseBatchDetail'][0]['LocationCity'].' from<b style="margin-left: 3px;">'.date('d F',strtotime($batchIdWith['batchStartTime'][0])).'</b>':'';
+                    }else{
+                        $vars['batchAvailable'] = (!empty($batchIdWith['batchStartTime'][0]) && isset($batchIdWith['batchStartTime'][0]))?'New Batches available from<b style="margin-left: 3px;">'.date('d F',strtotime($batchIdWith['batchStartTime'][0])).'</b>':'';
+                    }
+                    if ($course_center['cityCenterList']) {
+                        $FinalCourseCenters =[];
+                        foreach ($course_center['cityCenterList'] as $key => $value) {
+                            if (in_array($value['centerCode'],$batcheCourseCode)) {
+                                $FinalCourseCenters[] = $value;
+                            }
+                        }
+                    }
+                    $currentCourseCenter = '';
+                    foreach ($FinalCourseCenters as $key => $value) {
+                        $currentCourseCenter .= '
+                        <div class="item">             
+                            <div class="CourseCenterDetail">
+                                <div class="row">
+                                    <div class="col-md-12 col-xs-12">
+                                        <div class="centerdetailName">
+                                            <h3><a href="#">'.$value['centerName'].'</a></h3> 
+                                        </div>
+                                            <div class="mapbox">
+                                                    <iframe src="https://maps.google.com/maps?q={{ '.$value['centerName'].' }}&hl=es;z=14&amp;output=embed" width="100%" height="300" frameborder="0" style="border:0" allowfullscreen>
+                                                    </iframe>
+                                                    <div class="text-add">
+                                                    <p class="usp-style"><a class="btn btn-block btn-call" href="tel:'.$value['centerPhone'].'"><b><i class="fa fa-phone"></i> '.$value['centerPhone'].'</b></a></p>
+                                                    <p class="usp-style"><img src="'.$base_url.'themes/custom/nexus/assets/images/fac.png" class="img-responsive"> <b>'.$value['centerUSPfaculty'].'</b></p>
+                                                    <p class="usp-style"><img src="'.$base_url.'themes/custom/nexus/assets/images/infra.png" class="img-responsive"> <b>'.$value['centerUSPinfra'].'</b></p>
+                                                    <p class="usp-style"><img src="'.$base_url.'themes/custom/nexus/assets/images/trust.png" class="img-responsive"> <b>'.$value['centerUSPtrust'].'</b></p>
+                                                    </div>
+                                                </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>';
+                    }
+                    $vars['currentCourseCenterList'] = $currentCourseCenter; 
+                }
+                /* End: */ 
+                /* Related Courses Information Start*/
+                $batch_template = array(
+                    'course_modular' => 'course_modular',
+                    'course_online_self' => 'course_online_self',
+                );
+                if (in_array($course_template_type,$batch_template)) {
+                    $related_course_ids = $node->get('field_related_courses')->getValue();
+                    if(!empty($related_course_ids)) {
+                        /* Pass value as simple array */ 
+                        $related_course_ids = array_column($related_course_ids,'target_id');
+                        /* Get the related course by using this function */
+                        $related_courses = \Drupal::service('niit_common.niit_related_courses')->niit_related_courses_info($related_course_ids);
+                        $r_course = courseRelatedCourses($related_courses,$node->field_select_template->value);
+                        $vars['related_course_list'] = $r_course;
+                        $vars['CourseTemplateCategory'] = $node->field_course_template_category->value;
+                    }
+                }
+
+                /*  Career Page variables Starts here*/
+                
+                //variable for career opportunity section ENDs here -(CO- Career opportunity)
+                /* Course Center start here
+                    course_icici,
+                *course_modular,course_new_modular,course_online_ilt,course_career,course_stack_route_ilt,
+                *course_online_self,course_icici,course_axis,course_nokia
+                */
+                $batch_template = array(
+                    'course_modular' => 'course_modular',
+                    'course_online_ilt' => 'course_online_ilt',
+                    'course_online_self' => 'course_online_self',
+                );
+                if (in_array($course_template_type,$batch_template)){
+                    $career_video_value = $node->get('field_course_video_review')->getValue();
+                    $career_image_value = $node->get('field_course_video_image_review')->getValue();
+                    $a ='active';
+                    foreach ($career_video_value as $key => $value) {
+                        $career_imageVideo_div .= '<div class="item '.$a.'"> 
+                                <iframe width="100%" height="225px" src="'.$value['input'].'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>                         
+                            </div>';
+                        $a='';
+                    }
+                    $careerVideoCount = count($career_video_value);
+                    $careerImageCount = count($career_image_value);
+                    $careerSliderCount = $careerVideoCount + $careerImageCount;
+                    foreach ($career_image_value as $key => $value) {
+                        $file = \Drupal\file\Entity\File::load($value['target_id']);
+                        $image_path = $file->url();
+                        $career_imageVideo_div .= '<div class="item '.$a.'">
+                            <img src="'.$image_path.'" alt="New York" style="width:100%; height:250px;">                        
+                        </div>';
+                        $a='';                  
+                    }
+                    for($i = 0; $i < $careerSliderCount; $i++){
+                    if($i == 0) {
+                            $careerSliderDotDiv .='<li data-target="#myCarousel55" data-slide-to="'.$i.'" class="active"></li>';
+                    }else{
+                            $careerSliderDotDiv .='<li data-target="#myCarousel55" data-slide-to="'.$i.'"></li>';
+                    }
+                    }
+                    
+                    
+                    $vars['career_imageVideo_div'] = $career_imageVideo_div;
+                    $vars['careerSliderDotDiv'] = $careerSliderDotDiv;
+                }
+                /**end career videoImage */
+                /* Course Center start here
+                    course_icici,
+                *course_modular,course_new_modular,course_online_ilt,course_career,course_stack_route_ilt,
+                *course_online_self,course_icici,course_axis,course_nokia
+                */
+                $batch_template = array(
+                    'course_axis' => 'course_axis',
+                    'course_nokia' => 'course_nokia',
+                    'course_icici' => 'course_icici',
+                    'course_career' => 'course_career',
+                    'course_new_modular' => 'course_new_modular',
+                );
+                if (in_array($course_template_type,$batch_template)){
+                    $nodeTesitmonialIds = $node->get('field_course_testimonials')->getValue();
+                    $nodeTesitmonialIds = array_column($nodeTesitmonialIds,'target_id');
+                    $testimonialResult = courseTestimonial($nodeTesitmonialIds);
+                    
+                    $vars['iciciTestimonialTabOutput'] = $testimonialResult['iciciTestimonialTabOutput'];
+                    $vars['iciciTestimonialTabDataOutput'] = $testimonialResult['iciciTestimonialTabDataOutput'];
+                    
+                }
+                
+                
+                if($course_template_type == 'course_career' || $course_template_type == 'course_icici' || $course_template_type == 'course_new_modular'){
+                    $vars['courseRatingAndReviewData'] = courseRatingAndReviewData($node->id());
+                    $vars['genarateRatingDataCount'] = genarateRatingDataCount($node->id());
+                }
+
+
+                if($course_template_type =='course_online_ilt' ||  $course_template_type  == 'course_online_self' ||  $course_template_type  == 'course_stack_route_ilt' || $course_template_type =='course_career' || $course_template_type =='course_icici' || $course_template_type =='course_axis' || $course_template_type =='course_new_stack_route' || $course_template_type =='course_campaign_page_template' || $course_template_type =='course_program2022_page_template' || $course_template_type =='course_icici_2022_template'){ 
+                    $course_delivery_mode_code = !empty($node->field_delivery_mode_code->value)?$node->field_delivery_mode_code->value:'';
+                    $courseProceedButton = !empty($node->field_proceed_button_link->value)?$node->field_proceed_button_link->value:'';
+                    $course_code = !empty($node->field_course_code->value)?$node->field_course_code->value:'';
+                    $batchIdWith = \Drupal::service('niit_common.niit_related_courses')->get_course_fee_and_details($course_delivery_mode_code,$course_code);
+                    $batchDataOutputCount = count($batchIdWith['courseBatchDetail']);
+                    $actual_link = "{$_ENV['DRUPAL_PROTOCOL_DOMAIN']}{$_SERVER['REQUEST_URI']}";
+                    // $actual_link = "https://sandbox-qa.niit.com/".$_SERVER['REQUEST_URI'];
+                    $site_current_url = $actual_link;
+                    $k = 1;
+
+                    $batchDataOutputPrice = $batchDataOutput = $batchDataOutputPriceModal = '';
+                    foreach ($batchIdWith['courseBatchDetail'] as $batchKey => $batchData) {
+                        if($course_template_type  == 'course_axis'){
+                            $batchDataOutputPrice .= '<h6>For more payment options </h6>
+                                <button type="button" class="btn btn-primary btn-block paymentOpt" data-toggle="modal" data-target="#myModal'.$k.'">View payment plans</button>';
+                        }elseif($course_template_type_new == 'course_new_stack_route' || $course_template_type_new =='course_campaign_page_template' || $course_template_type_new == 'course_program2022_page_template' || $course_template_type_new == 'course_icici_2022_template'){
+                            /*************************************/
+                            /* merge code from production start  */
+                            /*************************************/
+                            
+                            
+                            
+                            $fees_batch = '
+                            <div class="product_page_feesSection myModalnew'.$k.'">
+                              <h3>Program Fee</h3>
+                              <h2 class="mt-5">Rs.'.$node->field_course_fee->value.'';
+                              
+                            if(!empty($node->field_course_sticker_fee->value)){
+                               $fees_batch .= ' <span><del>Rs. '.$node->field_course_sticker_fee->value.'*</del></span>';
+                            }           
+
+                             $fees_batch .= '</h2>
+                                    <p><small>Excluding GST @ 18%</small></p>';
+
+                             if(!empty($node->field_saving_amount->value)){
+                             $fees_batch .= '<div class="saving_text"><p>'.$node->field_pre_total_saving_text->value.' : <b>Rs. '.$node->field_saving_amount->value.'</b></p></div>';
+                            }
+
+                            $fees_batch .= '
+                                <div class="price-sec-emi-text">
+                                    <small><img class="media-object" src="/india/themes/custom/nexus/assets/images/noun_verify_2969189.png" alt="NIIT program benefit"></small>
+                                    <h4><small>'.$emitextprodpage.'</small></h4>
+                                </div> 
+
+                                        <button type="button" class="btn-block new_applyNow_btns mt-5 paymentOpt" data-toggle="modal" data-target="#myModal'.$k.'">View Payment plans</button>
+
+                                        
+                                </div>';
+
+                            /*************************************/
+                            /* merge code from production end  */
+                            /*************************************/
+                           if($k == 2){continue;} 
+                           $batchDataOutput .= '                    
+                             <div class="col-md-8 h-50  batches_lists'.$k.'">';
+
+                           foreach ($batchIdWith['courseBatchDetail'] as $batchKey => $batchData) {
+                            $batchstrdt = explode("T",$batchData['batchStartDate']);
+                            $batchstartday = date("l", mktime($batchstrdt[0]));
+                            $batchstartday = substr($batchstartday,0,3);
+                            $batchDataOutput .= '                    
+                                <div class="batches_lists">
+                                  <div class="col-md-3 col-xs-4">
+                                    <p><small>Batch starts</small></p>
+                                  <h3>'.$batchData['BatchDD'].'/'.$batchData['BatchMM'].'/'.$batchData['BatchYY'].'</h3>
+                                  </div>
+
+                                  <!--div class="col-md-2 col-xs-2">
+                                    <p><small>Day</small></p>
+                                  <h3>'.$batchstartday.' </h3>
+                                  </div-->
+
+                                    <div class="col-md-7 col-xs-6">
+                                    <p><small>Time</small></p>
+                                  <h3>'.$batchData['batchTimings'].' </h3>
+                                  </div>
+                                </div>
+
+                              ';}
+
+                         $batchDataOutput .= '  
+                            </div>';
+
+                        if($k == 2){continue;}
+                        $batchDataOutput .= '  
+                            <div class="col-md-4">
+                                '.$fees_batch.'
+                            </div>';
+                            /** line 888 merge from production */
+                            if($batchData['isInstallmentAvailable'] == 'Y'){
+                                $batchDataOutputPrice .= '<h6>For more payment option </h6>
+                                <button type="button" class="btn btn-primary btn-block paymentOpt" data-toggle="modal" data-target="#myModal'.$k.'">View payment plans</button>';
+                            }
+                        }
+                        elseif($course_template_type  == 'course_stack_route_ilt'){
+                            /*************************************/
+                            /* merge code from production start  */
+                            /*************************************/
+                            $fees_batch = '<h5 class="ProgPrice">
+                                      <i class="fa fa-rupee"></i> '.courseFeeNumberToCurrencyConvert($batchData['batchFees']).'
+                                    </h5>
+                                    <p><small>(Excluding GST @ 18%)</small></p>';
+                            if($course_code == 'POS51'){
+                                $fees_batch = '<h5 class="ProgPrice">
+                                                <i class="fa fa-rupee"></i> 1,99,999/-
+                                              </h5>
+                                              <p><small>(Excluding GST @ 18%)</small></p>';
+                            }
+                            /*************************************/
+                            /* merge code from production end  */
+                            /*************************************/
+                            $batchDataOutput .= '
+                            <div class="col-md-3 pl-5">
+                                <h5>Start Date</h5>
+                                <p class="pb-0">
+                                    <span class="colortext">'.$batchData['BatchDD'].' '.$batchData['BatchMM'].' '.$batchData['BatchYY'].'</span>
+                                </p>
+                            </div>
+                            <div class="col-md-3">
+                                <h5>Timings</h5>
+                                <p class="pb-0">
+                                    <span class="colortext">'.$batchData['batchTimings'].'</span>
+                                </p>
+                            </div>
+                            <div class="col-md-3">
+                                <h5>Location</h5>
+                                <span class="colortext">ONLINE</span>
+                            </div>
+                            <div class="col-md-3">
+                                '.$fees_batch.'
+                            </div>';
+                            /** line 888 merge from production */
+                            if($batchData['isInstallmentAvailable'] == 'Y'){
+                                $batchDataOutputPrice .= '<h6>For more payment option </h6>
+                                <button type="button" class="btn btn-primary btn-block paymentOpt" data-toggle="modal" data-target="#myModal'.$k.'">View payment plans</button>';
+                            }
+                        }
+                        elseif($course_template_type == 'course_career' || $course_template_type == 'course_icici'){
+                            if(!empty($node->field_no_cost_emi_text->value)){
+                                $noCostEMITextData = '<p class="pb-0"><span class="colortext"><i>'.$node->field_no_cost_emi_text->value.'</i></span></p>';
+                            }else{
+                                $noCostEMITextData = '';
+                            }
+                            if($batchKey == 0){
+                                $course_delivery_mode_text = !empty($node->field_mode_of_delivery->value)?$node->field_mode_of_delivery->value:'';
+                                if($course_template_type == 'course_career'){
+                                    $batchDataOutput .= '<div class="col-md-2 pl-2">
+                                        <h5>Start Date</h5>
+                                        <p class="pb-0">
+                                            <span class="colortext">'.$batchData['BatchDD'].' '.$batchData['BatchMM'].'</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3 pl-0">
+                                        <h5>Timings</h5>
+                                        <p class="pb-0">
+                                            <span class="colortext">'.$batchData['batchTimings'].'</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-2 pl-2">
+                                        <h5>Delivery Mode</h5>
+                                        <p class="pb-0">
+                                            <span class="colortext">'.$course_delivery_mode_text.'</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3 m-dl-flex pl-0 pr-0">
+                                        <h3 class="ProgPrice"><i class="fa fa-rupee"></i> '.courseFeeNumberToCurrencyConvert($batchIdWith['CenterBatchFee']).'</h3>';
+                                        if(!empty($batchIdWith['centerBaseFee'])){
+                                            $batchDataOutput .= '<del class="stipeProgPrice">
+                                                        <i class="fa fa-rupee"></i> '.courseFeeNumberToCurrencyConvert($batchIdWith['centerBaseFee']).'
+                                                        </del>'; 
+                                        }
+                                    $batchDataOutput .=   $noCostEMITextData.'</div>';
+                                    if($node->field_additional_off->value){
+                                        $batchDataOutput .=   '<div class="col-md-2">
+                                                                    <div class="discount-coupon-ribon">
+                                                                    <p>'.$node->field_additional_off->value.'</p>
+                                                                    </div>
+                                                                </div>';
+                                    }
+
+                                }
+                                elseif( $course_template_type == 'course_icici'){
+                                    $batchDataOutput .= '<div class="col-md-3 pl-5">
+                                        <h5>Start Date</h5>
+                                        <p class="pb-0">
+                                            <span class="colortext">'.$batchData['BatchDD'].' '.$batchData['BatchMM'].'</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h5>Timings</h5>
+                                        <p class="pb-0">
+                                            <span class="colortext">'.$batchData['batchTimings'].'</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h5>Delivery Mode</h5>
+                                        <p class="pb-0">
+                                            <span class="colortext">'.$course_delivery_mode_text.'</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3 class="ProgPrice">
+                                        <i class="fa fa-rupee"></i> '.courseFeeNumberToCurrencyConvert($batchIdWith['CenterBatchFee']).'
+                                        </h3>';
+                                        if(!empty($batchIdWith['centerBaseFee'])){
+                                        $batchDataOutput .=   '<del class="stipeProgPrice">
+                                                            <i class="fa fa-rupee"></i> '.courseFeeNumberToCurrencyConvert($batchIdWith['centerBaseFee']).'
+                                                            </del>'; 
+                                        }
+                                       
+                                    $batchDataOutput .=   $noCostEMITextData.'</div>';
+
+                                }
+                                else{
+                                    $batchDataOutput .= '<div class="col-md-3 pl-5">
+                                        <h5>Start Date</h5>
+                                        <p class="pb-0">
+                                            <span class="colortext">'.$batchData['BatchDD'].' '.$batchData['BatchMM'].'</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h5>Timings</h5>
+                                        <p class="pb-0">
+                                            <span class="colortext">'.$batchData['batchTimings'].'</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h5>Delivery Mode</h5>
+                                        <p class="pb-0">
+                                            <span class="colortext">'.$course_delivery_mode_text.'</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3 class="ProgPrice">
+                                        <i class="fa fa-rupee"></i> '.courseFeeNumberToCurrencyConvert($batchIdWith['CenterBatchFee']).'
+                                        </h3>';
+                                        if(!empty($batchIdWith['centerBaseFee'])){
+                                        $batchDataOutput .=   '<del class="stipeProgPrice">
+                                                            <i class="fa fa-rupee"></i> '.courseFeeNumberToCurrencyConvert($batchIdWith['centerBaseFee']).'
+                                                            </del>'; 
+                                        }
+                                    $batchDataOutput .=   '</div>';
+
+                                }
+                                /******* View Payment Plan btn code*********** Start ***********/
+                                if($course_template_type == 'course_career'){
+                                    $batchDataOutputPrice .= '<h6>For more payment option </h6>
+                                                            <button type="button" class="btn btn-primary btn-block paymentOpt" data-toggle="modal" data-target="#myModal'.$k.'">View payment plans</button>';
+                                }else{
+                                    if($batchData['isInstallmentAvailable'] == 'Y'){
+                                        $batchDataOutputPrice .= '<h6>For more payment option </h6>
+                                                            <button type="button" class="btn btn-primary btn-block paymentOpt" data-toggle="modal" data-target="#myModal'.$k.'">View payment plans</button>';
+                                    }
+                                }
+                                /******* View Payment Plan btn code*********** End ***********/               
+
+                            }
+                        }else{
+                            if($k == 1){
+                                $vars['MainEnrollFeeD2h'] = $batchData['batchFees'].'/-';
+                                $batchDataOutput .= '<div class="col-md-12 batchBorder">';
+                            }else{
+                                $batchDataOutput .= '<div class="col-md-12 batchBorder mt-2">';
+                            }
+                            $batchDataOutput .= ' <div class="row">';
+                                $batchDataOutput .= '<div class="col-md-4 col-xs-4">
+                                    <h3 class="batchDate">'.$batchData['BatchMM'].' '.$batchData['BatchDD'].' - '.$batchData['BatchEndMM'].' '.$batchData['BatchEndDD'].'</h3>
+                                    <h5 class="WeekendCss">'.$batchData['WeekType'].'</h5>
+                                </div>
+                                <div class="col-md-5 col-xs-4">
+                                    <h3 class="batchTime">Timings</h3>
+                                    <p class="BatchTim">'.$batchData['batchTimings'].'</p>
+                                </div>
+                                <div class="col-md-2 col-xs-2">
+                                    <h3 class="batchDate"><i class="fa fa-rupee"></i> '.courseFeeNumberToCurrencyConvert($batchData['batchFees']).'</h3>
+                                    <h5 class="WeekendCssGST">( Excluding GST @ 18% )</h5>
+                                </div>';
+                                
+                                $batchDataOutput .= '<div class="col-md-1 col-xs-2">
+                                    <div class="CustomRadioBtn">';
+                                        if($k == 1){
+                                            $batchDataOutput .= '<input type="radio" onclick="radioButtonClick(\''.$k.'\');" id="test'.$k.'" value="'.$batchData['batchID'].'" name="priceRedioButton" checked="checked"><label for="test'.$k.'"></label>';
+                                        }else{
+                                            $batchDataOutput .= '<input type="radio" id="test'.$k.'" onclick="radioButtonClick(\''.$k.'\');" value="'.$batchData['batchID'].'" name="priceRedioButton"><label for="test'.$k.'"></label>';
+                                        }
+                                        $batchDataOutput .= '<form id="enrollForm-'.$batchData['batchID'].'" action="'.$courseProceedButton.'" method="post">
+                                            <input type="hidden" name="pCourseCode" value="'.$batchData['courseCode'].'">
+                                            <input type="hidden" name="pModalId" value="'.$batchData['batchType'].'">
+                                            <input type="hidden" name="pcollectionPlanId" value="'.$batchData['patternCode'].'">
+                                            <input type="hidden" name="pbatchId" value="'.$batchData['batchID'].'">
+                                            <input type="hidden" name="pSrcId" value="'.$batchData['SRC_ICD'].'">
+                                            <input type="hidden" name="pDstId" value="'.$batchData['DST_ICD'].'">
+                                            <input type="hidden" name="pisUserLoggedIn" value="N">
+                                            <input type="hidden" name="pBatchTimings" value="'.$batchData['batchTimings'].'">
+                                            <input type="hidden" name="pBatchStartDate" value="'.$batchData['batchStartDate'].'">
+                                            <input type="hidden" name="pBatchEndDate" value="'.$batchData['batchEndDate'].'">
+                                            <input type="hidden" name="pFee" value="'.$batchData['batchFees'].'">
+                                            <input type="hidden" name="CourseId" value="'.$batchData['courseID'].'">
+                                            <input type="hidden" name="CourseVersion" value="1">
+                                            <input type="hidden" name="CategoryName" value="Digital Marketing">
+                                            <input type="hidden" name="SeoUrl" value="web-apps-development-courses-online/web-apps-development-using-node-js">
+                                            <input type="hidden" name="pcheckEnroll" value="ENROLL">
+                                            <input type="hidden" name="bthcurrencyCode" value="'.$batchData['currencyCode'].'">
+                                            <input type="hidden" name="bthSymbolType" value="'.$batchData['SymbolType'].'">
+                                            <input type="hidden" name="bthSymbolValue" value="'.$batchData['SymbolValue'].'">
+                                            <input type="hidden" name="Minimum_Denomination" value="'.$batchData['Minimum_Denomination'].'">
+                                            <input type="hidden" name="Minimum_Denomination_Value" value="'.$batchData['Minimum_Denomination_Value'].'">
+                                            <input type="hidden" name="IsTax_IncludeIN_Collection" value="'.$batchData['IsTax_IncludeIN_Collection'].'">
+                                            <input type="hidden" name="SourcePlatformName" value="NIITCOM">
+                                            <input type="hidden" name="RequestName" value="Enrollment">
+                                            <input type="hidden" name="NIITCourseURL" value="'.$site_current_url.'">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div></div>';
+                            if($k == 1){
+                                $batchDataOutputPrice .= '<div class="upcomingBatchesPrice upcomingBatchesCount'.$batchDataOutputCount.'" id ="priceSection'.$k.'">
+                                                        <p class="cust-btnEnrolNow"><a href="javascript:void(0);" onclick="enrollNowSubmit(\''.$batchData['batchID'].'\')" class="btn btn-block btn-danger">enroll now</a></p>';
+                                    if($batchData['isInstallmentAvailable'] == 'Y'){
+                                        $batchDataOutputPrice .= '<small>For more payment option <a href="javascript:void(0);" data-toggle="modal" data-target="#myModal'.$k.'"><u>click here</u></a></small>';
+                                    }else{
+                                        $batchDataOutputPrice .= '<small class="visibility-hide">For more payment option <a href="javascript:void(0);" data-toggle="modal" data-target="#myModal'.$k.'"><u>click here</u></a></small>';
+                                    }
+                                    
+                                    $batchDataOutputPrice .= '</div>';
+                                    $vars['MainEnrollSelfPaced'] = '<p class="cust-btnEnrolNow"><a href="javascript:void(0);" class="btn btn-block btn-danger" onclick="enrollNowSubmit(\''.$batchData['batchID'].'\')">Enroll Now</a></p>';
+                                    $vars['MainEnrollSelfPacedSticky'] = ' onclick="enrollNowSubmit(\''.$batchData['batchID'].'\')" ';
+                            }else{
+                                $batchDataOutputPrice .= '<div class="upcomingBatchesPrice upcomingBatchesCount'.$batchDataOutputCount.'" id ="priceSection'.$k.'" style="display: none;">
+                                                    <p class="cust-btnEnrolNow"><a href="javascript:void(0);" onclick="enrollNowSubmit(\''.$batchData['batchID'].'\')" class="btn btn-block btn-danger">enroll now</a></p>';
+                                if($batchData['isInstallmentAvailable'] == 'Y'){
+                                    $batchDataOutputPrice .= '<small>For more payment option <a href="javascript:void(0);" data-toggle="modal" data-target="#myModal'.$k.'"><u>click here</u></a></small>';
+                                }else{
+                                    $batchDataOutputPrice .= '<small class="visibility-hide">For more payment option <a href="javascript:void(0);" data-toggle="modal" data-target="#myModal'.$k.'"><u>click here</u></a></small>';
+                                }
+
+                                $batchDataOutputPrice .= '</div>';
+                            }
+                        }
+                    
+                        if($course_template_type =='course_online_ilt' ||  $course_template_type  == 'course_online_self'){
+                            $batchFacultyDetailsDiv .= \Drupal::service('niit_common.niit_related_courses')->CourseBatchFacultyData($batchData['batchFacultyDetails'], $k);
+                            $vars['batchFacultyDetailsDiv'] = $batchFacultyDetailsDiv;
+                        }
+        
+                        /*if($course_code == 'AXISS'){
+                            $batchDataOutputPriceModal .= '
+                                <div class="modal fade payment-optionsPopup" id="myModal1" role="dialog">
+                                    <div class="modal-dialog modal-md">
+                                        <div class="modal-content">
+                                            <div class="modal-header paymentOptionHeader">
+                                                <button type="button" class="close paymentModalClosebtn" data-dismiss="modal">&times;</button> 
+                                                <h4 class="modal-title"><strong>Payment Options</strong></h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-3 leadLightBox-pl0 leadLightBox-pr0">
+                                                        <ul class="nav nav-pills">
+                                                            <li class="active"><a data-toggle="pill" href="#menu2">LOAN</a></li>
+                                                            <li><a data-toggle="pill" href="#home1">FULL PAYMENT</a></li>
+                                                            <li><a data-toggle="pill" href="#menu1">INSTALLMENT</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-9 paddingLeft-0">
+                                                        <div class="tab-content">
+                                                            <div id="menu2" class="courseplan tab-pane fade in active popUpBodyHead">
+                                                                <div class="row">
+                                                                    <div class="col-md-12 col-xs-12">
+                                                                        <p class="stackpriceSection mt-3"><b>Admission Fee :</b> <i class="fa fa-rupee"></i> 10,000+ GST. Loan available for balance fee payment of <i class="fa fa-rupee"></i> 2,15,000 + GST through Axis Bank at 13% rate of interest. EMIs will start 6 months after starting the job and will get deducted from your salary.</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="home1" class="tab-pane fade popUpBodyHead">
+                                                                <p class="stackpriceSection mt-4">
+                                                                    <b>Programme Fee :</b> <i class="fa fa-rupee"></i>2,25,000 + GST
+                                                                </p>
+                                                            </div>
+                                                            <div id="menu1" class="courseplan tab-pane fade popUpBodyHead">
+                                                                <div class="row">
+                                                                    <div class="col-md-12 col-xs-12">
+                                                                        <p class="stackpriceSection mt-3"><b>Admission Fee :</b> <i class="fa fa-rupee"></i>10,000 + GST</br>
+                                                                        </p>
+                                                                        <b class="mt-3">Installment Plan :</b>
+                                                                        <table class="pop-emi-fee" style="width: 100%;">
+                                                                            <tr><td>Instalment 1 (at the time of admission)</td><td><i class="fa fa-rupee"></i> 1,02,500 + GST</td></tr>
+                                                                            <tr><td>Instalment 2 (start of term 2)</td><td><i class="fa fa-rupee"></i> 1,12,500 + GST</td></tr>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>';
+
+                        }*/
+                        // else if($course_code == 'POS51'){
+
+                        //     $batchDataOutputPriceModal .= '
+                        //         <div class="modal fade payment-optionsPopup" id="myModal1" role="dialog">
+                        //             <div class="modal-dialog modal-md">
+                        //                 <div class="modal-content">
+                        //                     <div class="modal-header paymentOptionHeader">
+                        //                         <button type="button" class="close paymentModalClosebtn" data-dismiss="modal">&times;</button> 
+                        //                         <h4 class="modal-title"><strong>Payment Options</strong></h4>
+                        //                     </div>
+                        //                     <div class="modal-body">
+                        //                         <div class="row">
+                        //                             <div class="col-md-3 leadLightBox-pl0 leadLightBox-pr0">
+                        //                                 <ul class="nav nav-pills">
+                        //                                     <li class="active"><a data-toggle="pill" href="#home1">UPFRONT PAYMENT</a></li>
+                        //                                     <li><a data-toggle="pill" href="#menu1">INCOME LINKED PAYMENT</a></li>
+                        //                                 </ul>
+                        //                             </div>
+                        //                             <div class="col-md-9 paddingLeft-0">
+                        //                                 <div class="tab-content">
+                        //                                     <div id="home1" class="tab-pane fade in active popUpBodyHead">
+                        //                                         <p class="stackpriceSection mt-4">
+                        //                                             <b>Registration Fee :</b> <i class="fa fa-rupee"></i>15,000 + GST at the time of admission to the program</br
+                        //                                         </p>
+                        //                                         <p class="stackpriceSection mt-3">
+                        //                                             <b>Balance Fee :</b> <i class="fa fa-rupee"></i>1,84,999 + GST within 30 days of the beginning of the program
+                        //                                         </p>
+                        //                                     </div>
+                        //                                     <div id="menu1" class="courseplan tab-pane fade popUpBodyHead">
+                        //                                         <div class="row">
+                        //                                             <div class="col-md-12 col-xs-12">
+                        //                                                 <p class="stackpriceSection mt-3"><b>Registration Fee :</b> <i class="fa fa-rupee"></i>15,000 + GST at the time of admission to the program</br>
+                        //                                                 </p>
+                        //                                                 <p class="stackpriceSection mt-3"><b>Partial Program Fee :</b> <i class="fa fa-rupee"></i>15,000 + GST within 30 days of the beginning of program<br>
+                        //                                                 </p>
+                        //                                                 <p class="stackpriceSection mt-3"><b>Balance Program Fee :</b> 22.5% of the Initial CTC for 24 months after placement, after deduction of fees already paid 
+                        //                                                 </p>
+                        //                                                 <b class="mt-3">EMI for Reference :</b>
+                        //                                             <table class="pop-emi-fee" style="width: 100%;">
+                        //                                                     <tr><th>CTC Received</th><th>Fee Payable</th><th>EMI for 24 months</th></tr>
+                        //                                                     <tr><td>5,00,000</td><td>2,25,000</td><td>8,125</td></tr>
+                        //                                                     <tr><td>5,50,000</td><td>2,47,500</td><td>9,063</td></tr>
+                        //                                                     <tr><td>6,00,000</td><td>2,70,000</td><td>10,000</td></tr>
+                        //                                                     <tr><td>6,50,000</td><td>2,92,500</td><td>10,938</td></tr>
+                        //                                                     <tr><td>7,00,000</td><td>2,99,999</td><td>11,250</td></tr>
+                        //                                                     <tr><td>7,50,000</td><td>2,99,999</td><td>11,250</td></tr>
+                        //                                             </table>
+                        //                                             <p class="stackpriceSection mt-4"><b>Maximum Program Fee :</b> <i class="fa fa-rupee"></i>2,99,999 + GST
+                        //                                             </p>
+                        //                                             <p class="stackpriceSection"><b>Note :</b> Learner will need to sign up a Loan Agreement at the start of the program.
+                        //                                             </p>
+                        //                                                 </p>
+                        //                                             </div>
+                        //                                         </div>
+                        //                                     </div>
+                        //                                 </div>
+                        //                             </div>
+                        //                         </div>
+                        //                     </div>
+                        //                 </div>
+                        //             </div>
+                        //         </div>';
+
+                        // }
+                        else{
+                            if($course_template_type == 'course_career' || $course_template_type == 'course_stack_route_ilt' || $course_template_type == 'course_axis' || $course_template_type =='course_new_stack_route' || $course_template_type =='course_campaign_page_template' || $course_template_type =='course_program2022_page_template' || $course_template_type =='course_icici_2022_template'){
+                                $batchDataOutputPriceModal .= \Drupal::service('niit_common.niit_related_courses')->courseBatchFeeInstallmentModelPopUp($batchData, $node->id(), $k, $batchIdWith['CenterBatchFee']);
+                            }else{
+                                $paymentInstallmentData = \Drupal::service('niit_common.niit_related_courses')->CourseInstallmentPlanAPI($batchData);
+                                $batchDataOutputPriceModal .= \Drupal::service('niit_common.niit_related_courses')->CoursePageInstallmentFeeModelPopUp($paymentInstallmentData, $batchData, $node->id(), $k);
+                            }
+                        }
+                    
+                        $k++;
+                    }
+                    /************************************************** */
+                    /*** line 1190 to 1196 merge from production server */
+                    /************************************************** */
+                    
+                    $vars['batchDataOutput'] = $batchDataOutput;
+                    $vars['batchDataOutputPriceModal'] = $batchDataOutputPriceModal;
+                    $vars['batchDataOutputPrice'] = $batchDataOutputPrice;
+                    $vars['batchDataDateOutput'] = $batchData['batchTimings'];
+                }
+            }
+        }
+        /* End */ 
+    }
+
+    /**
+     * @param array $variables
+     */
+    function nexus_preprocess_page(array &$variables) {
+        global $base_url;
+        $variables['#attached']['drupalSettings']['DOMAIN_TRAINING_COM_PATH']['path'] = $_ENV['DOMAIN_TRAINING_COM'];
+        $variables['request_path'] = base_path();
+        $variables['request_path_uri'] = $_SERVER['REQUEST_URI'];
+        $variables['request_protocol_domain'] = $_ENV['DRUPAL_PROTOCOL_DOMAIN'];
+
+        $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+        $variables['path_to_theme'] = $path_to_theme;
+        $variables['global_path_to_theme'] = $path_to_theme;
+        
+       // Course Breadcrub start
+       if(!is_null(\Drupal::request()->getRequestUri())){
+           $currentUrl  = explode("/",\Drupal::request()->getRequestUri()); 
+           $currentUrl  = array_slice($currentUrl, 0, -1); 
+           $breadcrub   = implode("/",$currentUrl);
+           $categoryUrl = ltrim($breadcrub,"/india");
+        }
+        $variables['breadcrub'] =  $categoryUrl; 
+        // Course Breadcumb End
+        $node = \Drupal::routeMatch()->getParameter('node');
+        //variable comment by ajeet not in use. open when reuse variable in template.
+        // $variables['my_api_form'] = \Drupal::formBuilder()
+        //     ->getForm('Drupal\mymodule\Form\ExampleForm');
+        // $variables['appointment_for_counselor'] = \Drupal::formBuilder()->getForm('Drupal\mymodule\Form\CounselorForm');
+        if(is_object($node) && is_null($node) == FALSE){
+            $frontPage = \Drupal::configFactory()
+            ->get('system.site')
+            ->get('page.front');
+            $frontPageID = (int) filter_var($frontPage, FILTER_SANITIZE_NUMBER_INT);
+            if($node->getType() == 'contact_us'){
+                $variables['NiitGetCenterInformation'] = NiitGetCenterInformationcourse('','');
+                $variables['NiitGetCenterInformationCity'] = NiitGetCenterInformationCity();
+            }
+            if($node->id() == $frontPageID){
+                // Create data for slider
+                // Get from DB nids of content type slider_image
+                $query = \Drupal::database()->select('node', 'n');
+                $query->fields('n', ['nid']);
+                $query->condition('n.type', 'slider_image');
+                $nids = $query->execute()->fetchAll();
+
+                $variables['home_page']['slides'] = [];
+
+                // get and set values from content type to variable
+                foreach ($nids as $val) {
+                    $node = Drupal\node\Entity\Node::load($val->nid);
+
+                    $text = $node->get('body')->getValue();
+                    $link = $node->get('field_slider_image_url')->getValue();
+                    $img = $node->get('field_slider_image')->getValue();
+                    
+                    $file = \Drupal\file\Entity\File::load($img[0]['target_id']);
+
+                    $image_desk_alt = $node->field_slider_image->alt;
+                    
+                    if (is_object($file) && is_null($file) == FALSE) { 
+
+                    $img_src = $file->url(); 
+                    $img2 = $node->get('field_mobile_image')->getValue(); 
+                    $file2 = \Drupal\file\Entity\File::load($img2[0]['target_id']);
+                    $img_src = parse_url($file->url());
+                    $img_src_mob = parse_url($file2->url());
+                    $image_mob_alt = $node->field_mobile_image->alt;
+
+                    $variables['home_page']['slides'][] = [
+                         'caption' => $image_desk_alt,
+                         'caption1' => $image_mob_alt,
+                         'coursename' => $text[0]['value'],
+                        'img_src' => ImageStyle::load('home_slider')->buildUrl($file->getFileUri()),
+                        // 'img_src' => $img_src['path'],
+                        'img_src_mob' => ImageStyle::load('home_slider_mobile')->buildUrl($file2->getFileUri()),
+                        'link' => @$link[0]['value'],
+
+                    ];
+                    
+                    }
+                }
+            }
+        }
+
+        // Get Footer course category menu block.
+        $footer_category_menu = \Drupal\block\Entity\Block::load('footercoursecategorymenu');
+        if ($footer_category_menu) {
+            $block_get = \Drupal::entityManager()
+                ->getViewBuilder('block')
+                ->view($footer_category_menu);
+            $footer_category_menu = isset($block_get) ? $block_get : '';
+            $variables['footer_category_menu'] = $footer_category_menu;
+        }
+    }
+
+    /**
+     * @param $variables
+     */
+    function nexus_template_preprocess_views_view__course__block_1(&$variables) {
+        $view = $variables['view'];
+        $rows = $variables['rows'];
+        $style = $view->style_plugin;
+        $options = $style->options;
+
+        $variables['default_row_class'] = !empty($options['default_row_class']);
+
+        foreach ($rows as $id => $row) {
+            $variables['rows'][$id] = [];
+            $variables['rows'][$id]['content'] = $row;
+            $variables['rows'][$id]['attributes'] = new Attribute();
+            if ($row_class = $view->style_plugin
+                ->getRowClass($id)) {
+                $variables['rows'][$id]['attributes']
+                    ->addClass($row_class);
+            }
+        }
+    }
+
+    /**
+     * @param $variables
+     */
+    function nexus_template_preprocess_views_view__course__block_2(&$variables) {
+        $view = $variables['view'];
+        $rows = $variables['rows'];
+        $style = $view->style_plugin;
+        $options = $style->options;
+
+        $variables['default_row_class'] = !empty($options['default_row_class']);
+
+        foreach ($rows as $id => $row) {
+            $variables['rows'][$id] = [];
+            $variables['rows'][$id]['content'] = $row;
+            $variables['rows'][$id]['attributes'] = new Attribute();
+            if ($row_class = $view->style_plugin
+                ->getRowClass($id)) {
+                $variables['rows'][$id]['attributes']
+                    ->addClass($row_class);
+            }
+        }
+    }
+
+    /**
+     * @param $variables
+     */
+    function nexus_template_preprocess_views_view__course__block_3(&$variables) {
+        $view = $variables['view'];
+        $rows = $variables['rows'];
+        $style = $view->style_plugin;
+        $options = $style->options;
+
+        $variables['default_row_class'] = !empty($options['default_row_class']);
+
+        foreach ($rows as $id => $row) {
+            $variables['rows'][$id] = [];
+            $variables['rows'][$id]['content'] = $row;
+            $variables['rows'][$id]['attributes'] = new Attribute();
+            if ($row_class = $view->style_plugin
+                ->getRowClass($id)) {
+                $variables['rows'][$id]['attributes']
+                    ->addClass($row_class);
+            }
+        }
+    }
+
+    function nexus_template_preprocess_views_view__course(&$variables) {
+        $view = $variables['view'];
+        $rows = $variables['rows'];
+        $style = $view->style_plugin;
+        $options = $style->options;
+
+        $variables['default_row_class'] = !empty($options['default_row_class']);
+
+        foreach ($rows as $id => $row) {
+            $variables['rows'][$id] = [];
+            $variables['rows'][$id]['content'] = $row;
+            $variables['rows'][$id]['attributes'] = new Attribute();
+            if ($row_class = $view->style_plugin
+                ->getRowClass($id)) {
+                $variables['rows'][$id]['attributes']
+                    ->addClass($row_class);
+            }
+        }
+    }
+
+    function nexus_preprocess_form_element_label(&$variables) {
+        $variables['request_path_uri'] = $_SERVER['REQUEST_URI'];
+        if(array_key_exists('request_path_uri', $variables) && strpos($variables['request_path_uri'], 'lead-form') !== false) {
+            $variables['lead_form_true'] = true;
+        }
+        if(isset($variables['element']['radio_label']) && $variables['element']['radio_label'] == 'radio_label'){
+            $variables['multistep_form_true'] = 'Checked';
+        }else{
+            $variables['multistep_form_true'] = '';
+        }
+    }
+
+    /**
+     * Implements hook_preprocess_HOOK() for node.html.twig.
+     */
+
+    function nexus_preprocess_node(&$variables) {
+        global $base_url;
+        $variables['request_path'] = base_path();
+        $variables['request_path_uri'] = $_SERVER['REQUEST_URI'];
+        $variables['request_protocol_domain'] = $_ENV['DRUPAL_PROTOCOL_DOMAIN'];
+        $node = $variables['node'];
+        $path_to_theme = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+        $variables['path_to_theme'] = $path_to_theme;
+        /***
+         *  ajeet code start
+         * new condition added according veriable call in template
+         **/
+        //Variables are for SEO purspective code -GTM
+        $site_url = "{$_SERVER['REQUEST_URI']}";
+        // $exploded_url = explode('/', $site_url);
+        $variables['pageCategory'] = $site_url;
+        $previous_url = $_SERVER['HTTP_REFERER'];
+        $variables['previous_url'] = $previous_url;
+        if($variables['node']->bundle() == 'careers'){
+            $variables['career_job_filter'] = career_job_filter();
+            $variables['career_job_vacancy_data'] = NiitRecruitmentVacancyDetails('', '', '', '');
+        }
+        /*
+        * ajeet code end
+        */
+        //Variables for course search pages 03-09-2019
+        // if($variables['node']->bundle() == 'course_search') {
+            // $search_uri =  $_SERVER["REQUEST_URI"];
+            // $search_uriArray = explode('/', $search_uri);
+            // $search_uri_final = explode('-', $search_uriArray[1]);
+            // $course_name = $search_uri_final[0];
+            // $course_location = $search_uri_final[2];
+            // $variables['course_name'] = strtoupper($course_name);
+            // $variables['course_locationCAP'] = strtoupper($course_location);
+            // $city_srch = ucwords($course_location);
+            // if ($city_srch == 'Delhi') {
+            //     $city_srch = 'New Delhi';
+            // }
+            // $query = \Drupal::entityQuery('taxonomy_term');
+            // $query->condition('vid', 'course_tag');
+            // $query->condition('name', $course_name);
+            // $tids = $query->execute();
+
+            // $query = \Drupal::entityQuery('node');
+            // $query->condition('status', 1);
+            // $query->condition('type', 'course');
+            // $query->condition('field_course_tag_taxo', $tids, 'IN');
+            // $entity_ids = $query->execute();
+
+            // $related_courses = niit_related_courses($entity_ids);
+            
+        // }
+
+        if($variables['node']->bundle() == 'blog_post') {
+            $suggested_programms = "";
+            $related_blog       = "";
+            $placement_heading_title = "";
+            $config = \Drupal::config('niit_common.settings');
+            $suggested_programms = $config->get('suggested_programms');
+            $placement_heading_title = $config->get('placement_heading_title');
+            $related_blog = $config->get('related_blog'); 
+            $variables['suggested_program'] =  $suggested_programms;
+            $variables['placement_heading_title'] =  $placement_heading_title;
+            $variables['related_blog']      =  $related_blog;
+        }
+            
+            
+        if(!is_null(\Drupal::request()->getRequestUri())){
+                $currentUrl  = explode("/",\Drupal::request()->getRequestUri()); 
+                $currentUrl  = array_slice($currentUrl, 0, -1); 
+                $breadcrub   = implode("/",$currentUrl);
+                $categoryUrl = ltrim($breadcrub,"/india");
+                $variables['breadcrub'] =  $categoryUrl; 
+        }
+    
+        if ($variables['teaser'] || !empty($variables['content']['comments']['comment_form'])) {
+            unset($variables['content']['links']['comment']['#links']['comment-add']);
+        }
+
+        # Render Tip of the day view
+        $current_path = \Drupal::service('path.current')->getPath();
+        $result = \Drupal::service('path.alias_manager')
+            ->getAliasByPath($current_path);
+        $flag = FALSE;
+        if ($result == '/working-professionals/general-management') {
+            $flag = TRUE;
+        }
+        $variables['general_management'] = $flag;
+
+        $variables['theme_path'] = base_path() . $variables['directory'];
+        $variables['display_submitted'] = FALSE;
+        $variables['view_mode'] = $variables['elements']['#view_mode'];
+        $node_type = $node->getType();
+        $variables['brochur_flag'] = FALSE;
+
+        // node object . This condition is for placement mega drive , if expired then it will be automatically hide.
+        if(is_object($node) && $node->getType() == 'placement'){ 	
+            $node_id = $node->id();
+            $variables['center_node_id'] = $node_id;        
+            // find paragraph id by node which is for mega drive
+            $pquery = \Drupal::database()->select('node__field_components', 'nfc');
+            $pquery->join('paragraph__field_mega_drive_name', 'fmd', 'fmd.entity_id = nfc.field_components_target_id'); 
+            $pquery->fields('nfc', ['field_components_target_id']);
+            $pquery->condition('fmd.bundle', 'placement_mega_drive','=');
+            $pquery->condition('nfc.entity_id',$node_id,'=');
+            $pid = $pquery->execute()->fetchAll();
+            // check condition if exist paragraph then go further.
+            $drive_flag = 0;
+            if(is_array($pid) && !empty($pid)){
+                $paragraph = Paragraph::load($pid[0]->field_components_target_id);
+                if(is_object($paragraph) && !is_null($paragraph)){
+                    $megadriveId = $paragraph->get('field_mega_drive_name')->getValue()[0]['target_id'];
+                    $megadriveNode  = Node::load($megadriveId);
+                    if(is_object($megadriveNode) && !is_null($megadriveNode)){ 
+                        // there are two date of mega drive end date or start date i found both date if end date will be there then i will then on end date otherwise i will check on start date.
+                        $endDate = $megadriveNode->get('field_drive_end_date')->getValue()[0]['value'];
+                        $startDate = $megadriveNode->get('field_drive_date')->getValue()[0]['value'];
+                        $flagDate  = (isset($endDate) && !is_null($endDate)) ? $endDate : $startDate;  
+                        $flagDate = date("Y-m-d",strtotime($flagDate)); 
+                        if(strtotime($flagDate) < strtotime(date("Y-m-d"))){
+                            $drive_flag = 1; 
+                        }  
+                    }
+                }
+            }  
+            $variables['drive_flag'] = $drive_flag;  
+        }
+        
+        $is_show_recruitor       =   true; 
+        $is_show_short_term      =   true;
+        $is_show_graduate        =   true;
+        $is_show_workingprofession = true;
+        $is_show_collagestudent  =   true;
+            
+        if(is_object($node) && $node->getType() == 'center_'){
+            $is_show_recruitor = false; 
+            if($node->hasField('field_short_term_courses')){
+                $short_term_courses = $node->get('field_short_term_courses')->getValue();
+                if(is_array($short_term_courses) && empty($short_term_courses)){
+                    $is_show_short_term      =   false;
+                } 
+            } 
+            if($node->hasField('field_student_courses_center')){
+                $field_student_courses = $node->get('field_student_courses_center')->getValue();
+                if(is_array($field_student_courses) && empty($field_student_courses)){
+                    $is_show_collagestudent      =   false;
+                } 
+            } 
+            if($node->hasField('field_working_professional_cours')){
+                $is_show_workingprofession = $node->get('field_working_professional_cours')->getValue();
+                if(is_array($is_show_workingprofession) && empty($is_show_workingprofession))
+                {
+                    $is_show_workingprofession      =   false;
+                } 
+            } 
+            if($node->hasField('field_graduate_courses')){
+                $field_workingprofession = $node->get('field_graduate_courses')->getValue();
+                if(is_array($field_workingprofession) && empty($field_workingprofession)){
+                    $is_show_graduate      =   false; 
+                } 
+            }  
+
+        }
+            
+        $variables['is_show_recruitor']  = $is_show_recruitor;
+        $variables['is_show_short_term'] = $is_show_short_term;
+        $variables['is_show_graduate']   = $is_show_graduate;
+        $variables['is_show_workingprofession']  = $is_show_workingprofession;
+        $variables['is_show_collagestudent']  = $is_show_collagestudent;  
+
+
+        if ($variables['elements']['#view_mode'] == 'full') {
+            switch ($node_type) {
+
+                case 'course':
+                    if (($node->hasField('field_brochure_url'))) {
+                        $brochure_url = $node->get('field_brochure_url')->getValue();
+                        if (!empty($brochure_url[0]['uri'])) {
+                            $variables['brochur_flag'] = TRUE;
+                            $variables['brochur_path'] = $brochure_url[0]['uri'];
+                        }
+                    }
+
+                    break;
+                default;
+            }
+        }
+
+        # Get current node/course Id
+        if ($node instanceof \Drupal\node\NodeInterface && is_null($node) == FALSE) {
+            if($node->gettype() == 'course'){
+                
+                # End for getting entity term id amd taxonomy term 
+                $nid = $node->id();
+                $variables['proceedButtonLink'] = $node->get('field_proceed_button_link')->value;
+                $variables['enrollment_open'] = $node->get('field_enrollment_open')->value;
+                $delivery_mode_code = $node->get('field_delivery_mode_code')->value;
+                $courseCode = $node->get('field_course_code')->value;
+                $token = $variables['apiToken'];
+                $currency = 'INR';
+                $CourseType = $delivery_mode_code;
+                # Generate token Code
+                # call api for generating of token
+                if(empty($node->field_select_template->value)){
+                    $variables['related_courses'] =  views_embed_view('related_courses', 'related_course');
+                    if(isset($_COOKIE["userLocation"]) && !empty($_COOKIE["userLocation"])){
+                        $userLocation = json_decode($_COOKIE["userLocation"]);
+                        $variables['userCityName'] =  $userLocation->userCityName; // City Name
+                        $variables['userLatitude'] = $userLocation->userLatitude; // Get latitude
+                        $variables['userLongitude'] = $userLocation->userLongitude; // Get longitude
+                        
+                    }else{
+                        $MaxMindUserName = $_ENV['MaxMindUserName'];
+                        $MaxMindPassword  = $_ENV['MaxMindPassword'];
+                        $userIps = explode(",",$_SERVER['HTTP_X_FORWARDED_FOR']);
+                        $userIp = $userIps[0];
+                        $locationCurl = curl_init();
+                        curl_setopt_array($locationCurl, array(
+                            CURLOPT_URL => "https://geoip.maxmind.com/geoip/v2.1/city/".$userIp,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "GET",
+                            CURLOPT_HTTPHEADER => array(
+                                "Content-Type: application/vnd.maxmind.com-city+json; charset=UTF-8; version=2.1",
+                                "Authorization: Basic ". base64_encode($MaxMindUserName.":".$MaxMindPassword)
+                            ),
+                        ));
+
+                        $location_rep = curl_exec($locationCurl);
+                        $location_err = curl_error($locationCurl);
+                        curl_close($locationCurl);
+                        if ($location_err) {
+                            $variables['userCityName'] =  "New Delhi";
+                            $variables['userLatitude'] = "28.6139"; // Get latitude
+                            $variables['userLongitude'] = "77.2090"; // Get longitude
+                            $userLocation = array('userCityName'=>$variables['userCityName'], 'userLatitude'=>$variables['userLatitude'], 'userLongitude'=>$variables['userLongitude']);
+                        setcookie('userLocation', json_encode($userLocation), time()+3600); 
+                        }else {
+                            $location_rep_arr = json_decode($location_rep);
+                            $location_city = $location_rep_arr->city->names; // Get city name array
+                            $variables['userCityName'] =  !empty($location_city->en)? $location_city->en : "New Delhi";
+                            $locationlatlng = $location_rep_arr->location; // get location object
+                            $variables['userLatitude'] = !empty($locationlatlng->latitude) ? $locationlatlng->latitude : "28.6139"; ; // Get latitude
+                            $variables['userLongitude'] = !empty($locationlatlng->longitude) ? $locationlatlng->longitude : "77.2090" ; // Get longitude
+                            // Create array of user location such as city, latitude and longitude
+                            $userLocation = array('userCityName'=>$variables['userCityName'], 'userLatitude'=>$variables['userLatitude'], 'userLongitude'=>$variables['userLongitude']);
+                            setcookie('userLocation', json_encode($userLocation), time()+3600); 
+                        }
+                    }
+                
+                    // get city name in english    
+                    $title_array = array();
+                    $query = \Drupal::database()->select('node', 'n');
+                    $query->fields('n', ['nid']);
+                    $query->condition('n.type', 'center_');
+                    $nids = $query->execute()->fetchAll();
+                    # get node detail with using node id 
+                    $niit_center_information = array();
+                    $niit_center_city = array();
+                    $total_center_information = array();
+                    foreach($nids as $val){
+                        $node_center = Node::load($val->nid);
+                        $niit_center_city[] = $node_center->get('field_center_city')->value;  
+                        if($node_center->get('field_center_city')->value == $variables['userCityName']){
+                            $centerName = $node_center->get('title')->value; 
+                            $centerLatitude = $node_center->get('field_center_latitude')->value; 
+                            $centerLongitude = $node_center->get('field_center_longitude')->value;
+                            $centerLocation = $node_center->get('field_center_location')->value;
+                            $centerCity = $node_center->get('field_center_city')->value;
+                            $centerCode = $node_center->get('field_center_code')->value;
+                            $distance = distanceCalculation($variables['userLatitude'], $variables['userLongitude'], $centerLatitude, $centerLongitude, $unit = 'km', $decimals = 2); 
+                            $niit_center_information[] = array(
+                                                    'centerId'=> $val->nid,   
+                                                    'centerName'=>$centerName, 
+                                                    'centerLatitude'=>$centerLatitude,
+                                                    'centerLongitude'=>$centerLongitude,
+                                                    'centerLocation'=>$centerLocation,
+                                                    'centerCity'=>$centerCity,
+                                                    'centerCode'=>$centerCode, 
+                                                    'distance'=>$distance,                          
+                                                    );
+                        }
+
+                    }
+                    # sort city by distance
+                    usort($niit_center_information, function($a, $b) {
+                        return $a['distance'] <=> $b['distance'];
+                    }); 
+                    # Set into Variables array 
+                    $variables['cityCenterList'] = $niit_center_information;
+                    $niit_center_city = array_unique($niit_center_city);
+                    $variables['niit_center_city'] = $niit_center_city;
+                }
+                
+                ## End token generate api
+                if(empty($node->field_select_template->value)){
+                    ## Generate Token For batchdetail api 
+                    $TrainingTokenApiURL  = $_ENV['TrainingTokenApiURL'];
+                    // $TrainingTokenApiURL  = 'https://qa.training.com/niitdigitalplatformAPI/api/JWTtoken/GenerateToken';
+                    $TrainingKeyAPIKey = $_ENV['TrainingKeyAPIKey']; // ajeet this is dependency other curl function batchfee
+                    // $TrainingKeyAPIKey = '401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429090fb337591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1';
+                    $curl = curl_init();
+                    curl_setopt_array($curl, array(
+                        CURLOPT_URL => $TrainingTokenApiURL,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "GET",
+                        CURLOPT_HTTPHEADER => array(
+                            "key: ".$TrainingKeyAPIKey
+                        ),
+                    ));
+                    $response = curl_exec($curl);
+                    $err = curl_error($curl);
+                    curl_close($curl);
+                    if ($err) {
+                        $variables['apiToken'] = "";
+                    } else {
+                        $res_array = json_decode($response); 
+                        if(array_key_exists('token', $res_array) && !is_null($res_array->token)){
+                            $variables['apiToken'] = $res_array->token;     
+                        }else{
+                            $variables['apiToken'] = "";  
+                        }
+                
+                    }
+                
+                    //Get current url -start
+                    $actual_link = "{$_ENV['DRUPAL_PROTOCOL_DOMAIN']}{$_SERVER['REQUEST_URI']}";
+                    $variables['site_current_url'] = $actual_link;
+                    //Get current url -end
+                    // $batchId = '';
+                    // $centerCode = '';
+                    # Get batch, seat availability and fee detail of course
+                    $TrainingCourseBatchApiURL = $_ENV['TrainingCourseBatchApiURL'];
+                    // $TrainingCourseBatchApiURL = "https://qa.training.com/niitdigitalplatformAPI/api/CourseBatcheswrapper/";
+                    $nodecurl = curl_init();
+                    curl_setopt_array($nodecurl, array(
+                        CURLOPT_URL => $TrainingCourseBatchApiURL,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "GET",
+                        CURLOPT_HTTPHEADER => array(
+                            "CourseType: ".$CourseType,
+                            // "batchId: ",
+                            "cache-control: no-cache",
+                            "centerCode: ",
+                            "country: ",
+                            "courseCode: ".$courseCode,
+                            "currency: INR",
+                            "token: ".$token,
+                            //"zoneName: "
+                        ),
+                    ));
+                    # Batch fee of center 
+                    $CenterBatchFee = array();
+                    $node_response = curl_exec($nodecurl); // ajeet veriable used only in course--full twig template need to add condition according twig
+                    $variables['courseBatchDetailRes'] = $node_response;
+                    $node_err = curl_error($nodecurl);
+                    curl_close($nodecurl);
+                    if ($node_err) {
+                    // echo "cURL Error #:" . $node_err;
+                    } else {
+                        $courseBatchDetail = array();
+                        $node_response_array =  json_decode($node_response);
+                        $centerCode = array();
+                        $batchStartTime = array();
+                        foreach($node_response_array as $_node_response_array){
+                            foreach($_node_response_array as $value){ 
+                                $centerCode[] = $value->SRC_ICD; 
+                                $batchStartTime[] = $value->TimeZoneShortBatchStartDateUTC;     
+                                $courseBatchDetail[] = array(
+                                    'batchID'=>$value->batchID,
+                                    'courseID'=>$value->courseID,
+                                    'batchType'=>$value->batchType,
+                                    'batchStartDate'=>$value->batchStartDate,
+                                    'batchEndDate'=>$value->batchEndDate,
+                                    'batchFees'=>$value->batchFees,
+                                    'baseFees'=>$value->baseFees,
+                                    'currencyCode'=>$value->currencyCode,
+                                    'courseCode'=>$value->courseCode,
+                                    'isInstallmentAvailable'=>$value->isInstallmentAvailable,
+                                    'IS_Batch_Available'=>$value->IS_Batch_Available,
+                                    'Batch_UnAvailableMeessge'=>$value->Batch_UnAvailableMeessge,
+                                    'batchTimings'=>$value->batchTimings,
+                                    'patternCode'=>$value->patternCode,
+                                    'SRC_ICD'=>$value->SRC_ICD,
+                                    'DST_ICD'=>$value->DST_ICD,
+                                    'SymbolType'=>$value->SymbolType,
+                                    'SymbolValue'=>$value->SymbolValue,
+                                    'Minimum_Denomination'=>$value->Minimum_Denomination,
+                                    'Minimum_Denomination_Value'=>$value->Minimum_Denomination_Value,
+                                    'IsTax_IncludeIN_Collection'=>$value->IsTax_IncludeIN_Collection,
+                                    'TimeZoneShortBatchStartDateUTC'=>$value->TimeZoneShortBatchStartDateUTC
+                                ); 
+                                $CenterBatchFee[] =  $value->batchFees;
+                            }
+                        }
+                        $centerCode = array_unique($centerCode);
+                        $CenterBatchFee = array_unique($CenterBatchFee);
+                        sort($CenterBatchFee);
+                        sort($batchStartTime);
+                        $variables['CenterBatchFee'] = max($CenterBatchFee);
+                        $courseBatchDetail = array_unique($courseBatchDetail, SORT_REGULAR);
+                        $variables['courseBatchDetail']=$courseBatchDetail;
+                        $variables['batchStartTime'] = array_unique($batchStartTime);
+                        $variables['centerCode']=$centerCode;
+                        $batchIdWithDate = array();
+                        $CenterBatchId = array();
+                        $batchId = array();
+                        # create batch id object start time wise
+                        foreach($centerCode as $_centerCode){
+                            foreach( $courseBatchDetail as $_courseBatchDetail ){
+                                if($_centerCode == $_courseBatchDetail['SRC_ICD']){
+                                    $batchIdWithDate[$_courseBatchDetail['SRC_ICD']][$_courseBatchDetail['TimeZoneShortBatchStartDateUTC']][]=$_courseBatchDetail['batchID'];
+                                    $CenterBatchId[$_courseBatchDetail['SRC_ICD']][] = $_courseBatchDetail['batchID'];
+                                    $batchId[] = $_courseBatchDetail['batchID'];
+                                }
+                            }
+                        }
+                        $variables['batchIdWithDate']=$batchIdWithDate;
+                        $variables['CenterBatchId']=$CenterBatchId;
+                        $variables['batchId']=implode(',', $batchId);
+                    }
+                }     
+            }
+        }
+    }
+         
+
+
+    /**
+     * @param $account
+     */
+    function nexus_user_login($account) {
+        global $user;
+        $youradminurl = "admin/structure";
+        if (in_array('administrator', $account->roles)) {
+            drupal_goto($youradminurl);
+        }
+    }
+
+    /**
+     * Implements THEME_preprocess_paragraph().
+     *
+     * @param mixed $variables
+     *   Used for paragraph variables.
+     */
+    function nexus_preprocess_paragraph(&$variables) {
+        $variables['request_path'] = base_path();
+        $node = \Drupal::routeMatch()->getParameter('node');
+        $paragraph = $variables['paragraph'];
+        if (is_object($node) && is_null($node) == FALSE) {
+            if ($node->gettype() == 'placement') {
+                // Check if node type for placement and recruiter.
+                $page_type_id = $node->get('field_page_type')
+                    ->getValue()[0]['target_id'];
+                $term_name = Term::load($page_type_id)->getName();
+                // Get name of value of page type.
+                $variables['placement_page_type'] = $term_name;
+            }
+        }    
+        // Get Paragraph ID.
+        switch ($paragraph->bundle()) {
+            case 'companies_slider':
+                if ($paragraph->hasField('field_company_refer')) {
+                    $field_company_refer = $paragraph->get('field_company_refer')
+                        ->getValue()[0]['target_id'];
+                    $company_refer_node = Node::load($field_company_refer)
+                        ->toArray();
+                    // Load company's node using target id.
+                    if (is_array($company_refer_node)) {
+                        $company_logo = isset($company_refer_node['field_company_logo'][0]['target_id']) ? File::load($company_refer_node['field_company_logo'][0]['target_id'])
+                            ->getFileUri() : '';
+                        $variables['field_company_logo'] = isset($company_logo) ? file_create_url($company_logo) : '';
+                    }
+                }
+                break;
+            
+            case 'tips_of_the_day_embed':
+                $variables['tips_of_day'] = views_embed_view('tips_of_the_day', 'tips_day');
+                break; 
+            default;
+        }
+        $variables['hhii'] = 'ajit';
+    }
+        
+    # This function is written for getting of distance between two points   
+    function distanceCalculation($point1_lat, $point1_long, $point2_lat, $point2_long, $unit = 'km', $decimals = 2) {
+        // Calculate the distance in degrees
+        $degrees = rad2deg(acos((sin(deg2rad($point1_lat))*sin(deg2rad($point2_lat))) + (cos(deg2rad($point1_lat))*cos(deg2rad($point2_lat))*cos(deg2rad($point1_long-$point2_long)))));
+    
+        // Convert the distance in degrees to the chosen unit (kilometres, miles or nautical miles)
+        switch($unit) {
+            case 'km':
+                $distance = ($degrees * 111.13384); // 1 degree = 111.13384 km, based on the average diameter of the Earth (12,735 km)
+                break;
+            case 'mi':
+                $distance = $degrees * 69.05482; // 1 degree = 69.05482 miles, based on the average diameter of the Earth (7,913.1 miles)
+                break;
+            case 'nmi':
+                $distance =  $degrees * 59.97662; // 1 degree = 59.97662 nautic miles, based on the average diameter of the Earth (6,876.3 nautical miles)
+        }
+        return round($distance, $decimals);
+    }
+
+    function nexus_preprocess_html(&$variables){
+        global $base_url;
+        
+        $variables['#attached']['drupalSettings']['DRUPAL_SITE_PATH_INDIA']['GOOGLE_TAG_EVENT_DATALAYER_URL'] = $_ENV['GOOGLE_TAG_EVENT_DATALAYER_URL'];
+        $ContentTypeName = $ContentTitle =  $termDataKCBundle  = false;
+        $variables['request_path'] = base_path();
+        $variables['path_to_theme'] = $base_url.'/'.\Drupal::theme()->getActiveTheme()->getPath();
+        $canonical_link = $_ENV['DRUPAL_PROTOCOL_DOMAIN'].$_SERVER['REQUEST_URI'];
+        $variables['actual_link'] = $canonical_link;
+        $variables['sentry_url'] = $_ENV['sentry_url'];
+        $variables['event_url'] = $_ENV['niitkms_event'];//this used in pre-prod servr
+        // $variables['event_url'] = $_ENV['event_url']; // this used in production server
+        
+        $current_path = \Drupal::service('path.current')->getPath();
+        $resultUrl = \Drupal::service('path.alias_manager')->getAliasByPath($current_path);
+        $current_user = \Drupal::currentUser();
+        if($current_user->id() > 0){
+            $user = User::load($current_user->id());
+        }
+        $roles = $current_user->getRoles();
+
+        $node = \Drupal::routeMatch()->getParameter('node');
+
+        $variables['formStudentCity'] = !empty($_SESSION['formStudentCity']) ? $_SESSION['formStudentCity'] : '';
+        $variables['formStudentState'] = !empty($_SESSION['formStudentState']) ? $_SESSION['formStudentState'] : '';
+        $variables['formStudentDOB'] = !empty($_SESSION['formStudentDOB']) ? $_SESSION['formStudentDOB'] : '';
+
+        //Set encypted mobile number for logged in users
+        /** get current user */
+        
+        #set variables
+        /** line not 1954 to 1959 not use in preoduction server */
+        // if($roles[1] == 'niit'){
+        //     $variables['formStudentEmail'] = md5($user->getEmail());
+        //     $variables['formStudentMobile'] = md5($user->get('field_mobile_number')->value);
+        // } else {
+        //     $variables['formStudentMobile'] = !empty($_SESSION['formStudentMobile']) ? $_SESSION['formStudentMobile'] : '';
+        // }
+
+        $variables['cgrp'] = '';
+        $variables['scgrp'] = '';
+        $variables['category'] = '';
+        $variables['event_nid'] = '';
+
+        $cookieAll = explode('.', $_COOKIE['_ga']);
+        $gaCookie = $cookieAll[2].'.'.$cookieAll[3];
+        $variables['gaCookie'] = $gaCookie;
+
+        $variables['user_event'] = $gaCookie;
+        if ($current_user->id() > 0) {
+            $variables['user_event'] = $current_user->id();
+        }
+
+        if ($node instanceof \Drupal\node\NodeInterface) {
+
+            $variables['coursecampaigncode'] = '';
+            $variables['breadcrumb_script'] = '';
+            $variables['coursepagetemplates'] = '';
+
+            $ContentTypeName = $node->bundle();
+            $ContentTitle = $node->getTitle();
+            $nid = $node->id();
+            if($node->bundle() == 'course'){
+
+                // $variables['loaderEnable'] = "";
+                // if($current_user->id() > 0){
+                //     $currentUserid = $current_user->id();
+                //     $campaignCode = $node->field_campaign_code->value; 
+                //     $courseCode = $node->field_course_code->value;
+                //     $course_template_type = $node->field_select_template->value;
+                //     if($course_template_type == "course_axis"){
+                //         $variables['loaderEnableColorCls'] = "course_axis_cls";
+                //     }else if($course_template_type == "course_icici"){
+                //         $variables['loaderEnableColorCls'] = "course_icici_cls";
+                //     }else{
+                //         $variables['loaderEnableColorCls'] = "";
+                //     }
+                //     $finalResult = application_form_status($campaignCode, $courseCode, $currentUserid, 'current_user');
+                //     if($finalResult['check_eligibility'] == 'Y'){
+                //         if($finalResult['applctn_opn'] == 'Y'){
+                //             if($_REQUEST['read'] == "Y"){
+                //                 $variables['loaderEnable'] = "hide";
+                //             }else{
+                //                 $variables['loaderEnable'] = "show";
+                //             }
+                //         }
+                //     }  
+                // }
+
+                $variables['pageNodeSelectTemplate'] = $node->field_select_template->value;
+                # FAQ JSON Schema Start
+                $variables['faq_json_script'] = seo_faq_json_script_section($node->id());
+                # FAQ JSON Schema End
+                $mainCoursedetails = \Drupal::service('niit_common.niit_related_courses')->niit_related_courses_info([$node->id()]);
+                $course_api_fee = 'No';
+                if(strval($mainCoursedetails[0]['course_api_fee']) > 0  && !empty($mainCoursedetails[0]['course_api_fee'])){
+                    $course_api_fee = strval($mainCoursedetails[0]['course_api_fee']);
+                }
+                $course_api_base_fee = 'No';
+                if(strval($mainCoursedetails[0]['course_api_base_fee']) > 0  && !empty($mainCoursedetails[0]['course_api_base_fee'])){
+                    $course_api_base_fee = strval($mainCoursedetails[0]['course_api_base_fee']);
+                }
+                $course_star_rating_value = 'No';
+                if(!empty($mainCoursedetails[0]['course_star_rating_value'])){
+                    $course_star_rating_value = $mainCoursedetails[0]['course_star_rating_value'];
+                }
+                $course_total_review = 'No';
+                if(!empty($mainCoursedetails[0]['course_total_review'])){
+                    $course_total_review = $mainCoursedetails[0]['course_total_review'];
+                }
+                $batchAvailable = 'No';
+                if(!empty($mainCoursedetails[0]['batchAvailable'])){
+                    $batchAvailable = $mainCoursedetails[0]['batchAvailable'];
+                }
+                $variables['coursefeedetails'] = $course_api_fee.'@@'.$course_api_base_fee.'@@'.$course_star_rating_value.'@@'.$course_total_review.'@@'.$batchAvailable;
+                $variables['pageTitle'] = 'CoursePage';
+                setlocale(LC_MONETARY, 'en_IN');
+                
+                $variables['CourseCode'] = (!empty($node->field_course_code->value))?$node->field_course_code->value : '';
+                $variables['ModeOfDelevery'] = (!empty($node->field_mode_of_delivery->value))?$node->field_mode_of_delivery->value : '';
+                $variables['pageNodeId'] = $node->id();
+                $variables['coursecampaigncode'] = (!empty($node->field_campaign_code->value))?$node->field_campaign_code->value : '';
+                $catName = '';
+                $categoryUrl = '';
+                if(!empty($node->field_top_course_category->target_id)){
+                    $category = $node->field_top_course_category->target_id;
+                    $cat_load = Node::load($category);
+                    $catName = $cat_load->getTitle();
+                }
+
+                if(!is_null(\Drupal::request()->getRequestUri())){
+                    $currentUrl  = explode("/",\Drupal::request()->getRequestUri()); 
+                    $currentUrl  = array_slice($currentUrl, 0, -1); 
+                    $breadcrub   = implode("/",$currentUrl);
+                    $categoryUrl = 'https://www.niit.com/india'.$breadcrub;
+                }
+
+                $variables['breadcrumb_script'] =  '<script type="application/ld+json">
+                                                    {
+                                                    "@context": "https://schema.org/", 
+                                                    "@type": "BreadcrumbList", 
+                                                    "itemListElement": [{
+                                                        "@type": "ListItem", 
+                                                        "position": 1, 
+                                                        "name": "Home",
+                                                        "item": "https://www.niit.com/"  
+                                                    },{
+                                                        "@type": "ListItem", 
+                                                        "position": 2, 
+                                                        "name": "'.$catName.'",
+                                                        "item": "'.$categoryUrl.'"  
+                                                    },{
+                                                        "@type": "ListItem", 
+                                                        "position": 3, 
+                                                        "name": "'.$ContentTitle.'",
+                                                        "item": ""  
+                                                    }]
+                                                    }
+                                                    </script>';
+
+            }elseif($node->bundle() == 'course_landing_page'){
+                $mainCoursedetails = \Drupal::service('niit_common.niit_related_courses')->niit_related_courses_info([$node->id()]);
+                $course_api_fee = 'No';
+                if(strval($mainCoursedetails[0]['course_api_fee']) > 0  && !empty($mainCoursedetails[0]['course_api_fee'])){
+                    $course_api_fee = strval($mainCoursedetails[0]['course_api_fee']);
+                }
+                $course_api_base_fee = 'No';
+                if(strval($mainCoursedetails[0]['course_api_base_fee']) > 0  && !empty($mainCoursedetails[0]['course_api_base_fee'])){
+                    $course_api_base_fee = strval($mainCoursedetails[0]['course_api_base_fee']);
+                }
+                $course_star_rating_value = 'No';
+                if(!empty($mainCoursedetails[0]['course_star_rating_value'])){
+                    $course_star_rating_value = $mainCoursedetails[0]['course_star_rating_value'];
+                }
+                $course_total_review = 'No';
+                if(!empty($mainCoursedetails[0]['course_total_review'])){
+                    $course_total_review = $mainCoursedetails[0]['course_total_review'];
+                }
+                $batchAvailable = 'No';
+                if(!empty($mainCoursedetails[0]['batchAvailable'])){
+                    $batchAvailable = $mainCoursedetails[0]['batchAvailable'];
+                }
+                $variables['coursefeedetails'] = $course_api_fee.'@@'.$course_api_base_fee.'@@'.$course_star_rating_value.'@@'.$course_total_review.'@@'.$batchAvailable;
+                $variables['pageTitle'] = 'LandingPage';
+                $variables['pageNodeId'] = $node->field_related_course_reference->target_id;
+                $variables['CourseCode'] = (!empty($node->field_course_code->value))?$node->field_course_code->value : '';
+                $r_nid = $node->field_related_course_reference->target_id;
+                $resultUrl = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$r_nid);
+
+            }else{
+                $variables['pageTitle'] = $ContentTitle;
+                $variables['pageNodeId'] = $node->id();
+            }
+            $variables['pageNodeBundle'] = $node->bundle();
+            
+        }
+        
+
+        # GA -360 Data-Layer  Start
+
+        // echo '-----'; echo '<br>'; print_r($nid); echo '<br>'; print_r($resultUrl);
+        
+        if (\Drupal::routeMatch()->getRouteName() == 'entity.taxonomy_term.canonical') {
+            $term_id = \Drupal::routeMatch()->getRawParameter('taxonomy_term');
+            $termDataKC = Term::load($term_id);
+            $termDataKCBundle = $termDataKC->bundle();
+        }
+        $urlArray = explode('/', $resultUrl);
+        if($urlArray[1] == 'india'){
+            $KCView = $urlArray[2];
+        }else{
+            $KCView = $urlArray[1];
+        }
+
+        $variables['datalayer_ClientId'] = $gaCookie;
+        $variables['datalayer_Country'] = 'india';
+
+        $variables['datalayer_PageCategory'] = '';
+        $variables['datalayer_PageSubCategory'] = '';
+        $variables['datalayer_PageSubSubCategory'] = '';
+        $variables['datalayer_PageName'] = '';
+
+        $variables['datalayer_CourseCatogery'] = '';
+        $variables['datalayer_CourseSubCatogery'] = '';
+        $variables['datalayer_CourseName'] = '';
+
+        $variables['datalayer_CourseCode'] = '';
+        $variables['datalayer_CourseDuration'] = '';
+        $variables['datalayer_CourseFees'] = '';
+        $variables['datalayer_CourseBaseFee'] = '';
+        $variables['datalayer_CourseFeesTax'] = '';
+        $variables['datalayer_CourseType'] = '';
+        $variables['datalayer_CourseRating'] = '';
+        $variables['datalayer_CourseReviews'] = '';
+        $variables['datalayer_CourseEnrollmentNow'] = '';
+
+        $variables['datalayer_LeadId'] = '';
+        $variables['datalayer_CentreName'] = '';
+        $variables['datalayer_CentreId'] = '';
+        $variables['datalayer_CenterState'] = '';
+        $variables['datalayer_CenterCity'] = '';
+        $variables['datalayer_AvailableBatches'] = '';
+        $variables['datalayer_SelectedBatch'] = '';
+        $variables['datalayer_CourseStartDate'] = '';
+
+        $variables['datalayer_StudentEncryptedMobileNumber'] = '';
+        $variables['datalayer_StudentRegistrationNumber'] = '';
+        $variables['datalayer_StudentDOB'] = '';
+        $variables['datalayer_StudentGender'] = '';
+        $variables['datalayer_StudentCountry'] = 'india';
+        $variables['datalayer_StudentState'] = '';
+        $variables['datalayer_StudentCity'] = '';
+        $variables['datalayer_StudentPinCode'] = '';
+        /* line no 2150 to 2163 not used in preoduction server */
+
+        /*************** New variable ************* start *********/
+        $variables['datalayer_StudentEncryptedEmailID'] = '';
+        $variables['datalayer_StudentName'] = '';
+        $variables['datalayer_CouponCode'] = '';
+        $variables['datalayer_CampaignCode'] = '';
+
+        $variables['datalayer_articleName'] = '';
+        $variables['datalayer_articleCategory'] = '';
+        $variables['datalayer_articleSubCategory'] = '';
+
+        # is user Login
+        $variables['acquire_chat_widget_login_details'] = '';
+        if($roles[1] == 'niit'){
+            $variables['formStudentEmail'] = md5($user->getEmail());
+            $variables['formStudentMobile'] = md5($user->get('field_mobile_number')->value);
+            $variables['formStudentName'] = $user->get('field_user_name')->value;
+
+            $variables['datalayer_StudentEncryptedEmailID'] = md5($user->getEmail());
+            $variables['datalayer_StudentName'] = $user->get('field_user_name')->value;
+            $variables['datalayer_StudentEncryptedMobileNumber'] = md5($user->get('field_mobile_number')->value);
+        }
+        /*************** New variable ************* end ***********/
+
+        if($ContentTypeName == 'page' && $ContentTitle == 'Home'){
+            $variables['datalayer_PageCategory'] = 'HomePage';
+            $variables['datalayer_PageName'] = $variables['datalayer_Country'].':'.$variables['datalayer_PageCategory'];
+        }else if($ContentTypeName == 'course' || $ContentTypeName == 'course_landing_page'){
+            $variables['datalayer_PageCategory'] = 'CoursePage';
+            $variables['datalayer_PageSubCategory'] = 'CourseCatalogPage';
+            $variables['datalayer_PageSubSubCategory'] = 'CoursePage';
+            /** ew course created by ajeet */
+            if($ContentTypeName == 'course_landing_page'){
+                $suffix = ':CampaignLandingPage';
+            }
+            $top_course_category = stringGetLowerWithDash($node->field_top_course_category->target_id);
+            if($node->field_catgory->target_id > 0){
+                $categoryTypeName = (Term::load($node->field_catgory->target_id))->getName();
+                $course_catgory = stringGetLowerWithDash($categoryTypeName);
+            }
+            $courseTitle = stringGetLowerWithDash($node->getTitle());
+            
+            $currentPageTitle.= 'india';
+            $currentPageTitle.= $course_catgory ? ':'.$course_catgory : '';
+            $currentPageTitle.= $top_course_category ? ':'.$top_course_category : $top_course_category;
+            $currentPageTitle.= ':'.$courseTitle.''.$suffix;
+            $variables['datalayer_PageName'] = $currentPageTitle;
+            $variables['datalayer_CourseCatogery'] = $top_course_category;
+            $variables['datalayer_CourseSubCatogery'] = $course_catgory;
+            $variables['datalayer_CourseName'] = $top_course_category.':'.$courseTitle;
+
+            /** old course */
+            /*
+            if($ContentTypeName == 'course_landing_page'){
+                if($urlArray[1] == 'india'){
+                    $variables['datalayer_PageName'] = 'india:'.$urlArray[2].':'.$urlArray[3].':'.$urlArray[4].':CampaignLandingPage';
+                    $variables['datalayer_CourseCatogery'] = $urlArray[3];
+                    $variables['datalayer_CourseSubCatogery'] = $urlArray[2];
+                    $variables['datalayer_CourseName'] = $urlArray[3].':'.$urlArray[4];
+                }else{
+                    $variables['datalayer_PageName'] = 'india:'.$urlArray[1].':'.$urlArray[2].':'.$urlArray[3].':CampaignLandingPage';
+                    $variables['datalayer_CourseCatogery'] = $urlArray[2];
+                    $variables['datalayer_CourseSubCatogery'] = $urlArray[1];
+                    $variables['datalayer_CourseName'] = $urlArray[2].':'.$urlArray[3];
+                }
+            }else{
+                if($urlArray[1] == 'india'){
+                    $variables['datalayer_PageName'] = 'india:'.$urlArray[2].':'.$urlArray[3].':'.$urlArray[4];
+                    $variables['datalayer_CourseCatogery'] = $urlArray[3];
+                    $variables['datalayer_CourseSubCatogery'] = $urlArray[2];
+                    $variables['datalayer_CourseName'] = $urlArray[3].':'.$urlArray[4];
+                }else{
+                    $variables['datalayer_PageName'] = 'india:'.$urlArray[1].':'.$urlArray[2].':'.$urlArray[3];
+                    $variables['datalayer_CourseCatogery'] = $urlArray[2];
+                    $variables['datalayer_CourseSubCatogery'] = $urlArray[1];
+                    $variables['datalayer_CourseName'] = $urlArray[2].':'.$urlArray[3];
+                }
+            }*/
+            
+            $courseEnrollmentOpen = 'No';
+
+            $variables['datalayer_CourseCode'] = $mainCoursedetails[0]['course_code'];
+            // $variables['datalayer_CourseDuration'] = $mainCoursedetails[0]['course_duration'];
+            $variables['datalayer_CourseFees'] = strval($mainCoursedetails[0]['course_api_fee']);
+            $variables['datalayer_CourseBaseFee'] = '';
+            $variables['datalayer_CourseFeesTax'] = '';
+            $variables['datalayer_CourseType'] = $node->field_mode_of_delivery->value;
+            $variables['datalayer_CourseRating'] = $mainCoursedetails[0]['course_star_rating_value'];
+            $variables['datalayer_CourseReviews'] = $mainCoursedetails[0]['course_total_review'];
+            $variables['datalayer_CourseEnrollmentNow'] = $courseEnrollmentOpen;
+
+            $variables['datalayer_AvailableBatches'] = $mainCoursedetails[0]['batchAvailable'];
+            $variables['datalayer_SelectedBatch'] = '';
+            $variables['datalayer_CourseStartDate'] = '';
+
+        }else if($ContentTypeName == 'course_category'){
+            $variables['datalayer_PageCategory'] = 'CategoryPage';
+            if(is_numeric($node->field_catgory->target_id)){
+                $categoryTypeName = (Term::load($node->field_catgory->target_id))->getName();
+                $SubCatogery = str_replace(' ', '-', strtolower($categoryTypeName));
+            }
+            $nodeTitle = str_replace(' ', '-', strtolower($node->getTitle()));
+
+            $variables['datalayer_PageName'] = 'india:'.$SubCatogery.':'.$nodeTitle;
+            $variables['datalayer_CourseCatogery'] = $nodeTitle;
+            $variables['datalayer_CourseSubCatogery'] = $SubCatogery;
+            /*if($urlArray[1] == 'india'){
+                $variables['datalayer_PageName'] = 'india:'.$urlArray[2].':'.$urlArray[3];
+                $variables['datalayer_CourseCatogery'] = $urlArray[3];
+                $variables['datalayer_CourseSubCatogery'] = $urlArray[2];
+            }else{
+                $variables['datalayer_PageName'] = 'india:'.$urlArray[1].':'.$urlArray[2];
+                $variables['datalayer_CourseCatogery'] = $urlArray[2];
+                $variables['datalayer_CourseSubCatogery'] = $urlArray[1];
+            }*/
+        }else if($ContentTypeName == 'blog_post'){
+
+            // $variables['datalayer_PageCategory'] = 'KnowledgeCentreArticlePage'; // this line in pre-prode
+            $variables['datalayer_PageCategory'] = 'KnowledgeCentreDetailPage'; // this line in production  need to remove one variable
+            $blogTypeArray = $node->get('field_blog_type')->getValue(); 
+            $scgrp = '';
+            foreach ($blogTypeArray as $blogType) {
+                if(!empty($blogType['target_id'])){
+                    $term_name = Term::load($blogType['target_id']);
+                    $blogTypeName .= $term_name->getName().'/';
+                    $scgrp = $term_name->getName();
+                }
+            }
+            $variables['datalayer_PageSubCategory'] = substr($blogTypeName, 0, -1);
+            if($urlArray[1] == 'india'){
+                $variables['datalayer_PageName'] = 'india:'.substr($blogTypeName, 0, -1).':'.$urlArray[2];
+            }else{
+                $variables['datalayer_PageName'] = 'india:'.substr($blogTypeName, 0, -1).':'.$urlArray[1];
+            }
+
+            $pTitle = $node->getTitle();
+            
+            $variables['datalayer_articleName'] = $pTitle;
+            $variables['datalayer_articleCategory'] = substr($blogTypeName, 0, -1);
+
+            $category = '';
+            if(!empty($node->get('field_categories'))){
+                $cat =  $node->get('field_categories')->getValue()[0]['target_id'];
+                if(!empty($cat)){
+                    $catid = Term::load($cat);
+                    $category = $catid->getName();
+                }
+            }
+            
+
+            $variables['cgrp'] = 'article';
+            $variables['scgrp'] = $scgrp;
+            $variables['category'] = $category;
+            $variables['event_nid'] = $nid;
+
+            $variables['breadcrumb_script'] =  '<script type="application/ld+json">
+                                                    {
+                                                    "@context": "https://schema.org/", 
+                                                    "@type": "BreadcrumbList", 
+                                                    "itemListElement": [{
+                                                        "@type": "ListItem", 
+                                                        "position": 1, 
+                                                        "name": "Home",
+                                                        "item": "https://www.niit.com/"  
+                                                    },{
+                                                        "@type": "ListItem", 
+                                                        "position": 2, 
+                                                        "name": "Knowledge Center",
+                                                        "item": "https://www.niit.com/india/knowledge-center/"  
+                                                    },{
+                                                        "@type": "ListItem", 
+                                                        "position": 3, 
+                                                        "name": "'.$pTitle.'",
+                                                        "item": ""  
+                                                    }]
+                                                    }
+                                                    </script>';
+
+        }else if($termDataKCBundle == 'blog_tags'){
+            $variables['datalayer_PageCategory'] = 'KnowledgeCentreTagPage';
+            if($urlArray[1] == 'india'){
+                $variables['datalayer_PageName'] = 'india:knowledge-center:tag-page:'.$urlArray[2];
+            }else{
+                $variables['datalayer_PageName'] = 'india:knowledge-center:tag-page:'.$urlArray[1];
+            }
+
+            $blog_term_name = $termDataKC->getName();
+
+            $variables['breadcrumb_script'] = '<script type="application/ld+json">
+                                                    {
+                                                    "@context": "https://schema.org/", 
+                                                    "@type": "BreadcrumbList", 
+                                                    "itemListElement": [{
+                                                        "@type": "ListItem", 
+                                                        "position": 1, 
+                                                        "name": "Home",
+                                                        "item": "https://www.niit.com/"  
+                                                    },{
+                                                        "@type": "ListItem", 
+                                                        "position": 2, 
+                                                        "name": "'.$blog_term_name.'",
+                                                        "item": ""  
+                                                    }]
+                                                    }
+                                                    </script>';
+
+        }else if($termDataKCBundle == 'hierarchy_category'){
+            // $variables['datalayer_PageCategory'] = 'KnowledgeCentreCategoryPage'; // this used in pre-production
+            $variables['datalayer_PageCategory'] = 'KnowledgeCentreCategoryPage'; // this used in preodution need one variable to remove
+            $variables['pageNodeBundle'] = 'HierarchyCategory';
+            $variables['event_nid'] = $term_id;
+
+        }else if($KCView == 'knowledge-center'){
+            $variables['datalayer_PageCategory'] = 'KnowledgeCentrePage';
+            $variables['datalayer_PageName'] = 'india:'.$KCView;
+
+            $variables['event_nid'] = $nid;
+
+        }else if($ContentTypeName == 'placement'){
+            $variables['datalayer_PageCategory'] = 'PlacementPage';
+            if($urlArray[1] == 'india'){
+                $variables['datalayer_PageSubCategory'] = $urlArray[3];
+                $variables['datalayer_PageName'] = 'india:placement-page:'.$urlArray[3];
+            }else{
+                $variables['datalayer_PageSubCategory'] = $urlArray[2];
+                $variables['datalayer_PageName'] = 'india:placement-page:'.$urlArray[2];
+            }
+        }else if($ContentTypeName == 'center_'){
+            $variables['datalayer_PageCategory'] = 'CenterPage';
+            $variables['datalayer_PageName'] = 'india:'.str_replace(" ","-",$ContentTitle);
+        }else{
+            $variables['datalayer_PageName'] = 'india:'.str_replace(" ","-",$ContentTitle);
+        }
+
+        if($ContentTypeName == 'webinar'){
+            $variables['datalayer_PageCategory'] = 'eventpage';
+
+            $category = '';
+            if($node->field_categories[0]->target_id){
+                $cat =  $node->get('field_categories')->getValue()[0]['target_id'];
+                $catid = Term::load($cat);
+                $category = $catid->getName();
+            }
+
+            $variables['cgrp'] = 'event';
+            $variables['scgrp'] = '';
+            $variables['category'] = $category;
+            $variables['event_nid'] = $nid;
+        }
+
+        if($ContentTypeName == 'careers'){
+            $variables['breadcrumb_script'] = '<script type="application/ld+json">
+                                                    {
+                                                    "@context": "https://schema.org/", 
+                                                    "@type": "BreadcrumbList", 
+                                                    "itemListElement": [{
+                                                        "@type": "ListItem", 
+                                                        "position": 1, 
+                                                        "name": "Home",
+                                                        "item": "https://www.niit.com/"  
+                                                    },{
+                                                        "@type": "ListItem", 
+                                                        "position": 2, 
+                                                        "name": "Careers",
+                                                        "item": ""  
+                                                    }]
+                                                    }
+                                                    </script>';
+        }elseif($ContentTypeName == 'knowledge_center_slider'){
+            $variables['breadcrumb_script'] = '<script type="application/ld+json">
+                                                    {
+                                                    "@context": "https://schema.org/", 
+                                                    "@type": "BreadcrumbList", 
+                                                    "itemListElement": [{
+                                                        "@type": "ListItem", 
+                                                        "position": 1, 
+                                                        "name": "Home",
+                                                        "item": "https://www.niit.com/"  
+                                                    },{
+                                                        "@type": "ListItem", 
+                                                        "position": 2, 
+                                                        "name": "Knowledge Centre",
+                                                        "item": ""  
+                                                    }]
+                                                    }
+                                                    </script>';
+        }
+
+        $current_uripath = \Drupal::request()->getRequestUri();
+        $current_uripath_array = explode('/', $current_uripath);
+        if(array_key_exists(2, $current_uripath_array) && $current_uripath_array[2] == 'search' ){
+            $variables['breadcrumb_script'] = '<script type="application/ld+json">
+                                                    {
+                                                    "@context": "https://schema.org/", 
+                                                    "@type": "BreadcrumbList", 
+                                                    "itemListElement": [{
+                                                        "@type": "ListItem", 
+                                                        "position": 1, 
+                                                        "name": "Home",
+                                                        "item": "https://www.niit.com/"  
+                                                    },{
+                                                        "@type": "ListItem", 
+                                                        "position": 2, 
+                                                        "name": "Search Course",
+                                                        "item": ""  
+                                                    }]
+                                                    }
+                                                    </script>';
+
+        }
+        # GA -360 Data-Layer End
+    }
+
+    function nexus_preprocess_block(&$variables) {
+        $variables['#cache']['max-age'] = 0;
+    }
+    

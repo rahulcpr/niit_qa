@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - paragraphs
+id: paragraph.center_icon_text_view
+label: 'Center Icon Text view'
+targetEntityType: paragraph
+cache: true

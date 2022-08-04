@@ -1,0 +1,188 @@
+    <div class="container-fluid">  
+        <div class="row">
+
+
+            <header role="banner">
+                {% include directory ~ '/templates/layout/header.html.twig' %}
+            </header>
+            {{ page.primary_menu }}
+            {{ page.secondary_menu }}
+
+   
+     <div class="ProductBox blog-details-wrp">
+       <div class="container-fluid">  
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumbs">
+                    <ul>
+                        <li>
+
+                            <a href="/">Home / </a>
+                        </li>
+                        <li>{{ term_name }}</li> 
+                    </ul>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div> 
+   
+            <div class="col-lg-12">
+                <div class="slider-container afterfixheddiv">
+                <div class="slidermain">
+                    <div>
+                        <div class="slidewrap">  
+                            <img src="{{ imagePath }}" class="hide600" width="" height="">  
+                            </div>  
+                        </div>
+                    </div> 
+                </div>  
+                
+            </div> 
+        </div>
+    
+
+</div>      
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+           <div class="page-blog-list knowledge_cntrtxtbox">
+            <div class="view-content"> 
+
+                <div class="item-list blogboxes"> 
+                    {{ drupal_view('knowledge_center', 'block_2',termids) }} 
+                </div> 
+
+           </div>
+      </div>
+        </div>
+    </div>
+</div>
+
+ <footer>
+                <section class="container">
+                    <div class="row">
+                        <div class="col-xs-12 col-lg-12">
+                            <div class="row">
+                                <div
+                                    class="col-xs-12 col-sm-3 col-md-3 col-lg-3 ipad">
+                                    <ul class="footer-listlink">
+                                        <div class="subscribe"
+                                            id="subscribe-form">
+                                            {% if page.footer_newsletter %} {{ page.footer_newsletter }} {% endif %}
+                                        </div>
+                                    </ul>
+                                    <!-- Successfull Subscription Modal -->
+                                    <div id="newsletter-modal" class="overlay5"
+                                        style="display:none;">
+                                        <div class="errorbox" id="errorb">
+                                            <a href="javascript:void(0)"
+                                                class="closepop">&times;</a>
+                                            <div class="popbox">
+                                                <h3 class="sucess"><i
+                                                    class="far fa-check-circle"></i>
+                                                </h3>
+                                                <!--<img src="assets/images/error-icon.png">-->
+                                                <h2 class="success">Thank you
+                                                    for subscribing!</h2>
+                                                <div class="clr"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="col-xs-12 col-sm-2 col-md-2 col-lg-2 ipad">
+                                    <ul class="footer-listlink">
+                                        {% if page.footer_first %} {{ page.footer_first }} {% endif %}
+                                    </ul>
+                                </div>
+                                <div
+                                    class="col-xs-12 col-sm-2 col-md-2 col-lg-2 ipad">
+                                    <ul class="footer-listlink col-md-offset-0 col-lg-offset-1">
+                                        {% if page.footer_second %} {{ page.footer_second }} {% endif %}
+                                    </ul>
+                                </div>
+                                <div
+                                    class="col-xs-12 col-sm-2 col-md-2 col-lg-2 ipad">
+                                    <ul class="footer-listlink">
+                                        {% if page.footer_third %} {{ page.footer_third }} {% endif %}
+                                    </ul>
+                                </div>
+                                <div
+                                    class="col-xs-12 col-sm-2 col-md-2 col-lg-2 footp-left ipad">
+                                    <ul class="footer-listlink">
+                                        <h2 class="linkhead accordionButton1">
+                                            Programme Categories </h2>
+                                        <div class="accordionContent1">
+                                            {{ footer_category_menu }}
+                                        </div>
+                                    </ul>
+                                </div>
+                                <div class="clearfix visible-xs"></div>
+                                <div class="col ipad">
+                                    <ul class="footer-listlink lastul">
+                                        {% if page.footer_fifth %} {{ page.footer_fifth }} {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-4">
+                            <ul class="footer-listlink">
+                                <div class="social-icons">
+                                    <h2 class="linkhead">Follow Us</h2>
+                                    <ul>
+                                        <li>
+                                            <a href="https://www.facebook.com/NIIT4u/"
+                                                target="_blank">
+                                                <i class="fab fa-facebook-f"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://twitter.com/NIITLtd"
+                                                class="twi" target="_blank">
+                                                <i class="fab fa-twitter"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.youtube.com/channel/UCtE0wET2olVOwVw7ELCP35w"
+                                                class="tube"
+                                                target="_blank">
+                                                <i class="fab fa-youtube"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.linkedin.com/company/niit-limited"
+                                                class="lin"
+                                                target="_blank">
+                                                <i class="fab fa-linkedin-in"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    {# {% if page.footer_social %} {{ page.footer_social }} {% endif %} #}
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                <section class="footer-bott">
+                    <div class="container">
+                        <div class="row">
+                            <aside class="col-lg-6">
+                                <div class="footercopy">
+                                    {% if page.copy_right_first %} {{ page.copy_right_first }} {% endif %}
+                                </div>
+                            </aside>
+                            <aside class="col-lg-6 text-right">
+                                <div class="footercopy">
+                                    {% if page.copy_right_second %} {{ page.copy_right_second }} {% endif %}
+                                </div>
+                                <div class="clr"></div>
+                            </aside>
+                            <div class="clr"></div>
+                        </div>
+                    </div>
+                </section>
+            </footer>

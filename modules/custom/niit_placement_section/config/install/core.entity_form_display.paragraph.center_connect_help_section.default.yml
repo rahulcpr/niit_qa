@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.center_connect_help_section.field_connect_help
+    - paragraphs.paragraphs_type.center_connect_help_section
+  module:
+    - paragraphs
+id: paragraph.center_connect_help_section.default
+targetEntityType: paragraph
+bundle: center_connect_help_section
+mode: default
+content:
+  field_connect_help:
+    type: entity_reference_paragraphs
+    weight: 0
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.top_salaried_students
+  module:
+    - text
+id: node.top_salaried_students.body
+field_name: body
+entity_type: node
+bundle: top_salaried_students
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

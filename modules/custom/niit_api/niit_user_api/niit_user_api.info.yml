@@ -1,0 +1,5 @@
+name: NIIT USER API
+description: Define's a custom User Api
+package: Niit Custom API
+type: module
+core: 8.x

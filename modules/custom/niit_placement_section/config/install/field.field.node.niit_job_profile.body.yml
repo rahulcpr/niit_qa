@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.niit_job_profile
+  module:
+    - text
+id: node.niit_job_profile.body
+field_name: body
+entity_type: node
+bundle: niit_job_profile
+label: 'Job Description'
+description: 'Job Description'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

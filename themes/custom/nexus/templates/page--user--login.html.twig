@@ -1,0 +1,19 @@
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+
+<div class="container custom-user-login-form-template">
+    <div class="row vertical-offset-100">
+    	<div class="col-md-4 col-md-offset-4 mt-5 mb-5">
+    		<div class="panel panel-default">
+			  	<div class="panel-heading">
+			    	<h3 class="panel-title">Please sign in</h3>
+			 	</div>
+			  	<div class="panel-body">
+			    	{{ page.content }}
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>
+{% include directory ~ '/templates/layout/footer.html.twig' %}

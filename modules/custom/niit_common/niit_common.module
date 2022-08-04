@@ -1,0 +1,3222 @@
+<?php
+    use Drupal\Core\Form\FormStateInterface;
+    use Drupal\node\Entity\Node;
+    use Drupal\taxonomy\Entity\Term;
+    use Drupal\views\Plugin\views\query\QueryPluginBase;
+    use Drupal\views\ViewExecutable;
+    use Drupal\views\Views;
+    use Symfony\Component\HttpFoundation;
+    use Drupal\paragraphs\Entity\Paragraph;
+    use Symfony\Component\HttpFoundation\RedirectResponse;
+    use Symfony\Component\HttpFoundation\Request;
+    use Drupal\Component\Render\FormattableMarkup;
+    use Drupal\Core\Entity\EntityInterface;
+
+ 
+function  niit_common_views_pre_render(\Drupal\views\ViewExecutable $view) {
+    if($view->id() == 'fest_event' && ($view->current_display == 'block_9' || $view->current_display == 'block_10')) {
+        foreach ($view->result as $key => $row) {
+            if($row->_entity->get('field_select_coupon')->target_id){
+                $nodeData = Node::load($row->_entity->get('field_select_coupon')->target_id);
+                $offerText = $nodeData->field_offer_text->value;
+                $couponCode = $nodeData->field_coupon_code->value;
+                $couponstartdate = $nodeData->field_coupon_start_date->value;
+                $couponenddate = $nodeData->field_coupon_end_date->value;
+                $datetoday = date('Y-m-d');
+                if($couponenddate >= $datetoday && $couponstartdate <= $datetoday) {
+                    $row->_entity->set('body', $offerText.'--'.$couponCode);
+                }
+                else{
+                    $row->_entity->set('body', 'No offers available for this course.');
+                }
+            }else{
+                $row->_entity->set('body', 'No offers available for this course.');
+            }
+        }
+        
+    }
+
+    if($view->id() == 'listing_pages' && ($view->current_display == 'block_1')) {
+        foreach ($view->result as $key => $row) {
+            if($row->_entity->get('field_select_coupon')->target_id){
+                $nodeData = Node::load($row->_entity->get('field_select_coupon')->target_id);
+                $offerText = $nodeData->field_offer_text->value;
+                $couponCode = $nodeData->field_coupon_code->value;
+                $couponstartdate = $nodeData->field_coupon_start_date->value;
+                $couponenddate = $nodeData->field_coupon_end_date->value;
+                $datetoday = date('Y-m-d');
+                if($couponenddate >= $datetoday && $couponstartdate <= $datetoday) {
+                    $row->_entity->set('body', $offerText.'--'.$couponCode);
+                }
+                else{
+                    $row->_entity->set('body', 'No offers available for this course.');
+                }
+
+            }else{
+                $row->_entity->set('body', 'No offers available for this course.');
+            }
+
+        }
+        
+    }
+} 
+
+function niit_common_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+
+    if ($view->id() == 'in_your_city' && $display_id == 'in_your_city') {
+        // Get user city
+        if(isset($_COOKIE["userCity"]) && !empty($_COOKIE["userCity"])){
+         $userCity = $_COOKIE["userCity"];
+        }else{
+            $userCity = _get_Client_City();
+            setcookie('userCity', $userCity, time()+3600); 
+        }
+        // Get List of location states.
+        $service_terms = \Drupal::service('entity_type.manager')
+            ->getStorage("taxonomy_term")
+            ->loadTree('states', $parent = 0, $max_depth = NULL, $load_entities = FALSE);
+        // Get current name of tid.
+        foreach ($service_terms as $key => $term) {
+            $term_data[$term->tid] = $term->name;
+        }
+        // Get user city term id
+        $userCityTermID = array_search($userCity, $term_data);
+        if($userCityTermID){
+            $filter_input = $view->getExposedInput();
+            if(empty($filter_input)){
+                $exposed_filters = array(
+                    'field_drive_city_target_id' => $userCityTermID
+                );
+                $filter_input['field_drive_city_target_id'] = $exposed_filters;
+                $view->setExposedInput($filter_input);
+            }
+        }
+
+    }
+}
+
+// This function return user city by user's IP
+function _get_Client_City(){
+    $userIps = explode(",",$_SERVER['HTTP_X_FORWARDED_FOR']);
+    $userIp = $userIps[0];
+    $MaxMindUserName = $_ENV['MaxMindUserName'];
+    $MaxMindPassword  = $_ENV['MaxMindPassword'];
+    $locationCurl = curl_init();
+    curl_setopt_array($locationCurl, array(
+    CURLOPT_URL => "https://geoip.maxmind.com/geoip/v2.1/city/".$userIp,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => "",
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 30,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_HTTPHEADER => array(
+        "Content-Type: application/vnd.maxmind.com-city+json; charset=UTF-8; version=2.1",
+        "Authorization: Basic ". base64_encode($MaxMindUserName.":".$MaxMindPassword)
+    ),
+    ));
+
+    $location_rep = curl_exec($locationCurl);
+    $location_err = curl_error($locationCurl);
+    curl_close($locationCurl);
+    if ($location_err) {
+    //echo "cURL Error #:" . $location_err; // Get error if any issue
+    } else {
+    $location_rep_arr = json_decode($location_rep);
+    $location_city = $location_rep_arr->city->names; // Get city name array 
+    $userCityName = $location_city->en; 
+
+    return $userCityName;  
+    }
+    
+}
+
+function getParagraphIdByNodeId($nodeId = 0)
+{
+    $pquery = \Drupal::database()->select('paragraphs_item_field_data', 'p');
+    $pquery->fields('p', ['id']);
+    $pquery->condition('p.type', 'placement_testimonial','=');
+    $pquery->condition('p.parent_id', $nodeId,'=');
+    $pid = $pquery->execute()->fetchAll();
+    $paragraphId = 0;
+    if (is_array($pid)) {
+        $paragraphId = $pid[0]->id;
+    }
+    $paragraph_obj = Paragraph::load($paragraphId);
+    $paragraphIds = [];
+    if(is_object($paragraph_obj) && !is_null($paragraph_obj)) {
+
+        foreach ($paragraph_obj->get('field_testimonials_reference')->getValue() as $ids) {
+
+            array_push($paragraphIds, $ids['target_id']);
+        }
+    }
+    return $paragraphIds;
+}
+
+function niit_common_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
+
+    if ($form['#id'] == 'views-exposed-form-in-india-placement-drive-in-india-drive') {
+         $years  = [];
+         $months = [];
+        $currentYear  = date('Y');
+        $currentMonth = date('m');
+        foreach($form['field_year_target_id']['#options'] as $key => $value)
+        {
+            if(is_numeric($value)) {
+
+                if($value >= $currentYear) {
+                    $years[$key] = $value;
+                }
+            }
+           else{
+               $years[$key] = $value;
+           }
+        }
+
+        // Load all node of mega drive which is published.
+        $query = \Drupal::entityQuery('node')
+            ->condition('status', 1) //published or not
+            ->condition('type', 'mega_drive') //content type
+            ->pager(0); //specify results to return
+        $nids = $query->execute();
+        $currentDate = date('d-m-Y');
+        // getting current selected year id by user
+        $req = !empty(\Drupal::request()->query->get('field_year_target_id')) ? \Drupal::request()->query->get('field_year_target_id') : 'All';
+
+        // find year value from our taxonomy by year id
+        $selectedYear = $years[$req];
+
+        // define month array to push unque month name.
+        $monthArray = [];
+
+        // load each node inside foreach loop.
+        foreach ($nids as $nid) {
+            $node = \Drupal\node\Entity\Node::load($nid);
+            $date = $node->field_drive_date->value;
+            $megaDriveDate  = date("d-m-Y",strtotime($date));
+            $megaDriveYear  = date("Y",strtotime($date));
+            // make condition for mega drive should be past and year must be match.
+            if(strtotime($megaDriveDate) >= strtotime($currentDate) && ($megaDriveYear == $selectedYear)) {
+                $month = date("M",strtotime($megaDriveDate));
+                if(!in_array($month,$monthArray))
+                {
+                    array_push($monthArray,$month);
+                }
+            }
+        }
+
+        foreach($form['field_month_target_id']['#options'] as $key => $value)
+        {
+            if($value != 'Month') {
+                $months[$key] = $value;
+            }
+            else{
+                $months[$key] = $value;
+            }
+        }
+        // sorting month name
+        $sortedMonth = array();
+        foreach($monthArray as $month) {
+            $m = date_parse($month);
+            $sortedMonth[$m['month']] = $month;
+        }
+        ksort($sortedMonth);
+        $sortedMonthFinal = ['All' => 'Month'];
+        foreach($sortedMonth as $smonth)
+        {
+            $key = array_search ($smonth, $months);
+            $sortedMonthFinal[$key] = $smonth;
+        }
+        // end sorting logic.
+        // here's a form element that we can just add to the form.
+        $form['field_year_target_id']['#options']  = $years;
+        $form['field_month_target_id']['#options'] = $sortedMonthFinal;
+
+     }
+    if($form['#id'] == 'views-exposed-form-mega-drive-archive-mega-drive-archive')
+    {
+
+        $years  = [];
+        $months = [];
+        $currentYear  = date('Y');
+        $currentMonth = date('m');
+
+        foreach($form['field_year_target_id']['#options'] as $key => $value)
+        {
+            if(is_numeric($value)) {
+
+                if($value <= $currentYear) {
+                    $years[$key] = $value;
+                }
+            }
+            else{
+                $years[$key] = $value;
+            }
+        }
+        // Load all node of mega drive which is published.
+        $query = \Drupal::entityQuery('node')
+            ->condition('status', 1) //published or not
+            ->condition('type', 'mega_drive') //content type
+            ->pager(0); //specify results to return
+        $nids = $query->execute();
+        $currentDate = date('d-m-Y');
+        // getting current selected year id by user
+        $req = !empty(\Drupal::request()->query->get('field_year_target_id')) ? \Drupal::request()->query->get('field_year_target_id') : 'All';
+
+        // find year value from our taxonomy by year id
+        $selectedYear = $years[$req];
+
+        // define month array to push unque month name.
+        $monthArray = [];
+
+        // load each node inside foreach loop.
+        foreach ($nids as $nid) {
+            $node = \Drupal\node\Entity\Node::load($nid);
+            $date = $node->field_drive_date->value;
+            $megaDriveDate  = date("d-m-Y",strtotime($date));
+            $megaDriveYear  = date("Y",strtotime($date));
+            // make condition for mega drive should be past and year must be match.
+            if(strtotime($megaDriveDate) < strtotime($currentDate) && ($megaDriveYear == $selectedYear)) {
+                 $month = date("M",strtotime($megaDriveDate));
+                 if(!in_array($month,$monthArray))
+                 {
+                   array_push($monthArray,$month);
+                 }
+            }
+        }
+
+        foreach($form['field_month_target_id']['#options'] as $key => $value)
+        {
+            if($value != 'Month') {
+                    $months[$key] = $value;
+            }
+           else{
+               $months[$key] = $value;
+           }
+        }
+        // sorting month name
+        $sortedMonth = array();
+        foreach($monthArray as $month) {
+            $m = date_parse($month);
+            $sortedMonth[$m['month']] = $month;
+        }
+        ksort($sortedMonth);
+        $sortedMonthFinal = ['All' => 'Month'];
+        foreach($sortedMonth as $smonth)
+        {
+            $key = array_search ($smonth, $months);
+            $sortedMonthFinal[$key] = $smonth;
+        }
+        // end sorting logic.
+        // here's a form element that we can just add to the form.
+        $form['field_year_target_id']['#options']  = $years;
+        $form['field_month_target_id']['#options'] = $sortedMonthFinal;
+     }
+}
+  
+
+function niit_common_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+		
+			if ($view->id() == 'knowledge_center' || $view->id() == 'knowledge_center_blog_tag') {
+        
+            $query->addField('node_field_data', 'nid', '', ['function' => 'groupby']);
+            $query->addGroupBy('node_field_data.nid');
+         }
+				
+		if($view->id() == 'related_blogs')
+             {  
+                foreach ($query->where as &$condition_group) { 
+                    
+                foreach ($condition_group['conditions'] as &$condition) { 
+                if ($condition['field'] == 'node_field_data.nid') 
+                {   
+                    $node = \Drupal::routeMatch()->getParameter('node');
+                    $nodeId = $node->id();
+                
+                        if(!empty($nodeId)) { 
+                        $condition = array(
+                        'field' => 'node_field_data.nid',
+                        'value' => $nodeId,
+                        'operator' => '<>',
+                        );
+                        }
+                 } 
+             }
+           } 
+         }	
+ 
+        if ($view->id() == 'testimonial_modal') {
+            foreach ($query->where as &$condition_group) {
+                foreach ($condition_group['conditions'] as &$condition) {
+
+                    if ($condition['field'] == 'node_field_data.nid') {
+                        $node = \Drupal::routeMatch()->getParameter('node');
+                        $nid = getParagraphIdByNodeId($node->id());
+                        if(is_array($nid) && !empty($nid)) { 
+                            $condition = array(
+                                'field' => 'node_field_data.nid',
+                                'value' => $nid,
+                                'operator' => 'IN',
+                            );
+                        }
+                    }
+
+                }
+            }
+        }
+        // make sure we're altering the correct view
+        if (($view->id() == 'in_india_placement_drive') || ($view->id() == 'in_your_city') || ($view->id() == 'mega_drive_archive')) {
+
+
+            // Get current node type.
+                    // get paragraph id for load on this page.!is_null($node->id()) ? $node->id() :
+                $node = \Drupal::routeMatch()->getParameter('node');
+                // save node id in cookies for filter data.
+                $nodeId = 807;
+
+                if (is_object($node) && !empty($node->id())) {
+                    $nodeId = $node->id();
+                    setcookie('placementNodeId', $nodeId, time()+86400);
+                }else if(!empty($_COOKIE['placementNodeId'])){
+                     $nodeId = $_COOKIE['placementNodeId'];
+                }
+                $pquery = \Drupal::database()->select('paragraphs_item_field_data', 'p');
+                $pquery->fields('p', ['id']);
+                $pquery->condition('p.type', 'placement_mega_drive','=');
+                $pquery->condition('p.parent_id', $nodeId ,'=');
+                $pid = $pquery->execute()->fetchAll();
+                //$paragraphId = 0;
+                if (is_array($pid)) {
+                    $paragraphId = $pid[0]->id;
+                }
+                  // paragraph loaded here.
+                $paragraph_obj = Paragraph::load($paragraphId);
+                if(!is_null($paragraph_obj))
+                {
+                    // if field_mega_drive_name exists or not.
+                    if(is_object($paragraph_obj->get('field_mega_drive_name'))) {
+                            $nid = $paragraph_obj->get('field_mega_drive_name')->getValue()[0]['target_id'];
+                            // add condition, which is not displaying record who, already displayed above.
+                            foreach ($query->where as &$condition_group) {
+                            $condition_array = [
+                            'field' => 'nid',
+                            'value' => $nid,
+                            'operator' => '<>',
+                            ];
+                            array_push($condition_group['conditions'], $condition_array);
+                        }
+                    }
+                }
+
+
+
+        }
+       if ($view->storage->get('id') == 'upcoming_event') {
+
+            $node = \Drupal::routeMatch()->getParameter('node');
+        
+            if (is_object($node) && is_null($node) == FALSE) {
+                 
+                 if ($node->gettype() == 'center_') {
+                    $nid = $node->id();
+                    # Get condition group from query object
+                    foreach ($query->where as &$condition_group) {  
+                         _recursively_alter_query_conditions($condition_group['conditions'], $nid);
+                    }
+                }
+
+
+            }
+        }
+       if ($view->storage->get('id') == 'past_event') {
+            $node = \Drupal::routeMatch()->getParameter('node');
+            if (is_object($node) && is_null($node) == FALSE) {
+                if ($node->gettype() == 'center_') {
+                    $nid = $node->id();
+                    # Get condition group from query object
+                    foreach ($query->where as &$condition_group) { 
+                        _recursively_alter_query_conditions($condition_group['conditions'], $nid);
+
+                    }
+                }
+            }
+
+
+        }
+
+    }
+
+
+
+
+    // helper function: (takes in conditions group argument)
+    function _recursively_alter_query_conditions(&$conditions, $nid) {
+        // foreach condition in condition group
+        foreach ($conditions as &$condition) {
+            // if condition is itself a condition group
+            if (isset($condition['field']) && is_a($condition['field'], 'Drupal\Core\Database\Query\Condition')) {
+                // call the helper function on it
+                _recursively_alter_query_conditions($condition['field']->conditions(), $nid);
+            }
+            else {
+                // check if we want to alter the condition and if so alter it
+                _alter_query_condition($condition, $nid);
+            }
+        }
+    }
+
+
+    // separate helper function to determine if the condition is one we want to alter
+    function _alter_query_condition(&$condition, $nid) { 
+    
+        if (isset($condition['field']) && ($condition['field'] == 'node__field_center.field_center_target_id')) {
+            $condition['value']    = $nid;
+            $condition['operator'] = '=';
+        }
+
+    }
+
+
+    /**
+     * @param $form
+     * @param \FormStateInterface $form_state
+     * @param $form_id
+     */
+    function niit_common_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+        if($form_id == 'node_course_edit_form' || $form_id == 'node_course_form'){
+            $form['field_course_newly_star_rating']['#attributes']['class'][0] = '';
+            $form['field_course_newly_star_rating']['widget'][0]['value']['#type'] = 'textfield';
+        }
+        switch ($form_id) {
+            case 'webform_submission_lead_form_school_enterprise_add_form':
+                //get form type(school, enterprise) from URL in ref key
+
+                $req = \Drupal::request()->query->get('ref');
+                $form_type = isset($req) && ($req == 'school' || $req == 'enterprises') ? $req : 'school';
+                if (!empty($form_type)) {
+                    $form['actions']['submit']['#submit'][] = 'lead_school_enterprise_form_validate';
+                }
+                break;
+
+            case 'views_exposed_form':
+    
+                break;            
+
+            case 'webform_submission_lead_form_add_form':
+                // Get course id and type from URL.
+                $course_key = \Drupal::request()->get('course');
+
+                ### This Parameter comes from ecommerce page
+                $centerName = \Drupal::request()->get('centerName');
+                $cityName = \Drupal::request()->get('cityName');
+                #End Ecommerce
+                $node_course = isset($course_key) && is_integer((int) $course_key) ? Node::load($course_key) : '';
+                if ($node_course !== NULL && is_object($node_course)) {
+                    if ($node_course->getType() == 'course') {
+                        $course_id = $node_course->get('field_catgory')
+                            ->getValue();
+                        $id = isset($course_id) ? $node_course->get('field_catgory')
+                            ->getValue()[0]['target_id'] : '';
+                        $form['elements']['course']['#default_value'] = $id;
+                        $form['elements']['course']['#attributes'] = ['disabled' => "disabled"];
+                        $form['elements']['courses']['#default_value'] = $course_key;
+                        $form['elements']['courses']['#attributes'] = ['disabled' => "disabled"];
+                    }
+                }
+                if(isset($centerName) && !empty($centerName) && !is_null($centerName) ){
+                    
+                 $form['elements']['center_name']['#value'] = $centerName;
+                 //$form['elements']['center_name']['#attributes'] = ['readonly' => "readonly"];                     
+                }
+
+
+                // Get List of location states.
+                $service_terms = \Drupal::service('entity_type.manager')
+                    ->getStorage("taxonomy_term")
+                    ->loadTree('states', $parent = 0, $max_depth = 1, $load_entities = FALSE);
+
+                    foreach ($service_terms as $key => $term) {
+                    $term_date[$term->tid] = $term->name;
+                    $pid = $term->tid;
+                    $childterm = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadTree('states', $pid, $max_depth = 2, $load_entities = FALSE);
+                    foreach($childterm as $key => $term){
+                    $child_terms[$pid][$term->tid] = $term->name;
+                    $cityList[$term->tid] = $term->name;
+                    }
+               }
+
+                $stateId = "State";
+                $cityId = "City";
+                # Get state Id(Parent Id) and city Id(Child Id)
+                if(isset($cityName) && !empty($cityName) && !is_null($cityName)){
+                    
+                    foreach($child_terms as $key =>$value){
+                        $state = $key;
+                        foreach($value as $key => $val){
+
+                            if($val == $cityName){
+                                $stateId = $state;
+                                $cityId = $key;
+                                break;                      
+                            }
+
+                        }
+
+                    }
+                $form['elements']['location']['#options'] = $term_date;
+                $form['elements']['location']['#default_value'] = $stateId;
+                $form['elements']['city']['#options'] = $cityList;
+                $form['elements']['city']['#default_value'] = $cityId;              
+                }else{
+                $form['elements']['location']['#options'] = $term_date;
+                $form['elements']['city']['#attributes'] = ['disabled' => "disabled"];
+                    
+                }
+
+                $form['actions']['submit']['#validate'][] = 'lead_course_form_validate';
+                break;
+                case 'webform_submission_enquire_now_course_add_form':
+                    $service_terms = \Drupal::service('entity_type.manager')
+                        ->getStorage("taxonomy_term")
+                        ->loadTree('states', $parent = 0, $max_depth = 1, $load_entities = FALSE);
+                    // Get current name of tid.
+                    foreach ($service_terms as $key => $term) {
+                        $term_date[$term->tid] = $term->name;
+                    }
+                    $form['elements']['state']['#options'] = $term_date;
+                    // $state = \Drupal::request()->query->get('state');
+                    $course = \Drupal::request()->query->get('course');
+                    $destination = \Drupal::request()->query->get('destination');
+                    $course_code = \Drupal::request()->query->get('course_code');
+                    $campaign_code = \Drupal::request()->query->get('campaign_code');
+
+                    $center_course_array = array('state' => $state, 'course' => $course); 
+
+                    // $form['elements']['state']['#options'] = $center_course_array;
+                    // $form['elements']['state']['#default_value'] = 'state';
+                    $form['elements']['course']['#options'] = $center_course_array;
+                    $form['elements']['course']['#default_value'] = 'course';
+                    // $form['elements']['state']['#attributes'] = ['disabled' => "disabled"];
+                    $form['elements']['course']['#attributes'] = ['disabled' => "disabled"];
+                    $form['destination'] = $destination;
+                    $form['course_code'] = $course_code;
+                    $form['campaign_code'] = $campaign_code;
+                    $form['actions']['submit']['#validate'][] = 'enquire_now_course_form_validate';
+                    $form['actions']['submit']['#submit'][] = 'niit_common_related_course_center_form_submit';              
+                break;
+
+            default;
+                // In case we are not able to single form id so we are checking by name/
+                // Get gernalize form id based on without nid.
+                if (strpos($form_id, 'webform_submission_get_in_touch') !== FALSE) {
+                    // Get List of location states.
+                    $service_terms = \Drupal::service('entity_type.manager')
+                        ->getStorage("taxonomy_term")
+                        ->loadTree('states', $parent = 0, $max_depth = 1, $load_entities = FALSE);
+                    // Get current name of tid.
+                    foreach ($service_terms as $key => $term) {
+                        $term_date[$term->tid] = $term->name;
+                    }
+                    $form['elements']['location']['#options'] = $term_date;
+                    $form['elements']['city']['#attributes'] = ['disabled' => "disabled"];
+                    $form['elements']['center']['#attributes'] = ['disabled' => "disabled"];
+                    $form['actions']['submit']['#validate'][] = 'get_in_touch_form_validate';
+
+
+                }
+                /* This case if for Talk to our expert form id is : api_example_form and it's actual id is : talk_to_expert*/
+                if (strpos($form_id, 'webform_submission_talk_to_expert_node') !== FALSE) {
+                    $form['actions']['submit']['#validate'][] = 'talk_to_expert_form_validate';//['talk_to_expert_submit'];
+                }
+                /* placement student page form actual id is webform_submission_enroll_for_placement_node_807_add_form, so i have make it default and added condition*/
+                if (strpos($form_id, 'webform_submission_enroll_for_placement_node') !== FALSE) {
+                    $form['actions']['submit']['#validate'][] = 'placement_student_form_validate';
+                }
+                if (strpos($form_id, 'webform_submission_enroll_for_placement_recruitment_node') !== FALSE) {
+                    $form['actions']['submit']['#validate'][] = 'placement_recruitment_form_validate';
+                }
+                if (strpos($form_id, 'webform_submission_course_detail_quick_connect_node') !== FALSE) {
+                    $form['actions']['submit']['#validate'][] = 'course_quick_connect_form_validate';
+                }
+                // if ($form['#id'] == 'webform-submission-course-detail-quick-connect-add-form' || $form['#id'] == 'webform-submission-course-detail-quick-connect-node-370-add-form') {
+                //     $form['actions']['submit']['#validate'][] = 'course_quick_connect_form_validate';
+                // }
+                 if (strpos($form_id, 'webform_submission_career_page_enquire_now') !== FALSE) {
+                    $service_terms = \Drupal::service('entity_type.manager')
+                        ->getStorage("taxonomy_term")
+                        ->loadTree('states', $parent = 0, $max_depth = 1, $load_entities = FALSE);
+                    // Get current name of tid.
+                    foreach ($service_terms as $key => $term) {
+                        $term_date[$term->tid] = $term->name;
+                    }
+                    $form['elements']['state']['#options'] = $term_date;
+                    $destination = \Drupal::request()->query->get('destination');
+                    $course_code = \Drupal::request()->query->get('course_code');
+                    $campaign_code = \Drupal::request()->query->get('campaign_code');
+                    $form['destination'] = $destination;
+                    $form['course_code'] = $course_code;
+                    $form['campaign_code'] = $campaign_code;
+                    $form['actions']['submit']['#validate'][] = 'career_page_enquire_now_form_validate';
+                    $form['actions']['submit']['#submit'][] = 'niit_common_related_course_center_form_submit';
+                }  
+               
+                if (strpos($form_id, 'webform_submission_career_page_request_a_call_back') !== FALSE) {
+                    $destination = \Drupal::request()->query->get('destination');
+                    $course_code = \Drupal::request()->query->get('course_code');
+                    $campaign_code = \Drupal::request()->query->get('campaign_code');
+                    $form['destination'] = $destination;
+                    $form['course_code'] = $course_code;
+                    $form['campaign_code'] = $campaign_code;
+                    $service_terms = \Drupal::service('entity_type.manager')
+                        ->getStorage("taxonomy_term")
+                        ->loadTree('states', $parent = 0, $max_depth = 1, $load_entities = FALSE);
+                    // Get current name of tid.
+                    foreach ($service_terms as $key => $term) {
+                        $term_date[$term->tid] = $term->name;
+                    }
+                    $form['elements']['state']['#options'] = $term_date;
+                    $form['actions']['submit']['#validate'][] = 'career_page_request_a_call_back_form_validate';
+                    $form['actions']['submit']['#submit'][] = 'niit_common_related_course_center_form_submit';
+                }
+        }
+    }
+
+/**
+ * this method called on validate form for Career page Enquire now on related courses.
+ */
+function enquire_now_course_form_validate(array &$form, FormStateInterface $form_state) {
+        // $path_without_india = substr($_SERVER['REQUEST_URI'], 6);
+        // $path = \Drupal::service('path.alias_manager')->getPathByAlias($path_without_india);
+        // if(preg_match('/node\/(\d+)/', $path, $matches)) {
+        //   $node = \Drupal\node\Entity\Node::load($matches[1]);
+        // }
+        $courseCode = $form['course_code'];
+        $campaign_code = $form['campaign_code'];
+        if(empty($campaign_code)){
+            $campaign_code = 'NIITCOM';
+        }
+
+        //call javascript method define on top for SEO purspecive
+        echo '<script type="text/JavaScript">
+            function onFormSuccess(eventName,formIdName) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                event: eventName, // form event name should be changed according to forms.
+                formId: formIdName //form id needs to be changed for each form depending on hard codes
+                });
+                // Rest of the success callback code
+            }
+        </script>';
+            
+        $eventName = "Career page Enquire now on related courses";
+        $formIdName = "enquire_now_course_form_validate";
+        echo '<script type="text/JavaScript">  
+             onFormSuccess("'.$eventName.'","'.$formIdName.'");
+             </script>' 
+        ; 
+
+    // Check existing term id.
+    $body = [
+        'Name' => (!empty($form_state->getValue('name'))) ? $form_state->getValue('name') : '',
+        'EmailID' => (!empty($form_state->getValue('email'))) ? $form_state->getValue('email') : '',
+        'PhoneNo' => (!empty($form_state->getValue('mobile'))) ? $form_state->getValue('mobile') :'',
+        'State' => (!empty($form_state->getValue('state'))) ? $form_state->getValue('state') :'',
+        'Center' => '',
+        'CampaignCode' => $campaign_code,
+        'ProgramInterested' => $courseCode,
+    ];
+    $url = $_ENV['LEAD_API_DEFAULT'];
+    $headers = [
+        'Content-Type' => 'application/json',
+        'Token' => $_ENV['LEAD_API_DEFAULT_TOKEN'],
+    ];
+    $client = \Drupal::httpClient();
+    try {
+        $request_test = $client->post($url, [
+            'headers' => $headers,
+            'body' => json_encode($body),
+        ]);
+    }
+    catch(\GuzzleHttp\Exception\ConnectException $e) {
+        $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+        return new RedirectResponse($url);
+    }
+    if ($request_test->getStatusCode() != 200) {
+        \Drupal::logger(' Placement page : ENQUIRE FOR OUR PLACEMENT LINKED PROGRAMMES')
+            ->notice('Query is not submitted');
+    }
+}
+
+/**
+ * this method called on validate form for request a call back on career page.
+ */
+function career_page_request_a_call_back_form_validate(array &$form, FormStateInterface $form_state) {
+        // $path_without_india = substr($_SERVER['REQUEST_URI'], 6);
+        // $path = \Drupal::service('path.alias_manager')->getPathByAlias($path_without_india);
+        // if(preg_match('/node\/(\d+)/', $path, $matches)) {
+        //   $node = \Drupal\node\Entity\Node::load($matches[1]);
+        // }
+        // $courseCode = (!empty($node->field_course_code->value))?$node->field_course_code->value:'';
+        $courseCode = $form['course_code'];
+        $campaigncode = $form['campaign_code'];
+
+        if(empty($campaigncode)){
+            $campaigncode = 'NIITCOM';
+
+        }
+        //call javascript method define on top for SEO purspecive
+        echo '<script type="text/JavaScript">
+            function onFormSuccess(eventName,formIdName) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                event: eventName, // form event name should be changed according to forms.
+                formId: formIdName //form id needs to be changed for each form depending on hard codes
+                });
+                // Rest of the success callback code
+            }
+        </script>';
+            
+        $eventName = "Career page Request a call back";
+        $formIdName = "career_page_request_a_call_back_form_validate";
+        echo '<script type="text/JavaScript">  
+             onFormSuccess("'.$eventName.'","'.$formIdName.'");
+             </script>' 
+            ; 
+    $stateId = !empty($form_state->getValue('state')) ? $form_state->getValue('state') : 0;
+    $term = Term::load($stateId);
+    // Check existing term id.
+    $body = [
+        'Name' => (!empty($form_state->getValue('name'))) ? $form_state->getValue('name') : '',
+        'EmailID' => (!empty($form_state->getValue('email'))) ? $form_state->getValue('email') : '',
+        'PhoneNo' => (!empty($form_state->getValue('mobile'))) ? $form_state->getValue('mobile') : '',
+        'State' => $stateId != 0 ? $term->getName() : '',
+        'Center' => '',
+        'CampaignCode' => $campaigncode,
+        'ProgramInterested' => $courseCode,
+    ];
+    $url = $_ENV['LEAD_API_DEFAULT'];
+    $headers = [
+        'Content-Type' => 'application/json',
+        'Token' => $_ENV['LEAD_API_DEFAULT_TOKEN'],
+    ];
+    $client = \Drupal::httpClient();
+    try {
+        $request_test = $client->post($url, [
+            'headers' => $headers,
+            'body' => json_encode($body),
+        ]);
+    }
+    catch(\GuzzleHttp\Exception\ConnectException $e) {
+        $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+        return new RedirectResponse($url);
+    }
+    if ($request_test->getStatusCode() != 200) {
+        \Drupal::logger(' Placement page : ENQUIRE FOR OUR PLACEMENT LINKED PROGRAMMES')
+            ->notice('Query is not submitted');
+    }
+}
+
+/**
+ * this method called on validate form fo Enquire now career page.
+ */
+function career_page_enquire_now_form_validate(array &$form, FormStateInterface $form_state) {
+        // $path_without_india = substr($_SERVER['REQUEST_URI'], 6);
+        // $path = \Drupal::service('path.alias_manager')->getPathByAlias($path_without_india);
+        // if(preg_match('/node\/(\d+)/', $path, $matches)) {
+        //   $node = \Drupal\node\Entity\Node::load($matches[1]);
+        // }
+        // $courseCode = (!empty($node->field_course_code->value))?$node->field_course_code->value:'';
+        $courseCode = $form['course_code'];
+        $campaign_code = $form['campaign_code'];
+
+        if(empty($campaign_code)){
+            $campaign_code = 'NIITCOM';
+        }
+
+        //call javascript method define on top for SEO purspecive
+        echo '<script type="text/JavaScript">
+            function onFormSuccess(eventName,formIdName) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                event: eventName, // form event name should be changed according to forms.
+                formId: formIdName //form id needs to be changed for each form depending on hard codes
+                });
+                // Rest of the success callback code
+            }
+        </script>';
+            
+        $eventName = "Career page main Enquire now";
+        $formIdName = "career_page_enquire_now_form_validate";
+        echo '<script type="text/JavaScript">  
+             onFormSuccess("'.$eventName.'","'.$formIdName.'");
+             </script>' 
+        ; 
+    $stateId = !empty($form_state->getValue('state')) ? $form_state->getValue('state') : 0;
+    $term = Term::load($stateId);
+    // Check existing term id.
+    $body = [
+        'Name' => (!empty($form_state->getValue('name'))) ? $form_state->getValue('name') : '',
+        'EmailID' => (!empty($form_state->getValue('email'))) ? $form_state->getValue('email') : '',
+        'PhoneNo' => (!empty($form_state->getValue('mobile'))) ? $form_state->getValue('mobile') :'',
+        'State' => $stateId != 0 ? $term->getName() : '',
+        'Center' => '',
+        'CampaignCode' => $campaign_code,
+        'ProgramInterested' => $courseCode,
+    ];
+    $url = $_ENV['LEAD_API_DEFAULT'];
+    $headers = [
+        'Content-Type' => 'application/json',
+        'Token' => $_ENV['LEAD_API_DEFAULT_TOKEN'],
+    ];
+    $client = \Drupal::httpClient();
+    try {
+        $request_test = $client->post($url, [
+            'headers' => $headers,
+            'body' => json_encode($body),
+        ]);
+    }
+    catch(\GuzzleHttp\Exception\ConnectException $e) {
+        $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+        return new RedirectResponse($url);
+    }
+    if ($request_test->getStatusCode() != 200) {
+        \Drupal::logger(' Placement page : ENQUIRE FOR OUR PLACEMENT LINKED PROGRAMMES')
+            ->notice('Query is not submitted');
+    }
+}
+/**
+ * this method called on validate form fo Quick connect course detail page.
+ */
+function course_quick_connect_form_validate(array &$form, FormStateInterface $form_state) {
+        $path_without_india = substr($_SERVER['REQUEST_URI'], 6);
+        $path = \Drupal::service('path.alias_manager')->getPathByAlias($path_without_india);
+        if(preg_match('/node\/(\d+)/', $path, $matches)) {
+          $node = \Drupal\node\Entity\Node::load($matches[1]);
+        }
+        $courseCode = (!empty($node->field_course_code->value))?$node->field_course_code->value:'';
+        $campaigncode = (!empty($node->field_campaign_code->value))?$node->field_campaign_code->value:'NIITCOM';
+
+        //call javascript method define on top for SEO purspecive
+        echo '<script type="text/JavaScript">
+            function onFormSuccess(eventName,formIdName) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                event: eventName, // form event name should be changed according to forms.
+                formId: formIdName //form id needs to be changed for each form depending on hard codes
+                });
+                // Rest of the success callback code
+            }
+        </script>';
+            
+        $eventName = "Student Enroll For Placement";
+        $formIdName = "webform_submission_enroll_for_placement_node";
+        echo '<script type="text/JavaScript">  
+             onFormSuccess("'.$eventName.'","'.$formIdName.'");
+             </script>' 
+        ; 
+
+    // Check existing term id.
+    $body = [
+        'Name' => (!empty($form_state->getValue('name'))) ? $form_state->getValue('name') : '',
+        'EmailID' => (!empty($form_state->getValue('email'))) ? $form_state->getValue('email') : '',
+        'PhoneNo' => (!empty($form_state->getValue('mobile'))) ? $form_state->getValue('mobile'):'',
+        'Center' => '',
+        'CampaignCode' => $campaigncode,
+        'ProgramInterested' => $courseCode,
+    ];
+    $url = $_ENV['LEAD_API_DEFAULT'];
+    $headers = [
+        'Content-Type' => 'application/json',
+        'Token' => $_ENV['LEAD_API_DEFAULT_TOKEN'],
+    ];
+    $client = \Drupal::httpClient();
+    try {
+        $request_test = $client->post($url, [
+            'headers' => $headers,
+            'body' => json_encode($body),
+        ]);
+    }
+    catch(\GuzzleHttp\Exception\ConnectException $e) {
+        $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+        return new RedirectResponse($url);
+    }
+    if ($request_test->getStatusCode() != 200) {
+        \Drupal::logger(' Placement page : ENQUIRE FOR OUR PLACEMENT LINKED PROGRAMMES')
+            ->notice('Query is not submitted');
+    }
+}
+
+
+/**
+ * this method called on submit of form.
+ */
+function placement_recruitment_form_validate(array &$form, FormStateInterface $form_state) {
+        //call javascript method define on top for SEO purspecive
+        echo '<script type="text/JavaScript">
+            function onFormSuccess(eventName,formIdName) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                event: eventName, // form event name should be changed according to forms.
+                formId: formIdName //form id needs to be changed for each form depending on hard codes
+                });
+                // Rest of the success callback code
+            }
+        </script>';
+            
+        $eventName = "Recruitment Enroll For Placement";
+        $formIdName = "webform_submission_enroll_for_placement_recruitment_node";
+        echo '<script type="text/JavaScript">  
+             onFormSuccess("'.$eventName.'","'.$formIdName.'");
+             </script>' 
+        ; 
+}
+
+/**
+ * this method called on submit of form.
+ */
+function placement_student_form_validate(array &$form, FormStateInterface $form_state) {
+        //call javascript method define on top for SEO purspecive
+        echo '<script type="text/JavaScript">
+            function onFormSuccess(eventName,formIdName) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                event: eventName, // form event name should be changed according to forms.
+                formId: formIdName //form id needs to be changed for each form depending on hard codes
+                });
+                // Rest of the success callback code
+            }
+        </script>';
+            
+        $eventName = "Student Enroll For Placement";
+        $formIdName = "webform_submission_enroll_for_placement_node";
+        echo '<script type="text/JavaScript">  
+             onFormSuccess("'.$eventName.'","'.$formIdName.'");
+             </script>' 
+        ; 
+
+    // Check existing term id.
+    $body = [
+        'Name' => !empty($form_state->getValue('full_name')) ? $form_state->getValue('full_name') : '',
+        'EmailID' => !empty($form_state->getValue('e_mail')) ? $form_state->getValue('e_mail') : '',
+        'PhoneNo' => !empty($form_state->getValue('mobile_no')) ? $form_state->getValue('mobile_no') : '',
+        'Center' => '',
+        'CampaignCode' => 'NIITCOM',
+    ];
+    $url = $_ENV['LEAD_API_DEFAULT'];
+    $headers = [
+        'Content-Type' => 'application/json',
+        'Token' => $_ENV['LEAD_API_DEFAULT_TOKEN'],
+    ];
+    $client = \Drupal::httpClient();
+    try {
+        $request_test = $client->post($url, [
+            'headers' => $headers,
+            'body' => json_encode($body),
+        ]);
+    }
+    catch(\GuzzleHttp\Exception\ConnectException $e) {
+        $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+        return new RedirectResponse($url);
+    }
+    if ($request_test->getStatusCode() != 200) {
+        \Drupal::logger(' Placement page : ENQUIRE FOR OUR PLACEMENT LINKED PROGRAMMES')
+            ->notice('Query is not submitted');
+    }
+}
+
+    /**
+     * this method called on submit of form.
+     */
+    function talk_to_expert_form_validate(array &$form, FormStateInterface $form_state) {
+        //call javascript method define on top for SEO purspecive
+        echo '<script type="text/JavaScript">
+            function onFormSuccess(eventName,formIdName) {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                event: eventName, // form event name should be changed according to forms.
+                formId: formIdName //form id needs to be changed for each form depending on hard codes
+                });
+                // Rest of the success callback code
+            }
+        </script>';
+            
+        $eventName = "Talk To Our Expert";
+        $formIdName = "webform_submission_talk_to_expert_node";
+        echo '<script type="text/JavaScript">  
+             onFormSuccess("'.$eventName.'","'.$formIdName.'");
+             </script>'; 
+
+        $center = '';
+        $node = \Drupal::routeMatch()->getParameter('node');
+        if ($node instanceof \Drupal\node\NodeInterface) {
+
+          if($node->bundle() == 'center_'){
+            $center = $node->get('field_center_code')->getValue()[0]['value'];
+          }
+        }
+
+        // Check existing term id.
+        // $utm_siteid = $_REQUEST['utm_siteid'];
+        // $utm_adunit = $_REQUEST['utm_adunit'];
+        // $body = [
+        //     'Name' => !empty($form_state->getValue('name')) ? $form_state->getValue('name') : '',
+        //     'EmailID' => !empty($form_state->getValue('email')) ? $form_state->getValue('email') : '',
+        //     'PhoneNo' => !empty($form_state->getValue('mobile_number')) ? $form_state->getValue('mobile_number') : '',
+        //     'Center' => $center,
+        //     'CampaignCode' => 'NIITCOM',
+        //     'SiteID' => $utm_siteid,
+        //     'AdUnit' => $utm_adunit,
+        // ];
+        # Set session for Event data Layer
+        session_start();
+        $_SESSION['formStudentName'] = $form_state->getValue('name');
+        $_SESSION['formStudentEmail'] = $form_state->getValue('email');
+        $_SESSION['formStudentMobile'] = md5($form_state->getValue('mobile_number'));
+
+        /*******************************/
+        $name = !empty($form_state->getValue('name')) ? $form_state->getValue('name') : '';
+        $email = !empty($form_state->getValue('email')) ? $form_state->getValue('email') : '';
+        $mobile = !empty($form_state->getValue('mobile_number')) ? $form_state->getValue('mobile_number') : '';
+        // $campaign_code = "NIITCOM";
+        
+        try {
+            /**GDPR API callback function  start*/
+            $request_time = \Drupal::time()->getCurrentTime();
+            $formdata = array(
+                'uid' => $mobile.'_'.$request_time,
+                'enqry_f_nm' => $name,
+                'enqry_crsspndnc_eml' => $email,
+                'time' => $request_time,
+            );
+            $GDPR_Id = multistep_user_consentapi($formdata);
+              /**GDPR API callback function  end*/
+            $values['GDPR_CONSENTID'] = $GDPR_Id;
+            $values['enqry_f_nm'] = $name;
+            $values['enqry_crsspndnc_eml'] = $email;
+            $values['enqry_crsspndnc_mbl'] = $mobile;
+            $values['prfrd_cntr'] = 'ZZZZZ';
+            if(!empty($_COOKIE['UTMParams'])){
+            $utm_data_array = json_decode($_COOKIE['UTMParams']);
+                if($utm_data_array->utmApplcbl == 'Y'){
+                    foreach ($utm_data_array->utm_params as $key => $value) {
+                       $values[$key] = $value;
+                    }
+                }
+          }
+            $API2 = array(
+                'leaduniqueid' => $mobile.'_'.$request_time,
+                'GDPR_CONSENTID' => $GDPR_Id,
+                'source' => "NIITCOM",
+                'leadformstg' => 'HomePage',
+            );
+            $data = array_merge($API2, $values);  
+            multistep_postapidate('I', $data);
+            // \Drupal::logger(' Home page : talk to expert')->error('Query is submitted');
+            // $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+            // return new RedirectResponse($url);
+        }
+        catch(\GuzzleHttp\Exception\ConnectException $e) {
+            $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+            return new RedirectResponse($url);
+        }        
+        /*******************************/
+
+        // $url = $_ENV['LEAD_API_DEFAULT'];
+        // $url = "https://ppmqa.niit.com/DrupalAPI/api/Drupal/PostData";
+        // $headers = [
+        //     'Content-Type' => 'application/json',
+        //     'Token' => "a4P4M9fF3pIgd4Vso3Iqaa3qDPRTcptquTV6eKODNtcS1bUe4+6QDQ==",
+        //     // 'Token' => $_ENV['LEAD_API_DEFAULT_TOKEN'],
+        // ];
+        // $client = \Drupal::httpClient();
+        // try {
+        //     $request_test = $client->post($url, [
+        //         'headers' => $headers,
+        //         'body' => json_encode($body),
+        //     ]);
+        // }
+        // catch(\GuzzleHttp\Exception\ConnectException $e) {
+        //     $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+        //     return new RedirectResponse($url);
+        // }
+        // if ($request_test->getStatusCode() != 200) {
+        //     \Drupal::logger(' Home page : talk to expert')
+        //         ->notice('Query is not submitted');
+        // }
+    }
+    
+    /**
+     * this method called on submit of form.
+     */
+    function get_in_touch_form_validate(array &$form, FormStateInterface $form_state) {
+        // $path_without_india = substr($_SERVER['REQUEST_URI'], 6);
+        // $path_without_india = $_SERVER['REQUEST_URI'];
+        // $path = \Drupal::service('path.alias_manager')->getPathByAlias($path_without_india);
+        // if(preg_match('/node\/(\d+)/', $path, $matches)) {
+        //   $node = \Drupal\node\Entity\Node::load($matches[1]);
+        // }
+        $node = \Drupal::routeMatch()->getParameter('node');
+        if ($node instanceof \Drupal\node\NodeInterface) {
+          // You can get nid and anything else you need from the node object.
+            $node = \Drupal\node\Entity\Node::load($node->id());
+            // $nid = $node->id();
+        }
+        $courseCode = (!empty($node->field_course_code->value))?$node->field_course_code->value:'';
+        // $campaigncode = (!empty($node->field_campaign_code->value))?$node->field_campaign_code->value:'NIITCOM';
+        if(!empty($node->field_campaign_code->value)){
+            $campaigncode = $node->field_campaign_code->value;
+        }else{
+            $campaigncode = 'NIITCOM';
+        }
+        
+        //call javascript method define on top for SEO purspecive
+        echo '<script type="text/JavaScript">
+                function onFormSuccess(eventName,formIdName) {
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                    event: eventName, // form event name should be changed according to forms.
+                    formId: formIdName //form id needs to be changed for each form depending on hard codes
+                    });
+                    // Rest of the success callback code
+                }
+            </script>';
+
+        $eventName = "Get in touch";
+        $formIdName = "webform_submission_get_in_touch";
+        echo '<script type="text/JavaScript">  
+             onFormSuccess("'.$eventName.'","'.$formIdName.'");
+             </script>' 
+        ; 
+
+        // get state and city id, to find it's name for provide with API.
+        $stateId = !empty($form_state->getValue('location')) ? $form_state->getValue('location') : 0;
+        $cityId  = !empty($form_state->getValue('city')) ? $form_state->getValue('city') : 0;
+               // Get center id and find name of center.
+        $centerId = !empty($form_state->getValue('center')) ? $form_state->getValue('center') : 0;
+        $tids = [$stateId,$cityId];
+        $terms = Term::loadMultiple($tids);
+        // <<<<<< pre-prode
+        // $prfrd_cntr = $prfrd_cntr_name = "";
+        // if(!empty($centerId)){
+        //     $prfrd_value = explode('_', $centerId);
+        //     $prfrd_cntr = $prfrd_value[0];
+        //     $prfrd_cntr_name = $prfrd_value[1];
+        // }
+        // <<<<<<<<<<<< production 
+        $centerCode = "";
+        if($centerId != 0) {
+            $nodeData = Node::load($centerId);
+            if ($nodeData->hasField('field_center_code')) {
+                if (!is_null($nodeData->get('field_center_code')->first())) {
+                    $centerData = $nodeData->get('field_center_code')->first()->getValue();
+                    $centerCode = $centerData['value'];
+                }
+            }
+        }
+
+        // Check existing term id.
+        $utm_siteid = $_REQUEST['utm_siteid'];
+        $utm_adunit = $_REQUEST['utm_adunit'];
+        // <<<<<<<<<<<< pre-prode
+        /*if(!empty($prfrd_cntr_name)){
+            $name = $form_state->getValue('name');
+            $email = $form_state->getValue('e_mail');
+            $mob_no = $form_state->getValue('mobile_number');
+            $request_time = \Drupal::time()->getCurrentTime();
+
+            $formdata_ID = array(
+                'uid' => $mob_no.'_'.$request_time,
+                'enqry_f_nm' => $name,
+                'enqry_crsspndnc_eml' => $email,
+                'time' => $request_time,
+            );
+            $id = multistep_user_consentapi($formdata_ID);
+
+            $leaddata = array();
+            $leaddata = array(
+                "orgntr_cd" => "NIIT",
+                'source' => $campaigncode,
+                'orgid' => 1,
+                'enqry_f_nm' => $name,
+                'enqry_crsspndnc_mbl' => $mob_no,
+                'enqry_crsspndnc_eml' => $email,
+                'prfrd_cntr' => $prfrd_cntr,
+                'prfrd_cntr_name' => $prfrd_cntr_name,
+                "intrstd_prgrm" => $courseCode,
+                'GDPR_CONSENTID' => $id,
+                'leaduniqueid' => $mob_no.'_'.$request_time,
+                'campaign' => $campaigncode,
+                'utm_siteid' => $utm_siteid,
+                'utm_adunit' => $utm_adunit,
+                'enqry_crsspndnc_state' => $stateId != 0 ? $terms[$stateId]->getName() : '',
+                'enqry_crsspndnc_city' => $cityId != 0 ? $terms[$cityId]->getName() : '',
+            );
+
+            multistep_postapidate('I',$leaddata);
+
+        }*/
+        // <<<<<<<< production
+        // if (isset($utm_siteid) && !empty($utm_siteid)) {
+        //     # code...
+        //     $name = $form_state->getValue('name');
+        //     $finalName = $name .'$$$'. $utm_siteid;
+        // }else{
+        //     $finalName = $form_state->getValue('name');
+        // }
+        $body = [
+            'Name' => !empty($form_state->getValue('name')) ? $form_state->getValue('name') : '',
+            'EmailID' => !empty($form_state->getValue('e_mail')) ? $form_state->getValue('e_mail') : '',
+            'PhoneNo' => !empty($form_state->getValue('mobile_number')) ? $form_state->getValue('mobile_number') : '',
+            //'State' => !empty($terms[$stateId]->getName()) ? $terms[$stateId]->getName() : '',
+            //'City' => !empty($terms[$cityId]->getName()) ? $terms[$cityId]->getName() : '',
+            'State' => $stateId != 0 ? $terms[$stateId]->getName() : '',
+            'City' => $cityId != 0 ? $terms[$cityId]->getName() : '',
+            'Center' => $centerId != 0 ? $nodeData->getTitle() : '',
+            'Center' => $centerCode,
+            'CampaignCode' => $campaigncode,
+            'SiteID' => $utm_siteid,
+            'AdUnit' => $utm_adunit,
+            'ProgramInterested' => $courseCode,
+        ];
+
+        $url = $_ENV['LEAD_API_DEFAULT'];
+        // $url = 'https://ppmqa.niit.com/DrupalAPI/api/Drupal/PostData';
+         $headers = [
+             'Content-Type' => 'application/json',
+             'Token' => $_ENV['LEAD_API_DEFAULT_TOKEN'],
+             // 'Token' => 'a4P4M9fF3pIgd4Vso3Iqaa3qDPRTcptquTV6eKODNtcS1bUe4+6QDQ==',
+         ];
+         $client = \Drupal::httpClient();
+        try {
+            $request_test = $client->post($url, [
+                'headers' => $headers,
+                'body' => json_encode($body),
+            ]);
+        }
+        catch(\GuzzleHttp\Exception\ConnectException $e) {
+            $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+            return new RedirectResponse($url);
+        }
+        // Check status code of request
+        if ($request_test->getStatusCode() != 200) {
+                \Drupal::logger('lead-form-submission (school/ enterprise)')
+                        ->notice('Query is not submitted');
+        }
+        // <<<<<<<<<< merge end
+
+    }
+
+
+    /**
+     * this method called on submit of form.
+     */
+    function lead_school_enterprise_form_validate(array &$form, FormStateInterface $form_state) {
+
+        // get form type from url.
+        $req = \Drupal::request()->query->get('ref');
+         $form_type = isset($req) && ($req == 'school' || $req == 'enterprises') ? $req : 'school';
+
+        // Check existing term id.
+        $body = [
+            'Name' => !empty($form_state->getValue('full_name')) ? $form_state->getValue('full_name') : '',
+            'EmailID' => !empty($form_state->getValue('email_id')) ? $form_state->getValue('email_id') : '',
+            'PhoneNo' => !empty($form_state->getValue('mobile_number')) ? $form_state->getValue('mobile_number') : '',
+            'CompanyName' => !empty($form_state->getValue('company_name')) ? $form_state->getValue('company_name') : '',
+            'Query' => !empty($form_state->getValue('query')) ? $form_state->getValue('query') : '',
+            'Category' => ucfirst($form_type),
+        ];
+        $url = $_ENV['LEAD_API_SCHOOL_ENT'];
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Token' => $_ENV['LEAD_API_SCHOOL_ENT_TOKEN'],
+        ];
+        // call API
+        $client = \Drupal::httpClient();
+        try {
+            $request_test = $client->post($url, [
+                'headers' => $headers,
+                'body' => json_encode($body),
+            ]);
+
+        }
+        catch(\GuzzleHttp\Exception\ConnectException $e) {
+            $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+            return new RedirectResponse($url);
+        }
+           // Check status code of request
+        if ($request_test->getStatusCode() != 200) {
+            \Drupal::logger('lead-form-submission (school/ enterprise)')
+                ->notice('Query is not submitted');
+        }
+    }
+
+    /**
+     * Set last password reset and expiration fields on password update.
+     */
+    function lead_course_form_validate(array &$form, FormStateInterface $form_state) {
+        echo '<script type="text/JavaScript">
+                function onFormSuccess(eventName,formIdName) {
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                    event: eventName, // form event name should be changed according to forms.
+                    formId: formIdName //form id needs to be changed for each form depending on hard codes
+                    });
+                    // Rest of the success callback code
+                }
+            </script>';
+
+        $eventName = "Course lead form";
+        $formIdName = "webform_submission_lead_form";
+        echo '<script type="text/JavaScript">  
+             onFormSuccess("'.$eventName.'","'.$formIdName.'");
+             </script>' 
+        ;
+
+        $centerId = \Drupal::request()->get('centerId');
+        // get state and city id, to find it's name for provide with API.
+        $stateId = !empty($form_state->getValue('location')) ? $form_state->getValue('location') : 0;
+        $cityId  = !empty($form_state->getValue('city')) ? $form_state->getValue('city') : 0;
+        $course = Term::load($form_state->getValue('course'));
+        
+        $centerCode = "";
+        if($centerId != 0 && $centerId != "") {
+            $nodeData = Node::load($centerId);
+            if ($nodeData->hasField('field_center_code')) {
+                if (!is_null($nodeData->get('field_center_code')->first())) {
+                    $centerData = $nodeData->get('field_center_code')->first()->getValue();
+                    $centerCode = $centerData['value'];
+                }
+            }
+        } 
+        
+        $tids = [$stateId,$cityId];
+        $terms = Term::loadMultiple($tids);
+
+        
+        // Check existing term id.
+
+        $name_course_type = !empty($form_state->getValue('course')) ? Term::load($form_state->getValue('course')) : '';
+
+        $course_interested = !empty($form_state->getValue('courses')) ? Node::load($form_state->getValue('courses')) : ''; 
+ 
+        $body = [
+            'Name' => !empty($form_state->getValue('full_name')) ? $form_state->getValue('full_name') : '',
+            'EmailID' => !empty($form_state->getValue('email_id')) ? $form_state->getValue('email_id') : '',
+            'PhoneNo' => !empty($form_state->getValue('mobile_number')) ? $form_state->getValue('mobile_number') : '',
+            'CompanyName' => !empty($form_state->getValue('company_name')) ? $form_state->getValue('company_name') : '',
+            'Query' => !empty($form_state->getValue('query')) ? $form_state->getValue('query') : '',
+            'Remarks' => !empty($form_state->getValue('query')) ? $form_state->getValue('query') : '', 
+            'State' => $stateId != 0 ? $terms[$stateId]->getName() : '',
+            'City' => $cityId != 0 ? $terms[$cityId]->getName() : '',
+            'Center' => $centerCode,
+            'CampaignCode' => 'NIITCOM',
+            'Category' => !empty($name_course_type) ? $name_course_type->getName() : '',
+            'StudentType' => !empty($name_course_type) ? $name_course_type->getName() : '',
+            'Designation' => !empty($form_state->getValue('designation')) ? $form_state->getValue('designation') : '',
+            'Country'     => 'IN',
+            'PinCode'     => !empty($form_state->getValue('pin_code')) ? $form_state->getValue('pin_code') : '',
+            'ProgramInterested' => !empty($course_interested) ? $course_interested->get('field_course_code')->getValue()[0]['value'] : '',
+
+        ]; 
+       
+        $url = $_ENV['LEAD_API_DEFAULT'];
+        $headers = [
+            'Content-Type' => 'application/json',
+            'Token' => $_ENV['LEAD_API_DEFAULT_TOKEN'],
+        ];
+        $client = \Drupal::httpClient();
+        try {
+            $request_test = $client->post($url, [
+                'headers' => $headers,
+                'body' => json_encode($body),
+            ]);
+
+        }
+        catch(\GuzzleHttp\Exception\ConnectException $e) {
+            $url = \Drupal\Core\Url::fromRoute('<front>')->toString();
+            return new RedirectResponse($url);
+        }
+       
+        // Check status code of request
+        if ($request_test->getStatusCode() != 200) {
+            \Drupal::logger('lead-form-submission')
+                ->notice('Query is not submitted');
+        }
+    }
+
+
+    /**
+     * @param \Drupal\node\Entity\Node $node
+     */
+    function niit_common_node_presave(Node $node) {
+        switch ($node->bundle()) {
+            case 'course':
+                if (isset($node->get('nid')->getValue()[0]['value'])) {
+                    $node->set('field_enroll_now_link', '/india/lead-form/?course=' . $node->get('nid')
+                            ->getValue()[0]['value']);
+                }
+                break;
+            case 'mega_drive':
+                if ($node->hasField('field_drive_date') && $node->hasField('field_year') && $node->hasField('field_month')) {
+                    if (!empty($node->get('field_drive_date')
+                        ->getValue()[0])) {
+                        $field_drive_date = strtotime($node->get('field_drive_date')
+                            ->getValue()[0]['value']);
+                        $month = date('M', $field_drive_date);
+                        $year = date('Y', $field_drive_date);
+                        $drive_month['target_id'] = get_drive_date_year('month', $month);
+                        $drive_year['target_id'] = get_drive_date_year('year', $year);
+                        $node->set('field_year', $drive_year);
+                        $node->set('field_month', $drive_month);
+                    }
+                }
+                break;
+
+            default;
+
+        }
+    }
+
+    /**
+     * @param \Drupal\node\Entity\Node $node
+     *
+     * @throws \Drupal\Core\Entity\EntityStorageException
+     */
+    function niit_common_node_insert(Node $node) {
+        switch ($node->bundle()) {
+            case 'course':
+                if (isset($node->get('nid')->getValue()[0]['value'])) {
+                    $node->set('field_enroll_now_link', '/india/lead-form/?course=' . $node->get('nid')
+                            ->getValue()[0]['value']);
+                    $node->save();
+                }
+            case 'mega_drive':
+                if ($node->hasField('field_drive_date') && $node->hasField('field_year') && $node->hasField('field_month')) {
+                    if (!empty($node->get('field_drive_date')
+                        ->getValue()[0])) {
+                        $field_drive_date = strtotime($node->get('field_drive_date')
+                            ->getValue()[0]['value']);
+                        $month = date('M', $field_drive_date);
+                        $year = date('Y', $field_drive_date);
+                        $drive_month['target_id'] = get_drive_date_year('month', $month);
+                        $drive_year['target_id'] = get_drive_date_year('year', $year);
+                        $node->set('field_year', $drive_year);
+                        $node->set('field_month', $drive_month);
+                    }
+                }
+                break;
+            default;
+
+        }
+    }
+
+    /**
+     * @param $name_vocab
+     * @param $name
+     *
+     * @return int|void
+     */
+    function get_drive_date_year($name_vocab, $name) {
+        if (get_tid_by_name($name_vocab, $name)) {
+            $tid = get_tid_by_name($name_vocab, $name);
+        }
+        else {
+            $tid = create_tid_by_name($name_vocab, $name);
+        }
+        // Return tid from name.
+        return $tid;
+    }
+
+
+    /**
+     * Utility: find term create by name and vid.
+     *
+     * @param string $name
+     *   Term name.
+     * @param string $vid
+     *   Term vid.
+     */
+    function create_tid_by_name($vid, $name) {
+        // Create term if not exist.
+        $term = Term::create([
+            'name' => $name,
+            'vid' => $vid,
+        ])->save();
+
+        return get_tid_by_name($vid, $name);
+    }
+
+
+    /**
+     * Utility: find term by name and vid.
+     *
+     * @param string $name
+     *   Term name.
+     * @param string $vid
+     *   Term vid.
+     *
+     * @return int
+     *   Term id or 0 if none.
+     */
+    function get_tid_by_name($vid = NULL, $name = NULL) {
+        $properties = [];
+        if (!empty($name)) {
+            $properties['name'] = $name;
+        }
+        if (!empty($vid)) {
+            $properties['vid'] = $vid;
+        }
+        $terms = \Drupal::entityManager()
+            ->getStorage('taxonomy_term')
+            ->loadByProperties($properties);
+        $term = reset($terms);
+
+        return !empty($term) ? $term->id() : FALSE;
+    }
+
+
+    # Tips of the day
+    # Do inactive of vissible tips of last displayed
+
+    function niit_common_cron() {
+        $tipsofday = Views::getView('cron_tips_of_the_day');
+        if (is_object($tipsofday)) {
+            $tipsofday->setDisplay('cron_tips_day');
+            $tipsofday->preExecute();
+            $tipsofday->execute();
+        }
+        if (isset($tipsofday->result)) {
+            foreach ($tipsofday->result as $key => $row) {
+                $node = \Drupal\paragraphs\Entity\Paragraph::load($row->_entity->get('id')
+                    ->getValue()[0]['value']);
+                $node->set('field_active', '0');
+                $node->save();
+            }
+        }
+        $tips = Views::getView('cron_tips_of_the_day');
+        if (is_object($tips)) {
+            $tips->setDisplay('cron_tips_day');
+            $tips->preExecute();
+            $tips->execute();
+        }
+        if(is_object($tips))
+        {
+            if(is_array($tips->result) && (count($tips->result) == 0))
+            {
+               $nids = \Drupal::entityQuery('node')->condition('type','tip_of_the_day')->execute();
+               if(is_array($nids) && !empty($nids)) {
+                   $nodeId = array_values($nids);
+                   $node = Node::load($nodeId[0]);
+                   $pids = $node->get('field_quotes')->getValue();
+                  foreach ($pids as $pid)
+                   {
+                       $paragraphObj = Paragraph::load($pid['target_id']);
+                      if(is_object($paragraphObj) && !is_null($paragraphObj))
+                      {
+                          $paragraphObj->set('field_active', '1');
+                          $paragraphObj->save();
+                      }
+                   }
+               }
+            }
+        }
+
+    }
+
+
+    /**
+     * @param array $attachments
+     */
+    function niit_common_page_attachments(array &$attachments) {
+        $node = \Drupal::routeMatch()->getParameter('node');
+
+        if(!empty($node)) {
+            //$node_type = $node->getType();
+            if (is_object($node)) {
+             $node_type = $node->getType();
+            }
+            if($node_type == 'mentors_advice' || $node_type == 'mega_drive'){
+                $attachments['#attached']['library'][] = 'niit_common/mentors_advice_mega_drive-js';
+            }
+        }
+        // Team js fixes for showing popup.
+        $attachments['#attached']['library'][] = 'niit_common/common-js';
+
+    }
+
+// enroll now center submit redirection 
+function niit_common_related_course_center_form_submit(array $form, Drupal\Core\Form\FormStateInterface $form_state){
+    $response = new Symfony\Component\HttpFoundation\RedirectResponse($form['destination']); 
+    $response->send(); 
+    return; 
+}
+
+# SEO FAQ Schema Function Start
+function seo_faq_json_script_section($nid){
+    $node = Node::load($nid);
+    $field_faqs = $node->get('field_faq')->getValue();
+    if(!empty($field_faqs)){
+        foreach($field_faqs as $field_faq){
+            $faqJsonQA .= '{
+                "@type": "Question",
+                "name": "'.$field_faq['question'].'",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "'.str_replace('"',"'",$field_faq['answer']).'"
+                }
+            },';
+        }
+    }
+    return '<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": ['.substr($faqJsonQA, 0, -1).']
+    }
+    </script>
+    ';
+}
+# SEO FAQ Schema Function End
+
+function career_job_filter(){
+    $output = [];
+   $output['first'] = '<div class="popular_courses">
+                <div class="job_filter drivefilter catfilter">
+                   <h3 class="join-search">Search Jobs</h3>
+                    <input type="text" name="keyword" class="keyword_career" placeholder="Keyword">'.
+                    NiitRecruitmentGetJobcategory().
+                    NiitRecruitmentGetCountry().'
+                   <input type="button" value="Search" class="button search_career">
+                </div>
+                <div id = "job_loader"></div>
+            </div>';
+        $output['second'] =  
+                    NiitRecruitmentGetJobcategorymulti().'
+                        
+
+                   '. NiitRecruitmentGetLocation().'
+
+                    '.NiitRecruitmentGetJobtype();
+
+   return $output;
+}
+
+function top_category_filter(){
+	$nid = '';
+	$node = \Drupal::routeMatch()->getParameter('node');
+	if ($node instanceof \Drupal\node\NodeInterface) {
+	// You can get nid and anything else you need from the node object.
+		$nid = $node->id();
+		$alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$nid);
+	}
+    $output = '<section class="list-prog">
+    
+    <div class="container">
+      <h2>List of Programs</h2>
+      <div class="list-prog-wrapper course_filter_main">
+      <div class="row">
+        
+        <h4>What describes you best?</h4>
+        <div class="list-form clearfix">
+          <div class="col-md-3 options1">
+            <p>I am a</p>
+            <select name="category_iama" class="form-select category_iama form-control">
+              <option value="0">Choose Your persona </option>
+			  <option value="Student">Student</option>
+			  <option value="Graduate">Graduate</option>
+			  <option value="Working Professional">Working Professional</option>
+            </select>
+            
+          </div>
+          <div class="col-md-3 options2">
+            <p>looking to</p>
+            <select name="category_looking" class="form-select category_looking form-control">
+              <option value="4">Choose Your goal </option>
+			  <option value="Land_my_first_job">Land my first job </option>
+			  <option value="Switch_Career">Switch Career </option>
+			  <option value="Learn_new_skill">Learn new skill </option>
+            </select>
+          </div>
+          <div class="col-md-3 options3">
+            <p>by studing for</p>
+            <select name="category_studying" class="form-select category_studying form-control">
+              <option value="8">Choose your availibility </option>
+			  <option value="4_hours_a_day">4 hours a day </option>
+			  <option value="8_or_more_hours_a_day">8 or more hours a day </option>
+            </select>
+          </div>
+		  <div class="col-md-3 option-button course_filter drivefilter catfilter">
+			<div class="popular_courses">
+			<input type="button" class="btn-social button search_career" value="Go"></input>
+		   </div>
+		   </div>
+          </div>
+		  <div class="clear"><a href="/india'.$alias.'">Clear all</a></div>
+		  
+        </div>
+      </div>
+	      <div class="popular_courses">
+			<div id = "course_filter_loader"></div>
+		  </div>
+    </div>
+  </section>';
+   
+
+   return $output;
+}
+
+function NiitRecruitmentGetCountry(){
+    $headers=array(
+      'Content-Type:application/json',
+      'Content-Length: 0'
+    );
+
+    //$url = "http://pd2.iniitian.com/essservices/api/NIITRecruitment/NiitRecruitmentGetCountry";
+    $url = $_ENV['Essservices_NiitRecruitmentGetCountry'];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $data_response = json_decode($response);
+    $option = '<select name="country_career" class="form-select country_career">
+              <option value = "">Country</option>';
+    foreach($data_response as $val){
+        $option .= '<option value = "'.$val->ch_countrykey.'">'.$val->vc_Country.'</option>';
+    }
+    $option .= '</select>';
+
+    return $option;
+}
+
+function NiitRecruitmentGetJobcategory(){
+    $headers=array(
+      'Content-Type:application/json',
+      'Content-Length: 0'
+    );
+
+   // $url = "http://pd2.iniitian.com/essservices/api/NIITRecruitment/NiitRecruitmentGetJobcategory";
+    $url = $_ENV['Essservices_NiitRecruitmentGetJobcategory'];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $data_response = json_decode($response);
+    $option = '<select name="category_career" class="form-select category_career">
+              <option value = "">All Category</option>';
+    foreach($data_response as $val){
+        $option .= '<option value = "'.$val->in_catid.'">'.$val->vc_category.'</option>';
+    }
+    $option .= '</select>';
+
+    return $option;
+}
+
+
+function NiitRecruitmentGetJobcategorymulti(){
+    $headers=array(
+      'Content-Type:application/json',
+      'Content-Length: 0'
+    );
+
+   // $url = "http://pd2.iniitian.com/essservices/api/NIITRecruitment/NiitRecruitmentGetJobcategory";
+    $url = $_ENV['Essservices_NiitRecruitmentGetJobcategory'];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $data_response = json_decode($response);
+    $option = '<h4>Refine your search</h4>
+              <hr>
+
+                    <div class="filer-checkbox">
+                      <h3 class="filter_title">Job Category</h3>
+                      <hr>';
+    foreach($data_response as $val){
+        $option .= '<div class="checkbox categorytypecheckbox">
+                      <label>
+                        <input type="checkbox" class="careercheck" name="check_category_type" value="'.$val->in_catid.'">
+                        <span class="cr careercheck1"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                       '.$val->vc_category.'
+                      </label>
+                    </div>';
+    }
+    $option .= ' </div>';
+
+    return $option;
+}
+
+
+function NiitRecruitmentGetLocation(){
+    $headers=array(
+      'Content-Type:application/json',
+      'Content-Length: 0'
+    );
+
+    //$url = "http://pd2.iniitian.com/essservices/api/NIITRecruitment/NiitRecruitmentGetCountry";
+    $url = $_ENV['Essservices_NiitRecruitmentGetCountry'];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $data_response = json_decode($response);
+    $option = '<div class="filer-checkbox">
+                          <h3 class="filter_title">Locations</h3>
+                          <hr>
+                          <input type="text" class="form-control" id="mycareerInput" onkeyup="mycareerFunction()" name="" placeholder="Search for location">
+
+                    <ul id="myUL" class="location-filter-scroll">';
+    foreach($data_response as $val){
+        $option .= '<div class="checkbox locationvalue1">
+
+                          <li><label>
+                            <input type="checkbox" name="check_location_val" value="'.$val->ch_countrykey.'">
+                            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>'.$val->vc_Country.'</label></li>
+                        </div>';
+    }
+    $option .= '</ul></div>';
+
+    return $option;
+}
+
+
+
+
+function NiitRecruitmentGetJobtype(){
+    $headers=array(
+      'Content-Type:application/json',
+      'Content-Length: 0'
+    );
+
+   /*$url = "https://pd2.iniitian.com/essservices/api/NIITRecruitment/NiitRecruitmentJobType";*/
+    $url = $_ENV['Essservices_NiitRecruitmentGetJobtype'];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HTTPGET, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $data_response = json_decode($response);
+    $option = '<div class="filer-checkbox">
+                          <h3 class="filter_title">Employment Type</h3>
+                          <hr>';
+    foreach($data_response as $val){
+        $option .= '<div class="checkbox jobtypecheckbox1">
+                          <label>
+                            <input type="checkbox" name="check_school_nid" id="jobtypecheckbox" value="'.$val->JobTypeID.'">
+                            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                       '.$val->JobTypeDesc.'
+                      </label>
+                    </div>';
+    }
+    $option .= ' </div>';
+
+    return $option;
+}
+
+// Code start 
+function NiitCourseCategoryDetails($Iama, $Looking, $Studying, $Nid){
+	$base_url = (isset($_ENV['DRUPAL_PROTOCOL_DOMAIN']) && !is_null($_ENV['DRUPAL_PROTOCOL_DOMAIN'] )) ? $_ENV['DRUPAL_PROTOCOL_DOMAIN']."/india/" : \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
+
+    $data_response = '';
+    $data_json = "{'Iama':'$Iama', 'Looking':'$Looking', 'Studying':'$Studying'}";
+	$Iama = $Iama;
+
+	if($Studying == '4_hours_a_day'){
+		$Studying='434';
+	}elseif($Studying == '8_or_more_hours_a_day'){
+		$Studying='433';
+	}
+
+	if($Nid > 0) {
+		$nid = $Nid;
+	}else{
+		$node = \Drupal::routeMatch()->getParameter('node');
+		if ($node instanceof \Drupal\node\NodeInterface) {
+			$nid = $node->id();
+		}
+	}
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+			$query = \Drupal::entityQuery('node');
+			$query->condition('type', 'course');
+			$query->condition('field_top_course_category', $nid);
+			if ($Iama == 'Student' || $Iama == 'Graduate' || $Iama == 'Working Professional'){
+			$query->condition('field_iama', $Iama);
+			}
+			if($Looking == 'Land_my_first_job' || $Looking == 'Switch_Career' || $Looking == 'Learn_new_skill'){
+			$query->condition('field_course_modules', '', '<>');
+			}
+			if ($Studying == 433 || $Studying == 434){
+			$query->condition('field_mode_of_learning', $Studying);
+			}
+			$query->condition('status', 1);
+			$query->range(0,9);
+			$nids = $query->execute();
+			$nodes = $node_storage->loadMultiple($nids);
+			$totaldata = count($nids);
+	if($totaldata > 0){
+		$searchdata = '<div class="search-result">Showing '.$totaldata.' Programs</div>';
+	}else{
+		$searchdata = '<div class="noresult">No data found</div>';
+	}	
+  $onlinedata = '';
+  $onlinehtml = '';
+			foreach ($nodes as $n) {
+			  $alias = \Drupal::service('path.alias_manager')->getAliasByPath('/node/'.$n->nid->value);
+			  
+			  if($n->field_mode_of_learning->target_id == 433 || $n->field_mode_of_learning->target_id == 434){ 
+                $onlinedata = (\Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($n->field_mode_of_learning->target_id))->label();
+			     $onlinehtml = '<div class="grad-icons col-md-6 col-sm-6 col-xs-6">
+                <span class="icons-prog"><img src="'.$base_url.'/themes/custom/nexus/assets/images/time.png"></span>
+                <span class="text-prog onlinedata">'.$onlinedata.'</span>
+              </div>';
+			  }
+			  if(!empty($n->field_course_duration->value)){
+				$cduration = '
+                  <div class="grad-icons col-md-6 col-sm-6 col-xs-6">
+                    <span class="icons-prog"><img src="'.$base_url.'/themes/custom/nexus/assets/images/schedule.png"></span>
+                    <span class="text-prog duration">'.$n->field_course_duration->value.'</span>
+                  
+			    </div>';
+			  }
+			  if(!empty($n->field_mode_of_delivery->value)){
+				$modofdiv = '<div class="grad-icons col-md-6 col-sm-6 col-xs-6">
+                <span class="icons-prog"><img src="'.$base_url.'/themes/custom/nexus/assets/images/video.png"></span>
+                <span class="text-prog mode-delivery">'.$n->field_mode_of_delivery->value.'</span>
+              </div>';
+			  }
+			  if(!empty($n->field_alumni_name->value) && !empty($n->field_enroll_no->getValue()[0]['value'])){
+			  $groupenrl = '<div class="grad-icons col-md-6 col-sm-6 col-xs-6">
+                            <span class="icons-prog"><img src="'.$base_url.'/themes/custom/nexus/assets/images/Group.png"></span>
+                            <span class="text-prog groupicon-enroll">'.$n->field_enroll_no->getValue()[0]['value'].''.$n->field_alumni_name->value.'</span>
+                          </div>';
+			  }
+    $finaldata .= '<div class="col-md-4">
+      <div class="show-result">
+        <div class="gradution-prog">
+          <div class="prog-img"><img src="'.(\Drupal\file\Entity\File::load($n->field_course_image->target_id))->url().'"></div>
+          <div class="prog-text">
+            <h4 class="courname">'.$n->title->value.'</h4>
+            <div class="top-prog-icon clearfix">
+			  <div class="assured-placement col-md-8 col-sm-8 col-xs-8">
+                <img src="'.$base_url.'/themes/custom/nexus/assets/images/ribbon.png">
+                '.$n->field_course_modules->value.'
+              </div>
+              <div class="info-icon col-md-4 col-sm-4 col-xs-4"><img src="'.$base_url.'/themes/custom/nexus/assets/images/info.png"><span class="tooltiptext">*T&C Apply. Refer to Program Page</span></div>
+             </div><div class="prog-sch clearfix">
+            '.$cduration.''.$onlinehtml.''.$modofdiv.''.$groupenrl.'
+            </div>
+          </div>
+              
+            <div class="view-prog"><a coursename="'.$n->title->value.'" mode="'.$n->field_mode_of_delivery->value.'" dur="'.$n->field_course_duration->value.'" href="/india'.$alias.'">View Program <i class="fa fa-angle-right" aria-hidden="true"></i></a></div>
+          </div></div>
+      </div>';
+	  
+	  }
+    $course_filter_data = '<section class="show-prog ">
+    <div class="show-prog-inner container">'.$searchdata.'
+      <div class="row">'.$finaldata.'             
+    
+	  </div>
+      </div>
+	  </section>';
+    return $course_filter_data;
+}
+
+// Code end
+
+
+function NiitRecruitmentVacancyDetails($CountryKey, $Categoryid, $Keyword, $jobtype){
+    $data_response = '';
+    $data_json = "{'CountryKey':'$CountryKey', 'Categoryid':'$Categoryid', 'Keyword':'$Keyword', 'jobtype':'$jobtype'}";
+
+    $url = "http://dv2.iniitian.com/essservices/api/NIITRecruitment/NiitRecruitmentVacancyDetails";
+    /*$url = $_ENV['Essservices_NiitRecruitmentVacancyDetails_multi'];*/
+  //  $url = $_ENV['Essservices_NiitRecruitmentVacancyDetails'];
+
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_CUSTOMREQUEST => "POST",
+      CURLOPT_POSTFIELDS => $data_json ,
+      CURLOPT_HTTPHEADER => array(
+        "Content-Type: application/json",
+        "DataType: JSON",
+      ),
+    ));
+
+    $response = curl_exec($curl);
+    $data_response = json_decode($response);
+    $job_data = '';
+    if(!empty($data_response)){
+
+        $country_data = array();
+        foreach($data_response as $data_val){
+          $val = (array)$data_val;
+          $countrykey = str_replace(' ', '', $val['ch_countrykey']);
+          $country_data[$countrykey]['name'] = $val['vc_Country'];
+          $country_data[$countrykey][$val['$id']] = array(
+            'role' => $val['Role'],
+            'jd' => $val['vc_jobdescription'],
+            'min' => intdiv($val['in_minexp'], 12),
+            'max' => intdiv($val['in_maxexp'], 12),
+            'category' => $val['vc_category'],
+            'qual' => $val['vc_Qualification'],
+            'location' => $val['vc_location'],
+            'skills' => $val['vc_Techskills'],
+            'in_vacancyid' => $val['in_vacancyid']
+          );
+        }
+
+        $job_data .= '<div>';
+
+        foreach($country_data as $k => $v){           
+
+            $job_data .= '
+                    <div id="hr-jobs-listing-parent"><ul id="careerPageUl">
+                      ';
+
+
+                        foreach($v as $k_name => $value){   
+                          if(is_numeric($k_name)){
+                            $jd = $value['jd'];
+
+                            $job_des = htmlspecialchars_decode($jd);
+
+                            $job_data .= '
+
+
+                      <li><div class="hr-jobs-listing mb-3" >
+                        <div class="row">
+                          <div class="col-md-10 col-xs-8">
+                          <h2>'.$value["role"].'</h2>
+                        </div>
+                        <div class="col-md-2 col-xs-4">
+                          <a href="http://pd2.iniitian.com/niitrecruitment/Register.aspx?Vacancyid='.$value["in_vacancyid"].'&callfrom=V" class="btn btn-block btn-primary">apply</a>
+                        </div>
+                        </div>
+                        <hr>
+
+                        <div class="row">';
+                             
+                                        $job_data .= '<div class="col-md-3">
+                            <p class="map-flex"><img src="'.$base_url.'themes/custom/nexus/assets/images/job.png" class="img-responsive">'.$value["min"].' to '.$value["max"].' yrs</div>';
+                                      
+                    
+                          if(!empty($value["location"])){
+                                        $job_data .= ' <div class="col-md-4">
+                            <p class="map-flex"><img src="'.$base_url.'themes/custom/nexus/assets/images/map.png" class="img-responsive">'.$value["location"].'</div>';
+                                      }
+                        $job_data .= '</div>
+                        
+                        <div class="row">
+                          <div class="col-md-12 mt-3">
+                            <a id="toggle_icon_career" class="career_see_more">See Details</a>
+                            <div id="toggle_icon_career_desc" class="hr-job_discribption" style="display: none">
+                            <span class="moreonecar">    
+                            '.$job_des.'
+                            </span>
+                            </div>
+                            <div class="mt-3"><a id="toggle_icon_career_minus" class="career_see_less" style="display: none">less</a></div>
+                          </div>
+                        </div>
+                        
+                      </div></li>
+                      ';
+                  }
+              }
+                        $job_data .= '
+                        </ul> </div>
+                   ';   
+        }
+
+        $job_data .= '<div class="mt-5" id="loadMorecareernew"><h5>Load more</h5></div></div>';
+    }
+    else{
+        $job_data = '<div class="alert alert-info no_job">
+         There are currently no vacancies available.
+        </div>';
+    }
+    
+    return $job_data;
+}
+
+# Get current location using max mind api - Start
+function get_current_location_using_max_mind_api(){
+    # Generate token Code
+    # call api for generating of token
+    if(isset($_COOKIE["userLocation"]) && !empty($_COOKIE["userLocation"])){
+        $userLocation = json_decode($_COOKIE["userLocation"]);
+        $variables['userCityName'] =  $userLocation->userCityName; // City Name
+        $variables['userLatitude'] = $userLocation->userLatitude; // Get latitude
+        $variables['userLongitude'] = $userLocation->userLongitude; // Get longitude
+        $userLocation = array('userCityName'=>$variables['userCityName'], 'userLatitude'=>$variables['userLatitude'], 'userLongitude'=>$variables['userLongitude']);
+    }
+    else{
+        $MaxMindUserName = $_ENV['MaxMindUserName'];
+        // $MaxMindUserName = '74904';
+        $MaxMindPassword  = $_ENV['MaxMindPassword'];
+        // $MaxMindPassword  = 'j54wO9s7jgF5';
+        $userIps = explode(",",$_SERVER['HTTP_X_FORWARDED_FOR']);
+        $userIp = $userIps[0];
+        $locationCurl = curl_init();
+        curl_setopt_array($locationCurl, array(
+        CURLOPT_URL => "https://geoip.maxmind.com/geoip/v2.1/city/".$userIp,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "GET",
+          CURLOPT_HTTPHEADER => array(
+            "Content-Type: application/vnd.maxmind.com-city+json; charset=UTF-8; version=2.1",
+            "Authorization: Basic ". base64_encode($MaxMindUserName.":".$MaxMindPassword)
+          ),
+        ));
+        $location_rep = curl_exec($locationCurl);
+        $location_err = curl_error($locationCurl);
+        curl_close($locationCurl);
+        if ($location_err) {
+            $variables['userCityName'] =  "New Delhi";
+            $variables['userLatitude'] = "28.6139"; // Get latitude
+            $variables['userLongitude'] = "77.2090"; // Get longitude
+            $userLocation = array('userCityName'=>$variables['userCityName'], 'userLatitude'=>$variables['userLatitude'], 'userLongitude'=>$variables['userLongitude']);
+            setcookie('userLocation', json_encode($userLocation), time()+3600); 
+        }else {
+            $location_rep_arr = json_decode($location_rep);
+            $variables['userCityName'] =  !empty($location_rep_arr->city->names->en)? $location_rep_arr->city->names->en : "New Delhi";
+            $variables['userLatitude'] = !empty($location_rep_arr->location->latitude) ? $location_rep_arr->location->latitude : "28.6139"; ; // Get latitude
+            $variables['userLongitude'] = !empty($location_rep_arr->location->longitude) ? $location_rep_arr->location->longitude : "77.2090" ; // Get longitude
+            // Create array of user location such as city, latitude and longitude
+            $userLocation = array('userCityName'=>$variables['userCityName'], 'userLatitude'=>$variables['userLatitude'], 'userLongitude'=>$variables['userLongitude']);
+            setcookie('userLocation', json_encode($userLocation), time()+3600); 
+        }
+    }
+    return $userLocation;
+}
+# Get current location using max mind api - End
+function get_center_data_using_city_state($campaignCode, $coursecode, $city, $state){
+    $locationData = get_current_location_using_max_mind_api();
+    if(empty($city)){
+        $city = $locationData->userCityName;
+    }
+    if(empty($state)){
+        $state = '';
+    }
+   $url = 'https://ccdev.niiteducation.com/CRMCallcenterAPI/api/CallCenter/GetCntrDtls';
+  //  $url = $_ENV['CRMCallcenterAPI_GetCntrDtls'];
+    $headers = array(
+        "content-type: application/json",
+        "Cmpgn_Cd: $campaignCode",
+        "Vrtcl_cd: ",
+        "Ctgry: ECOM",
+        "Product_cd: $coursecode",
+        "cntr_cd: ",
+        "Cntr_cty: $city",
+        "Cntr_stt: $state"
+    );
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $data_response = json_decode($response);
+    return $data_response;
+}
+
+function get_final_center_data_with_design($campaignCode, $city, $state){
+    $base_url = (isset($_ENV['DRUPAL_PROTOCOL_DOMAIN']) && !is_null($_ENV['DRUPAL_PROTOCOL_DOMAIN'] )) ? $_ENV['DRUPAL_PROTOCOL_DOMAIN']."/india/" : \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
+    $finalDataArray = get_center_data_using_city_state($campaignCode, $coursecode, $city, $state);
+    // $finalDataArray = get_center_data_using_city_state($campaignCode, '', 'delhi');
+    if($finalDataArray->ErrorYN == 'N'){
+        if(!empty($finalDataArray->dataSet)){
+            $outPut .= '<div id="exampleSlider-1" class="">
+                    <div class="MS-content">';
+            foreach ($finalDataArray->dataSet->Table as $key => $value) {
+                $mobileNo = preg_replace("/[^0-9]+/", "", $value->cntr_phn);
+                $outPut .= '<div class="item">             
+                <div class="CourseCenterDetail">
+                    <div class="row">
+                        <div class="col-md-12 col-xs-12">
+                            <div class="centerdetailName">
+                                <h3><a href="#">'.$value->cntr_nm.'</a></h3> 
+                            </div>
+                              <div class="mapbox">
+                                <iframe src="https://maps.google.com/maps?q={{ '.$value->cntr_nm.' }}&hl=es;z=14&amp;output=embed" width="100%"  height="300"  frameborder="0"  style="border:0"  allowfullscreen>
+                                </iframe>
+                                <div class="text-add">
+                                <p class="usp-style"><a class="btn btn-block btn-call" href="tel:'.$mobileNo.'"><b><i class="fa fa-phone"></i> '.$value->cntr_phn.'</b></a></p>
+                                <p class="usp-style"><img src="'.$base_url.'themes/custom/nexus/assets/images/fac.png" class="img-responsive"> <b>Expert Faculty</b></p>
+                                <p class="usp-style"><img src="'.$base_url.'themes/custom/nexus/assets/images/infra.png" class="img-responsive"> <b>Maintained Infrastructure</b></p>
+                                <p class="usp-style"><img src="'.$base_url.'themes/custom/nexus/assets/images/trust.png" class="img-responsive"> <b>30+yrs of Experience</b></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>';
+            }
+            $outPut .= '</div>
+            <div class="MS-controls">
+                <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+            </div>
+        </div>';
+        }
+    }else{
+        $outPut .= '<div  class="col-md-12">
+                        <center class="center_error"><h1>Center Not Available</h1></center>
+                    </div>';
+    }    
+    return $outPut;
+}
+
+/**************************************************/
+/*** Course Rating and Review section *** Start ***/ 
+/**************************************************/
+
+function courseRatingAndReviewData($nodeId){
+    $query = \Drupal::entityQuery('node');
+    $query->condition('type', 'rating_and_review');
+    $query->condition('field_course_student', $nodeId);
+    $query->condition('field_review_show_in_course_page', 1);
+    $query->condition('status', 1);
+    $query->sort('field_weight_student' , 'DESC'); 
+    $nodeIds = $query->execute();
+    $count = 0;
+    if(count($nodeIds) > 0){
+        $course_review = Node::loadMultiple($nodeIds);
+        foreach ($course_review as $key => $nodeData) {
+            if($count % 2 == 0){
+                $output['review'][$count][$key]['name'] = $nodeData->title->value;
+                $output['review'][$count][$key]['image'] = (\Drupal\file\Entity\File::load($nodeData->field_image_student->target_id))->url();
+                $output['review'][$count][$key]['rating'] = genarateStarRating($nodeData->field_rating_student->value);
+                $output['review'][$count][$key]['timing'] = $nodeData->field_review_timing->value;
+                $output['review'][$count][$key]['feedback'] = $nodeData->field_feedback_student->value;
+                $output['review'][$count][$key]['weight'] = $nodeData->field_weight_student->value;
+            }else{
+                $output['review'][$count-1][$key]['name'] = $nodeData->title->value;
+                $output['review'][$count-1][$key]['image'] = (\Drupal\file\Entity\File::load($nodeData->field_image_student->target_id))->url();
+                $output['review'][$count-1][$key]['rating'] = genarateStarRating($nodeData->field_rating_student->value);
+                $output['review'][$count-1][$key]['timing'] = $nodeData->field_review_timing->value;
+                $output['review'][$count-1][$key]['feedback'] = $nodeData->field_feedback_student->value;
+                $output['review'][$count-1][$key]['weight'] = $nodeData->field_weight_student->value;
+            }
+            $count ++;
+
+        }
+    }
+    return $output;
+}
+
+/**************************************************/
+/*** Course Rating and Review section ***** End ***/ 
+/**************************************************/
+function genarateRatingDataCount($nodeId){
+    $ratingQuery = \Drupal::entityQuery('node');
+    $ratingQuery->condition('type', 'rating_and_review');
+    $ratingQuery->condition('field_course_student', $nodeId);
+    $ratingQuery->condition('status', 1);
+    $ratingQuery->sort('field_weight_student' , 'DESC'); 
+    $ratingNodeIds = $ratingQuery->execute();
+    $totalRating = 0;
+    $totalStar = 0;
+    $fiveStar = 0;
+    $fourStar = 0;
+    $threeStar = 0;
+    $twoStar = 0;
+    $oneStar = 0;
+    foreach ($ratingNodeIds as $key => $ratingNodeId) {
+        $nodeData = Node::load($ratingNodeId);
+        $totalRating++;
+        $totalStar = $totalStar + $nodeData->field_rating_student->value;
+        if($nodeData->field_rating_student->value == 5 || $nodeData->field_rating_student->value == 4.5){
+            $fiveStar++;
+        }else if($nodeData->field_rating_student->value == 4 || $nodeData->field_rating_student->value == 3.5){
+            $fourStar++;
+        }else if($nodeData->field_rating_student->value == 3 || $nodeData->field_rating_student->value == 2.5){
+            $threeStar++;
+        }else if($nodeData->field_rating_student->value == 2 || $nodeData->field_rating_student->value == 1.5){
+            $twoStar++;
+        }else if($nodeData->field_rating_student->value == 1 || $nodeData->field_rating_student->value == 0.5){
+            $oneStar++;
+        }else{}
+    }
+    $output['totalRating'] = $totalRating;
+    $output['totalStar'] = round($totalStar/$totalRating, 1);
+    $output['fiveStar'] = $fiveStar;
+    $output['fourStar'] = $fourStar;
+    $output['threeStar'] = $threeStar;
+    $output['twoStar'] = $twoStar;
+    $output['oneStar'] = $oneStar;
+    $output['fiveStarPercent'] = round(($fiveStar/$totalRating)*100);
+    $output['fourStarPercent'] = round(($fourStar/$totalRating)*100);
+    $output['threeStarPercent'] = round(($threeStar/$totalRating)*100);
+    $output['twoStarPercent'] = round(($twoStar/$totalRating)*100);
+    $output['oneStarPercent'] = round(($oneStar/$totalRating)*100);
+
+    return $output;
+}
+
+
+function genarateStarRating($rating){
+    $output = '';
+    if(!empty($rating)){
+        if($rating > 0 && $rating < 1){
+            $output .= '<i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>';
+        }elseif($rating == 1){
+            $output .= '<i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>';
+        }
+        elseif($rating > 1 && $rating < 2){
+            $output .= '<i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>';
+        }
+        elseif($rating == 2){
+            $output .= '<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>';
+        }
+        elseif($rating > 2 && $rating < 3){
+            $output .= '<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>';
+        }
+        elseif($rating == 3){
+            $output .= '<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>';
+        }
+        elseif($rating > 3 && $rating < 4){
+            $output .= '<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i>';
+        }
+        elseif($rating == 4){ 
+            $output .= '<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>';
+        }
+        elseif($rating > 4 && $rating < 5){
+            $output .= '<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i>';
+        }
+        elseif($rating == 5){
+            $output .= '<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>';
+        }
+    }else{
+        $output .= '<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>';
+    }
+    return $output;
+}
+
+/******************************************************/
+/************** Number to currency convert ************/
+/******************************************************/
+function courseFeeNumberToCurrencyConvert($num){
+      $explrestunits = "" ;
+      if(strlen($num)>3){
+          $lastthree = substr($num, strlen($num)-3, strlen($num));
+          $restunits = substr($num, 0, strlen($num)-3); // extracts the last three digits
+          $restunits = (strlen($restunits)%2 == 1)?"0".$restunits:$restunits; // explodes the remaining digits in 2's formats, adds a zero in the beginning to maintain the 2's grouping.
+          $expunit = str_split($restunits, 2);
+          for($i=0; $i<sizeof($expunit); $i++){
+              // creates each of the 2's group and adds a comma to the end
+              if($i==0)
+              {
+                  $explrestunits .= (int)$expunit[$i].","; // if is first value , convert into integer
+              }else{
+                  $explrestunits .= $expunit[$i].",";
+              }
+          }
+          $thecash = $explrestunits.$lastthree;
+      } else {
+          $thecash = $num;
+      }
+      return  $thecash.'/-';
+}
+
+function courseFeeNumberToCurrencyConvertnew($num){
+      $explrestunits = "" ;
+      if(strlen($num)>3){
+          $lastthree = substr($num, strlen($num)-3, strlen($num));
+          $restunits = substr($num, 0, strlen($num)-3); // extracts the last three digits
+          $restunits = (strlen($restunits)%2 == 1)?"0".$restunits:$restunits; // explodes the remaining digits in 2's formats, adds a zero in the beginning to maintain the 2's grouping.
+          $expunit = str_split($restunits, 2);
+          for($i=0; $i<sizeof($expunit); $i++){
+              // creates each of the 2's group and adds a comma to the end
+              if($i==0)
+              {
+                  $explrestunits .= (int)$expunit[$i].","; // if is first value , convert into integer
+              }else{
+                  $explrestunits .= $expunit[$i].",";
+              }
+          }
+          $thecash = $explrestunits.$lastthree;
+      } else {
+          $thecash = $num;
+      }
+      return  $thecash.' + 18% GST';
+}
+
+function NiitGetCenterInformationcourse($courseTypeId, $cityCode){
+   //echo 'inside_method';
+   $data_response = '';
+    $data_json = "{'courseTypeId':'".$courseTypeId."', 'cityCode':'".$cityCode."'}";
+    //print_r($data_json); print_r($courseTypeId); print_r("Hellouuuu"); print_r($cityCode);
+
+    $base_url = (isset($_ENV['DRUPAL_PROTOCOL_DOMAIN']) && !is_null($_ENV['DRUPAL_PROTOCOL_DOMAIN'] )) ? $_ENV['DRUPAL_PROTOCOL_DOMAIN']."/india/" : \Drupal::urlGenerator()->generateFromRoute('<front>', [], ['absolute' => TRUE]);
+
+    $headers=array(
+        "Content-Type: application/json",
+        "DataType: JSON",
+      "courseTypeId: $courseTypeId",
+      "cityCode: $cityCode"
+    );
+
+
+   $url = "https://ccdev.niiteducation.com/CRMCallcenterAPI/api/CallCenter/get_centre_list";
+    //$url = $_ENV['Essservices_NiitRecruitmentGetJobtype'];
+   
+    //print_r($courseTypeId); die();
+    
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HTTPGET, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $data_response = json_decode($response);
+    // var_dump($response);
+
+   // $main = $data->course;
+    /*$data = array(
+        "course" => "Analytics",
+    );*/
+
+    
+    //$data_json = json_encode($data);
+ 
+   //print_r($data_response); die();
+    //print_r($data_response->VC_VRTCL_CD); print_r("HELLOOOO"); die();
+     $option .= '<div class="row mt5-1 corporateContactInfo">
+                <div class="col-md-10 col-md-offset-1">';
+    foreach($data_response->dataSet->Table as $key => $value){ 
+        
+        $option .= '
+          <div class="col-md-6 mb-8_rem">
+            <div class=" bg-whiteCorporate">
+              <img src="'.$base_url.'themes/custom/nexus/assets/images/cent.png" class="img-responsive ser-img">
+            <h4>'.$value->VC_CNTR_NM.'</h4>
+            <p class="pt-3">
+              <img src="'.$base_url.'themes/custom/nexus/assets/images/mapnew.png"> <span class="pl-3">'.$value->VC_CNTR_ADDRS.'</span>
+            </p>
+            <p class="mt-4">
+              <img src="'.$base_url.'themes/custom/nexus/assets/images/emailnew.png"> <span class="pl-3">'.$value->VC_CNTR_ML.'</span>
+            </p>
+            <p class="mt-4">
+              <img src="'.$base_url.'themes/custom/nexus/assets/images/callnew.png"> <span class="pl-3">'.$value->VC_Mobile.'</span>
+            </p>
+            <p class="mt-4">
+              <img src="'.$base_url.'themes/custom/nexus/assets/images/usernew.png"> <span class="pl-3">'.$value->VC_CONTACT_PERSON.'</span>
+            </p>
+           </div>
+          </div>
+        ';
+    }
+    $option .= '</div>
+                </div>';
+    
+    return $option;
+}
+
+
+
+function NiitGetCenterInformationCity(){
+
+   $url = "https://ccdev.niiteducation.com/CRMCallcenterAPI/api/CallCenter/get_centre_list";
+    //$url = $_ENV['Essservices_NiitRecruitmentGetJobtype'];
+    $headers=array(
+      'Content-Type:application/json',
+      'Content-Length: 0',
+      "courseTypeId: IT"
+    );
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HTTPGET, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $data_response = json_decode($response);
+
+   // $main = $data->course;
+    /*$data = array(
+        "course" => "Analytics",
+    );*/
+
+    //print_r($data['course']); die();
+    //$data_json = json_encode($data);
+ 
+   //print_r($data_response); die();
+    $option = '<select name="category_career" class="form-select category_career center-course-details center-course-details-2">
+    <option value="">Choose City</option>';
+    //print_r($data_response->VC_VRTCL_CD); print_r("HELLOOOO"); die();
+    foreach($data_response->dataSet->Table as $key => $value){ 
+        $option .= '<option value = "'.$value->VC_CNTR_CTY.'" class="center-course-option-city">'.$value->VC_CNTR_CTY.'</option>';
+    }
+    $option .= '</select>';
+
+    return $option;
+}
+function courseRelatedCourses($related_courses,$coursePageTemplate){
+    $r_course = '';
+    foreach ($related_courses as $key => $value) {
+        $related_course_image = (!empty($value['course_image']))?$value['course_image']:$path_to_theme.'/assets/images/l60Hf.png';
+        $relatedCourse_TotalReview = !empty($value['course_total_review'])?'<small>('.$value['course_total_review'].')</small>':'';
+        $realtedCourseApiFee = !empty($value['course_api_fee'])?'<i class="fa fa-rupee"></i>'.$value['course_api_fee'].'/-':'<i class="fa fa-rupee"></i>0/-';
+        $node_alias = '/india'.$value['node_alias'];
+        $r_course .= '<div class="item">
+            <div class="card card-cascade">
+                <div class="view view-cascade overlay related-coursenew">
+                    <img class="card-img-top" src="'.$related_course_image.'" alt="Card image cap">
+                    <div class="related-courseNewTitle-overlay">
+                        <h4 class="card-title-new"><a href="'.$node_alias.'">'.$value['course_title'].'</a></h4>
+                    </div>
+                    <a>
+                        <div class="mask rgba-white-slight"></div>
+                    </a>
+                </div>
+                <div class="card-body card-body-cascade text-center">
+                    <p class="card-text">'.$value['course_short_desc'].'</p>';
+                    $r_course .= '<span class="relatedCourseRationg">'.$value['course_star_rating_value'];
+                        $r_course .= genarateStarRating($value['course_star_rating_value']);
+                    $r_course .=  $relatedCourse_TotalReview.'</span>';
+                    $r_course .= '
+                    <hr class="cls">
+                    <p><small><i class="fa fa-clock-o"></i> '.$value['course_duration'].' | Course type: <b>'.$value['course_type'].'</b></small> </p>
+                    <p><span class="coursePriceNew">'.$realtedCourseApiFee.'</span>';
+                    if($coursePageTemplate =='course_modular'){                            
+                        if($value['course_enrollment_open'] == 1){
+                            if(!empty($value['course_api_fee']) && $value['course_api_fee'] != 0) {
+                                $r_course .= '<div class="'.$value['course_id'].'"><a href="javascript:void(0);" attributes="'.$value['course_id'].'" class="btn btn-block btn-danger '.$value['course_id'].' btn-infos-2" onclick="showEcomPoPup(\''.$value['course_id'].'\');">Enroll Now</a></div>';
+                            }else{
+                                $r_course .= '<a href="javascript:void(0);" class="btn btn-block btn-danger btn-infos-2" disabled>Enroll Now</a>';
+                            }
+                        }else{
+                            if(!empty($value['course_api_fee']) && $value['course_api_fee'] != 0) {
+                                $r_course .= '<a href="'.$value['course_enroll_now_link'].'" class="btn btn-block btn-danger btn-infos-2">Enroll Now</a>';
+                            }else{
+                                $r_course .= '<a href="javascript:void(0);" class="btn btn-block btn-danger btn-infos-2" disabled>Enroll Now</a>';
+                            }
+                        }
+                    }else if($coursePageTemplate =='course_career'){
+                        $r_course .= '<a class="btn btn-infos btn-infos-1 cust-btnEnqNow use-ajax" 
+                        data-dialog-type="modal" 
+                        href="/india/form/enquire-now-course?state=state&course='.$value['course_title'].'&course_code='.$value['course_code'].'&campaign_code='.$value['campaign_code'].'&destination='.$current_path.'">Enquire Now</a>';
+                    }else if($coursePageTemplate == 'course_online_self'){
+                        $batchIdWith = \Drupal::service('niit_common.niit_related_courses')->get_course_fee_and_details($value['course_delivery_mode_code'],$value['course_code']);
+                        if(!empty($batchIdWith['courseBatchDetail'][0])){
+                            $r_course .= '<a href="javascript:void(0);" class="btn btn-block btn-danger '.$value['course_id'].' btn-infos-2"  onclick="relatedCourseEnrollNowSubmit(\''.$batchIdWith['courseBatchDetail'][0]['batchID'].'\')">Enroll Now</a>';
+                            // $actual_link = "{$_ENV['DRUPAL_PROTOCOL_DOMAIN']}{$_SERVER['REQUEST_URI']}";
+                            $actual_link = "https://sandbox-qa.niit.com/".$_SERVER['REQUEST_URI'];
+                            $site_current_url = $actual_link;
+
+                            $r_course .= '<form id="relatedCourseEnrollForm-'.$batchIdWith['courseBatchDetail'][0]['batchID'].'" action="'.$value['course_proceed_button_link'].'" method="post">
+                                <input type="hidden" name="pCourseCode" value="'.$batchIdWith['courseBatchDetail'][0]['courseCode'].'">
+                                <input type="hidden" name="pModalId" value="'.$batchIdWith['courseBatchDetail'][0]['batchType'].'">
+                                <input type="hidden" name="pcollectionPlanId" value="'.$batchIdWith['courseBatchDetail'][0]['patternCode'].'">
+                                <input type="hidden" name="pbatchId" value="'.$batchIdWith['courseBatchDetail'][0]['batchID'].'">
+                                <input type="hidden" name="pSrcId" value="'.$batchIdWith['courseBatchDetail'][0]['SRC_ICD'].'">
+                                <input type="hidden" name="pDstId" value="'.$batchIdWith['courseBatchDetail'][0]['DST_ICD'].'">
+                                <input type="hidden" name="pisUserLoggedIn" value="N">
+                                <input type="hidden" name="pBatchTimings" value="'.$batchIdWith['courseBatchDetail'][0]['batchTimings'].'">
+                                <input type="hidden" name="pBatchStartDate" value="'.$batchIdWith['courseBatchDetail'][0]['batchStartDate'].'">
+                                <input type="hidden" name="pBatchEndDate" value="'.$batchIdWith['courseBatchDetail'][0]['batchEndDate'].'">
+                                <input type="hidden" name="pFee" value="'.$batchIdWith['courseBatchDetail'][0]['batchFees'].'">
+                                <input type="hidden" name="CourseId" value="'.$batchIdWith['courseBatchDetail'][0]['courseID'].'">
+                                <input type="hidden" name="CourseVersion" value="1">
+                                <input type="hidden" name="CategoryName" value="Digital Marketing">
+                                <input type="hidden" name="SeoUrl" value="web-apps-development-courses-online/web-apps-development-using-node-js">
+                                <input type="hidden" name="pcheckEnroll" value="ENROLL">
+                                <input type="hidden" name="bthcurrencyCode" value="'.$batchIdWith['courseBatchDetail'][0]['currencyCode'].'">
+                                <input type="hidden" name="bthSymbolType" value="'.$batchIdWith['courseBatchDetail'][0]['SymbolType'].'">
+                                <input type="hidden" name="bthSymbolValue" value="'.$batchIdWith['courseBatchDetail'][0]['SymbolValue'].'">
+                                <input type="hidden" name="Minimum_Denomination" value="'.$batchIdWith['courseBatchDetail'][0]['Minimum_Denomination'].'">
+                                <input type="hidden" name="Minimum_Denomination_Value" value="'.$batchIdWith['courseBatchDetail'][0]['Minimum_Denomination_Value'].'">
+                                <input type="hidden" name="IsTax_IncludeIN_Collection" value="'.$batchIdWith['courseBatchDetail'][0]['IsTax_IncludeIN_Collection'].'">
+                                <input type="hidden" name="SourcePlatformName" value="NIITCOM">
+                                <input type="hidden" name="RequestName" value="Enrollment">
+                                <input type="hidden" name="NIITCourseURL" value="'.$site_current_url.'">';
+                            $r_course .='</form>';
+                            $r_course .='<div class="selfPacedEnrollRemoveSpace"></div>';
+                        }
+                    }
+
+                    $r_course .= '</p>
+                </div>';
+                if($coursePageTemplate != 'course_online_self'){
+                    $r_course .= '<hr><div class="card-footerr">';
+                        if($value['batchAvailable'] != ''){
+                            $r_course .=  '<small class="s-bor"><i class="text-danger">Fast Filling</i>, batch will start from </small> <i class="fa fa-calendar text-danger"></i> <b>'.$value['batchAvailable'].'.</b>';
+                        }else{
+                            $r_course .=  '<small class="s-bor batchNotavailable"><i class="text-danger">This course is not accepting online registrations at this time.</i></small>';
+                        }
+                    $r_course .=  '</div>';
+                }
+                $r_course .=  '
+            </div>
+        </div>';
+    }
+    return $r_course;
+}
+function courseTestimonial($nids){
+   $nodeTesitmonial = Node::loadMultiple($nids);
+    foreach ($nodeTesitmonial as $key => $nodeTesitmonialData) {
+        if(!empty($nodeTesitmonialData->field_testimonial_type_new->target_id)){
+            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$key]['title'] = $nodeTesitmonialData->getTitle();
+            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$key]['video'] = $nodeTesitmonialData->field_testimonial_video->value;
+            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$key]['about_testimonial'] = $nodeTesitmonialData->field_about_testimonial->value;
+            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$key]['image_uri'] = (\Drupal\file\Entity\File::load($nodeTesitmonialData->field_testimonial_image->target_id))->url();
+            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$key]['testimonial_description'] = $nodeTesitmonialData->field_testimonial_description->value;
+            $testimonialResult[$nodeTesitmonialData->field_testimonial_type_new->target_id][$key]['testimonial_placement_company'] = $nodeTesitmonialData->field_placement_company->value;
+        }
+    }
+    # ICICI Testimonial
+    $iciciTestimonialTabOutput = '';
+    $iciciTestimonialTabDataOutput = '';
+    $iciciTestimonialCount = 0;
+    foreach ($testimonialResult as $key => $value) {
+        $testimonialTypeName = (Term::load($key))->getName();
+        if($iciciTestimonialCount == 0){
+            $iciciTestimonialTabOutput .= '<li class="active"><a data-toggle="tab" href="#toggleTabIcici-'.$key.'">'.$testimonialTypeName.'</a></li>';
+            $iciciTestimonialTabDataOutput .= '<div id="toggleTabIcici-'.$key.'" class="tab-pane fade in active">
+                <div id="exampleSlider111-'.$iciciTestimonialCount.'" class=""><div class="MS-content">';   
+        }else{
+            $iciciTestimonialTabOutput .= '<li><a data-toggle="tab" href="#toggleTabIcici-'.$key.'">'.$testimonialTypeName.'</a></li>';
+            $iciciTestimonialTabDataOutput .= '<div id="toggleTabIcici-'.$key.'" class="tab-pane fade">
+                <div id="exampleSlider111-'.$iciciTestimonialCount.'" class=""><div class="MS-content">';   
+        }                 
+        foreach ($value as $key1 => $value1) {
+            if (strlen($value1['testimonial_description']) > 150){
+                $newTestimonialData = substr($value1['testimonial_description'], 0, 150) . '...';  
+            }else{
+                $newTestimonialData = $value1['testimonial_description'];  
+            }
+            if(!empty($value1['video'])){
+                $iciciTestimonialTabDataOutput .= '<div class="item">
+                    <iframe width="100%" height="318" src="'.$value1['video'].'?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>';
+            }else{
+                $iciciTestimonialTabDataOutput .= '<div class="item">
+                    <a class="thumbnail" href="javascript:void(0);">
+                        <img src="'.$value1['image_uri'].'" class="img-responsive">
+                        <p class="mt-3">'.$newTestimonialData.'</p>
+                        <h5 class="mt-5">-'.$value1['title'].'</h5>
+                        <h6>'.$value1['testimonial_placement_company'].'</h6>
+                    </a>
+                </div>';
+            }
+    
+        }   
+        $iciciTestimonialTabDataOutput .= '</div>
+            <div class="MS-controls">
+                <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        </div>';
+        $iciciTestimonialCount++;
+    }
+    $response['iciciTestimonialTabDataOutput'] = $iciciTestimonialTabDataOutput;
+    $response['iciciTestimonialTabOutput'] = $iciciTestimonialTabOutput;
+    return $response;
+}
+// code add by ajeet kumar
+# String Capitalized with Remove Space/Space GA.
+function stringCapitalizeRemoveSpace($string){
+    return preg_replace("/[^a-zA-Z0-9\s]/", "", implode('-', array_map('ucfirst', explode(' ', $string))));
+}
+# String Capitalized Title with Get First Letter  GA.
+function stringCapitalizeGetTitleFirstLetter($string){
+    $words = explode(" ", ucwords($string));
+    $output = "";
+    foreach ($words as $w) {
+      $output .= $w[0];
+    }
+    return $output;
+}
+function courseCategoryRefrence($top_cc,$cc){
+    $addsyntex = '';
+    if(is_numeric($top_cc)){
+      $top_catgory_title = node::load($top_cc)->getTitle();
+      $cat_event.= stringCapitalizeRemoveSpace($top_catgory_title);
+      $addsyntex = '_';
+    }
+    if(is_numeric($cc)){
+      $catgory_title = node::load($cc)->getTitle();
+      $cat_event.= $addsyntex.''.stringCapitalizeRemoveSpace($catgory_title);
+      
+    }
+    return $cat_event;
+  }
+function stringCategoryCapitalizeRemoveDash($top_cc){
+    if(is_numeric($top_cc)){
+        $top_catgory_title = node::load($top_cc)->getTitle();
+        $top_catgory_title= stringCapitalizeGetTitleFirstLetter($top_catgory_title);
+    }
+    return $top_catgory_title;
+}
+function  stringCapitalizeGetCourseCategory($cc){
+    if(is_numeric($cc)){
+        $catgory_title = node::load($cc)->getTitle();
+        $catgory_title = '_'.preg_replace("/[^a-zA-Z0-9\s]/", "", implode('-', array_map('ucfirst', explode(' ', $catgory_title))));
+    }
+    return $catgory_title;
+}
+function stringGetLowerWithDash($value){
+    if(is_numeric($value)){
+        $nodeData = node::load($value);
+        $output = str_replace(' ', '-', strtolower($nodeData->getTitle()));
+    }else{
+        $output = str_replace(' ', '-', strtolower($value));
+    }
+    return $output;
+}
+function moneyFormatIndia($num) {
+    $explrestunits = "" ;
+    if(strlen($num)>3) {
+        $lastthree = substr($num, strlen($num)-3, strlen($num));
+        $restunits = substr($num, 0, strlen($num)-3); // extracts the last three digits
+        $restunits = (strlen($restunits)%2 == 1)?"0".$restunits:$restunits; // explodes the remaining digits in 2's formats, adds a zero in the beginning to maintain the 2's grouping.
+        $expunit = str_split($restunits, 2);
+        for($i=0; $i<sizeof($expunit); $i++) {
+            // creates each of the 2's group and adds a comma to the end
+            if($i==0) {
+                $explrestunits .= (int)$expunit[$i].","; // if is first value , convert into integer
+            } else {
+                $explrestunits .= $expunit[$i].",";
+            }
+        }
+        $thecash = $explrestunits.$lastthree;
+    } else {
+        $thecash = $num;
+    }
+    return $thecash; // writes the final format where $currency is the currency symbol.
+}
+function getCourseBatchStartDateTimeTimer($date){
+    $output = '<div id="clockdiv">
+                        <div class="col-md-3 col-xs-1">
+                            <span id="timer-day"></span>
+                            <div class="smalltext">DAYS</div>
+                        </div>
+                        <div class="col-md-3 col-xs-1">
+                            <span id="timer-hour"></span>
+                            <div class="smalltext">HRS</div>
+                        </div>
+                        <div class="col-md-3 col-xs-1">
+                            <span id="timer-minute"></span>
+                            <div class="smalltext">MIN</div>
+                        </div>
+                        <div class="col-md-3 col-xs-1">
+                            <span id="timer-second"></span>
+                            <div class="smalltext">SEC</div>
+                        </div>
+                    </div>
+
+                    <div id="timer-text" class="col-md-12 col-xs-12"></div>
+
+                    <script>
+
+                    var deadline = new Date("'.$date.'").getTime();
+
+                    var x = setInterval(function() {
+
+                    var now = new Date().getTime();
+                    var t = deadline - now;
+                    t = t + 1;
+                    var days = Math.floor(t / (1000 * 60 * 60 * 24));
+                    var hours = Math.floor((t%(1000 * 60 * 60 * 24))/(1000 * 60 * 60));
+                    var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((t % (1000 * 60)) / 1000);
+                    document.getElementById("timer-day").innerHTML = days ;
+                    document.getElementById("timer-hour").innerHTML = hours;
+                    document.getElementById("timer-minute").innerHTML = minutes;
+                    document.getElementById("timer-second").innerHTML = seconds;
+                    if (t < 0) {
+                            clearInterval(x);
+                            document.getElementById("timer-text").innerHTML = "TIME UP";
+                            document.getElementById("timer-day").innerHTML ="0";
+                            document.getElementById("timer-hour").innerHTML ="0";
+                            document.getElementById("timer-minute").innerHTML ="0" ;
+                            document.getElementById("timer-second").innerHTML = "0"; }
+                    }, 1000);
+                    </script>';
+    return $output;
+}
+function niit_common_entity_update(EntityInterface $entity) {	
+        
+        $timestamp = $entity->changed = time();
+	 if($entity->bundle() == 'course'){
+	$appid = $entity->get('field_course_')->target_id;
+ $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/categorynode/data/id&api_id=$appid";
+// $urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/categorynode&api_id=$appid";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			"api_id"=> $appid,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+		//  curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully update')); 
+   //drupal_set_message(print_r($entity->bundle() == 'course', true));
+  // drupal_set_message(print_r($entity->changed = time(), true));
+  // drupal_set_message(print_r($entity->get('field_course_')->target_id, true));
+         return $response;
+	 }if($entity->bundle() == 'blog_post'){
+		 $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/popular_articles";
+		// $urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/popular_articles";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+		 // curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully update')); 
+    // drupal_set_message(print_r($entity->bundle() == 'blog_post', true));
+   //  drupal_set_message(print_r($entity->changed = time(), true));
+         return $response;
+		 // print_r($response);
+		}if($entity->bundle() == 'webinar'){
+		 $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/upcomingevent";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully update')); 
+    // drupal_set_message(print_r($entity->bundle() == 'webinar', true));
+   // drupal_set_message(print_r($entity->changed = time(), true));
+         return $response;
+		 }
+}
+ function niit_common_entity_delete(EntityInterface $entity) {
+
+$timestamp = $entity->changed = time();
+	  if($entity->bundle() == 'course'){ 
+	 $appid = $entity->get('field_course_')->target_id;
+    $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/categorynode/data/id&api_id=$appid";
+   // $urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/categorynode&api_id=$appid";	  
+	  $data_array = array(
+			"timestamp"=> $timestamp,
+			"api_id"=> $appid,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+		  //curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+    //  echo '<pre>'; print_r($response); print_r($data_json); die();
+	  	 drupal_set_message(t('Node is successfully deleted')); 
+        //drupal_set_message(print_r($entity->bundle() == 'course', true));
+     //    drupal_set_message(print_r($entity->changed = time(), true));
+		// drupal_set_message(print_r($entity->get('field_course_')->target_id, true));
+         return $response;
+		 // print_r($response);
+
+ } if($entity->bundle() == 'blog_post'){
+		 $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/popular_articles";
+		 //$urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/popular_articles";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+		 // curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully deleted')); 
+     //drupal_set_message(print_r($entity->bundle() == 'blog_post', true));
+    // drupal_set_message(print_r($entity->changed = time(), true));
+         return $response;
+		 // print_r($response);
+		 
+		 
+	 }if($entity->bundle() == 'webinar'){
+		 $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/upcomingevent";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully deleted')); 
+    //drupal_set_message(print_r($entity->bundle() == 'webinar', true));
+   // drupal_set_message(print_r($entity->changed = time(), true));
+         return $response;
+		 
+	 }
+ 
+ }
+  function niit_common_taxonomy_term_update($term) {
+	  
+			$timestamp = $entity->changed = time();
+			$url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/taxonomy/data";
+	        $data_array = array(
+			"timestamp"=> $timestamp,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+            $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+          $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+    //echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Taxnonomy  is successfully updated')); 
+  // drupal_set_message(print_r($entity->bundle() == 'webinar', true));
+   //  drupal_set_message(print_r($entity->changed = time(), true));
+         return $response;
+				
+	 
+			
+
+ }
+  function niit_common_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+	    $timestamp = $entity->changed = time();
+	 if($entity->bundle() == 'course'){
+	$appid = $entity->get('field_course_')->target_id;
+    $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/categorynode/data/id&api_id=$appid";
+	//$urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/categorynode&api_id=$appid";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			"api_id"=> $appid,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+          //curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		  
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	
+	 drupal_set_message(t('Node is successfully created')); 
+  /// drupal_set_message(print_r($entity->bundle() == 'page', true));
+  // drupal_set_message(print_r($entity->changed = time(), true));
+   //drupal_set_message(print_r($entity->get('field_course_')->target_id, true));
+  // drupal_set_message(print_r($url, true));
+  // drupal_set_message(print_r($entity->id(), true));
+  
+         return $response;
+		
+	 }if($entity->bundle() == 'blog_post'){
+	   $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/popular_articles";
+	 //  $urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/popular_articles";
+	  $data_array = array(
+			"timestamp"=> $timestamp,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+		  //curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+   // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully created')); 
+  // drupal_set_message(print_r($entity->bundle() == 'blog_post', true));
+   drupal_set_message(print_r($entity->changed = time(), true));
+         return $response;
+		 // print_r($response);
+		 
+		 
+	 }if($entity->bundle() == 'webinar'){
+		 $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/upcomingevent";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $url);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully created')); 
+ //  drupal_set_message(print_r($entity->bundle() == 'webinar', true));
+   drupal_set_message(print_r($entity->changed = time(), true));
+         return $response;
+		 
+	 }
+	 
+	 
+ }
+
+ function niit_common_moneyFormatIndia($num) {
+    $explrestunits = "" ;
+    if(strlen($num)>3) {
+        $lastthree = substr($num, strlen($num)-3, strlen($num));
+        $restunits = substr($num, 0, strlen($num)-3); // extracts the last three digits
+        $restunits = (strlen($restunits)%2 == 1)?"0".$restunits:$restunits; // explodes the remaining digits in 2's formats, adds a zero in the beginning to maintain the 2's grouping.
+        $expunit = str_split($restunits, 2);
+        for($i=0; $i<sizeof($expunit); $i++) {
+            // creates each of the 2's group and adds a comma to the end
+            if($i==0) {
+                $explrestunits .= (int)$expunit[$i].","; // if is first value , convert into integer
+            } else {
+                $explrestunits .= $expunit[$i].",";
+            }
+        }
+        $thecash = $explrestunits.$lastthree;
+    } else {
+        $thecash = $num;
+    }
+    return $thecash; // writes the final format where $currency is the currency symbol.
+}
+ ?>

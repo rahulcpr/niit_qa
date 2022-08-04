@@ -1,0 +1,848 @@
+<!-- Header Start-->
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+<!-- Header End -->
+<div class="kc_page_white_bg" id="kc-artciles">
+  <!-- Breadcrub Start -->
+  <section class="kc-page-breadcrub mobile-hide">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="page-breadcrumbs">
+            <ul class="breadcrumb">
+              <li><a href="/">Home</a></li>
+              <li>{{ node.label }}</li> 
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Breadcrub End -->
+
+  <!-- Banner start here -->
+  <section class="kcHome_banner">
+    <div id="kcCarousel" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators">
+        
+        
+        {% for key, value in node.field_banner_carousel %}
+          {% set count = 0 %}
+          {% for key1, value1 in value.entity.field_placement_slider %}
+            {% if loop.first %}
+              <li data-target="#kcCarousel" data-slide-to="{{count}}" class="active"></li>
+            {% else %}
+              <li data-target="#kcCarousel" data-slide-to="{{count}}"></li>
+            {% endif %}
+            {% set count = count + 1 %}
+          {% endfor %}
+        {% endfor %}
+      </ol>
+      <!-- Wrapper for slides -->
+      <div class="carousel-inner">
+        {% for key, value in node.field_banner_carousel %}
+          {% for key1, value1 in value.entity.field_placement_slider %}
+
+              {% if loop.first %}
+                <div class="item active">
+              {% else %}
+                <div class="item">
+              {% endif %}
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ file_url(value1.entity.field_slider_image.entity.fileuri) }}" alt="{{ value1.entity.field_slider_image.alt }}" style="width:100%;" class="desk-display js-lazyload-image">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ file_url(value1.entity.field_mobile_image.entity.fileuri) }}" alt="{{ value1.entity.field_mobile_image.alt }}" style="width:100%;" class="mob-display js-lazyload-image">
+                <div class="kc_serachbox">
+                  <div id="searchBox" class="mobile-form">
+                    <form action="/india/kc-search" class="search-form" id="searchform" method="get">
+                      <span id="noEasy">
+                        <input class="sb-search-submit" type="submit" value="">
+                        <span class="sb-icon-search"></span>
+                      </span>
+                      <input id="sbox" name="keyword" onblur="if (this.placeholder == '') {this.placeholder = 'Search';}" onfocus="if (this.placeholder == 'Search') {this.placeholder = '';}" placeholder="Search" type="text" x-webkit-speech="">
+                    </form>
+                  </div>
+                </div>
+                {% if value1.entity.field_label.value is not empty %}
+                  <div class="banner-textbox">
+                    {% if value1.entity.field_slider_cta.uri is not empty %}
+                      <label>{{ link(value1.entity.field_label.value, value1.entity.field_slider_cta.uri, { } ) }}</label>
+                    {% else %}
+                      <label><a href="javascript:void(0);">{{ value1.entity.field_label.value }}</a></label>
+                    {% endif %}
+                      <p>{{ value1.entity.field_image_description.value }}</p>
+                      <div class="bootommsg">
+                        <span> {{ value1.entity.field_image_publish_details.value|raw }} </span>
+                      </div>
+                  </div>
+                {% endif %}
+              </div>
+          {% endfor %}
+        {% endfor %}
+
+       
+      </div>
+      <!-- Left and right controls -->
+      <a class="left carousel-control" href="#kcCarousel" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+      <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#kcCarousel" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+      <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </section>
+  <!-- Banner End here -->
+
+
+
+  <!-- Article start here -->
+  {% if getArticleData.status == 1 %}
+  <section class="kc_home_articles">
+    <div class="container">
+      <div class="row">
+        {% if getArticleData.data.0 is not empty %}
+          <div class="col-md-4 br_1px">
+            <div class="imagebar">
+              <a href="{{ getArticleData.data.0.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.0.img }}" alt="{{ getArticleData.data.0.ttl }}" class="img-responsive js-lazyload-image">
+                <ul class="imagebar-bot">
+                  <li>
+                    {% if getArticleData.data.0.upvt > 0 %}
+                      <div class="like-data"><i class="fa fa-thumbs-up view-btn" aria-hidden="true"></i> {{getArticleData.data.0.upvt }}</div>
+                    {% endif %}
+                    <div class="comment">
+                      <i class="fa fa-comment-o" aria-hidden="true"></i> {{ getArticleData.data.0.ratingCount|raw }}
+                     </div>
+                    </li>
+                    <li>{{ generateRatingStarIcons(getArticleData.data.0.avgRating)|raw }}</li>
+                </ul>
+              </a>
+              <div class="kc_img_cap">
+                {% for key1, taxonomy in getArticleData.data.0.map_taxonomy %}
+                  <p class="kmcgbar"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></p>
+                {% endfor %}
+                <h5><a href="{{ getArticleData.data.0.src }}">{{ getArticleData.data.0.ttl }}</a></h5>
+                <p class="art_para">{{ getArticleData.data.0.dsc|raw }}</p>
+                <p class="articlebar">
+                  {% if getArticleData.data.0.scgrp is not empty %}
+                    {{ generateIconWithText(getArticleData.data.0.scgrp)|raw }} <b>{{ getArticleData.data.0.scgrp }}</b> 
+                  {% endif %}
+                  {% if getArticleData.data.0.duration is not empty %}
+                    · {{ getArticleData.data.0.duration }} 
+                  {% endif %}
+                  {% if getArticleData.data.0.athrinfo.nm is not empty %}
+                    · By &nbsp;{{ getArticleData.data.0.athrinfo.nm }} 
+                  {% endif %}
+                  {# **Bookmark code start #}
+                  {% if current_user_id is not empty %}
+                    <span class="kc-bookmark-btn" node-id="{{ getArticleData.data.0.vId }}" category-id="{{ getArticleData.data.0.map_taxonomy.0.id }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% else %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                  {% endif %}
+                  {# **Bookmark code End #}
+                </p>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        <div class="col-md-8 kc_articles_right">
+          {% if getArticleData.data.1 is not empty %}
+          <div class="imagebar">
+            <div class="col-md-4 pl-0">
+              <a href="{{ getArticleData.data.1.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.1.img }}" alt="{{ getArticleData.data.1.ttl }}" class="img-responsive js-lazyload-image">
+               <ul class="imagebar-bot">
+                  <li>
+                    {% if getArticleData.data.1.upvt > 0 %}
+                      <div class="like-data"><i class="fa fa-thumbs-up view-btn" aria-hidden="true"></i> {{getArticleData.data.1.upvt }}</div>
+                    {% endif %}
+                    <div class="comment">
+                      <i class="fa fa-comment-o" aria-hidden="true"></i> {{ getArticleData.data.1.ratingCount|raw }}
+                     </div>
+                    </li>
+                    <li>{{ generateRatingStarIcons(getArticleData.data.1.avgRating)|raw }}</li>
+                </ul>
+              </a>
+            </div>
+            <div class="col-md-8 pl-0">
+              <div class="kc_img_cap">
+                {% for key1, taxonomy in getArticleData.data.1.map_taxonomy %}
+                    <p class="kmcgbar"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></p>
+                  {% endfor %}
+                  {# <p class="kmcgbar">FMCG</p> #}
+                  <h5><a href="{{ getArticleData.data.1.src }}">{{ getArticleData.data.1.ttl }}</a></h5>
+                <p class="art_para">{{ getArticleData.data.1.dsc|raw }}</p>
+                {# <p class="auidodetail"> <i class="fa fa-headphones"></i> AUDIO SUMMARY · 00:56</p> #}
+                  <p class="articlebar">
+                  {% if getArticleData.data.1.scgrp is not empty %}
+                    {{ generateIconWithText(getArticleData.data.1.scgrp)|raw }} <b>{{ getArticleData.data.1.scgrp }}</b> 
+                  {% endif %}
+                  {% if getArticleData.data.1.duration is not empty %}
+                    · {{ getArticleData.data.1.duration }} 
+                  {% endif %}
+                  {% if getArticleData.data.1.athrinfo.nm is not empty %}
+                    · By &nbsp;{{ getArticleData.data.1.athrinfo.nm }} 
+                  {% endif %}
+                  {# **Bookmark code start #}
+                  {% if current_user_id is not empty %}
+                    <span class="kc-bookmark-btn" node-id="{{ getArticleData.data.1.vId }}" category-id="{{ getArticleData.data.1.map_taxonomy.0.id }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% else %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                  {% endif %}
+                  {# **Bookmark code End #}
+                </p>
+              </div>
+            </div>
+
+            
+            
+          </div>
+          {% endif %}
+
+          {% if getArticleData.data.2 is not empty %}
+          <div class="imagebar">
+            <div class="col-md-4 pl-0">
+              <a href="{{ getArticleData.data.2.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.2.img }}" alt="{{ getArticleData.data.2.ttl }}" class="img-responsive js-lazyload-image">
+               <ul class="imagebar-bot">
+                  <li>
+                    {% if getArticleData.data.2.upvt > 0 %}
+                      <div class="like-data"><i class="fa fa-thumbs-up view-btn" aria-hidden="true"></i> {{getArticleData.data.2.upvt }}</div>
+                    {% endif %}
+                    <div class="comment">
+                      <i class="fa fa-comment-o" aria-hidden="true"></i> {{ getArticleData.data.2.ratingCount|raw }}
+                     </div>
+                    </li>
+                    <li>{{ generateRatingStarIcons(getArticleData.data.2.avgRating)|raw }}</li>
+                </ul>
+              </a>
+            </div>
+            <div class="col-md-8 pl-0">
+              <div class="kc_img_cap">
+                {% for key1, taxonomy in getArticleData.data.2.map_taxonomy %}
+                    <p class="kmcgbar"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></p>
+                  {% endfor %}
+                  {# <p class="kmcgbar">FMCG</p> #}
+                  <h5><a href="{{ getArticleData.data.2.src }}">{{ getArticleData.data.2.ttl }}</a></h5>
+                <p class="art_para">{{ getArticleData.data.2.dsc|raw }}</p>
+                {# <p class="auidodetail"> <i class="fa fa-headphones"></i> AUDIO SUMMARY · 00:56</p> #}
+                  <p class="articlebar">
+                  {% if getArticleData.data.2.scgrp is not empty %}
+                    {{ generateIconWithText(getArticleData.data.2.scgrp)|raw }} <b>{{ getArticleData.data.2.scgrp }}</b> 
+                  {% endif %}
+                  {% if getArticleData.data.2.duration is not empty %}
+                    · {{ getArticleData.data.2.duration }} 
+                  {% endif %}
+                  {% if getArticleData.data.2.athrinfo.nm is not empty %}
+                    · By &nbsp;{{ getArticleData.data.2.athrinfo.nm }} 
+                  {% endif %}
+                  {# **Bookmark code start #}
+                  {% if current_user_id is not empty %}
+                    <span class="kc-bookmark-btn" node-id="{{ getArticleData.data.2.vId }}" category-id="{{ getArticleData.data.2.map_taxonomy.0.id }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% else %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                  {% endif %}
+                  {# **Bookmark code End #}
+                </p>
+                
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          {% if getArticleData.data.3 is not empty %}
+          <div class="imagebar">
+            <div class="col-md-4 pl-0">
+              <a href="{{ getArticleData.data.3.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.3.img }}" alt="{{ getArticleData.data.3.ttl }}" class="img-responsive js-lazyload-image">
+               <ul class="imagebar-bot">
+                  <li>
+                    {% if getArticleData.data.3.upvt > 0 %}
+                      <div class="like-data"><i class="fa fa-thumbs-up view-btn" aria-hidden="true"></i> {{getArticleData.data.3.upvt }}</div>
+                    {% endif %}
+                    <div class="comment">
+                      <i class="fa fa-comment-o" aria-hidden="true"></i> {{ getArticleData.data.3.ratingCount|raw }}
+                    </div>
+                  </li>
+                  <li>{{ generateRatingStarIcons(getArticleData.data.3.avgRating)|raw }}</li>
+                </ul>
+              </a>
+            </div>
+            <div class="col-md-8 pl-0">
+              <div class="kc_img_cap">
+                {% for key1, taxonomy in getArticleData.data.3.map_taxonomy %}
+                    <p class="kmcgbar"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></p>
+                  {% endfor %}
+                  {# <p class="kmcgbar">FMCG</p> #}
+                  <h5><a href="{{ getArticleData.data.3.src }}">{{ getArticleData.data.3.ttl }}</a></h5>
+                <p class="art_para">{{ getArticleData.data.3.dsc|raw }}</p>
+                {# <p class="auidodetail"> <i class="fa fa-headphones"></i> AUDIO SUMMARY · 00:56</p> #}
+                  <p class="articlebar">
+                  {% if getArticleData.data.3.scgrp is not empty %}
+                    {{ generateIconWithText(getArticleData.data.3.scgrp)|raw }} <b>{{ getArticleData.data.3.scgrp }}</b> 
+                  {% endif %}
+                  {% if getArticleData.data.3.duration is not empty %}
+                    · {{ getArticleData.data.3.duration }} 
+                  {% endif %}
+                  {% if getArticleData.data.3.athrinfo.nm is not empty %}
+                    · By &nbsp;{{ getArticleData.data.3.athrinfo.nm }} 
+                  {% endif %}
+                  {# **Bookmark code start #}
+                  {% if current_user_id is not empty %}
+                    <span class="kc-bookmark-btn" node-id="{{ getArticleData.data.3.vId }}" category-id="{{ getArticleData.data.3.map_taxonomy.0.id }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% else %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                  {% endif %}
+                  {# **Bookmark code End #}
+                </p>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+  <!-- Article end here -->
+
+
+  <!-- Recent Stories Section Start -->
+  {% if getTaxonomyData.status == 1 %}
+  <section class="kc_home_recentStories">
+    <div class="container">
+      <div id="kcRecentStories" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+          {% set count2 = 0 %}
+          {% for key, value in getTaxonomyData.data %}
+              {% if loop.first %}
+                <li data-target="#kcRecentStories" data-slide-to="{{ count2 }}" class="active"></li>
+              {% else %}
+                <li data-target="#kcRecentStories" data-slide-to="{{ count2 }}"></li>
+              {% endif %}
+              {% set count2 = count2 + 1 %}
+          {% endfor %}
+        </ol>
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner">
+          {% for key, value in getTaxonomyData.data %}
+            {% if loop.first %}
+              <div class="item active">
+            {% else %}
+              <div class="item">
+            {% endif %}
+              <div class="row kc_recentStory">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ value.img }}" class="img-responsive cat-img js-lazyload-image">
+                <div class="col-md-6 br-1px">
+                  <div class="kc_recentStories_left">
+                    <div class="recentstoriesbar">
+                      <div class="rsbar-content col-md-7 col-md-offset-4 col-xs-offset-4 col-xs-8">
+                        <label>recent stories</label>
+                        <a href="{{ value.src }}"><h1>{{ value.txn_name }}</h1></a>
+                        <p>{{ value.dsc|raw }}</p>
+                      </div>
+                      <div class="rs-subbar pos-rel col-md-5">
+                        {# <p>{{ value.dsc }}</p>
+                        <div class="clearfix"></div> #}
+                      </div>
+                      <div class="col-md-7 kc_rs_btn">
+                        <a class="defaultbtn" tabindex="0" href="{{ value.src }}">Explore&nbsp;{{ value.txn_name }}  <i class="fa fa-chevron-right"></i> </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <ul class="kc_recentStories_right list-unstyled">
+                    {% set articleDataArray = getArticleDataInKMS(value.txn_id) %}
+                    {% if articleDataArray.data is not empty %}
+                      {% set break = false %}
+                      {% for key, value in articleDataArray.data if not break %}
+                        {% if key == 0 or key == 1 or key == 2 %}
+                          <li>
+                            <a href="{{ value.src }}">
+                              <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ value.img }}" alt="{{ value.ttl }}" class="js-lazyload-image">
+                            </a>
+                            <div class="rs-contect">
+                              {% for key1, taxonomy in value.map_taxonomy %}
+                                <span class="rsc-heading"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></span>
+                              {% endfor %}
+                              <label><a href ="{{ value.src }}">{{ value.ttl }}</a></label>
+                              <div class="articlebar">
+                                {% if value.scgrp is not empty %}
+                                  {{ generateIconWithText(value.scgrp)|raw }} <b>{{ value.scgrp }}</b> 
+                                {% endif %}
+                                {% if value.duration is not empty %}
+                                  · {{ value.duration }} 
+                                {% endif %}
+                                {% if value.athrinfo.nm is not empty %}
+                                  · By &nbsp;{{ value.athrinfo.nm }} 
+                                {% endif %}
+                              </div>
+                            </div>
+                          </li>
+                        {% else %}
+                          {% set break = true %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    
+                  </ul>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          
+        </div>
+        <!-- Left and right controls -->
+        <a class="left carousel-control" href="#kcRecentStories" data-slide="prev">
+          <i class="fa fa-chevron-left"></i>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#kcRecentStories" data-slide="next">
+          <i class="fa fa-chevron-right"></i>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+  <!-- Recent Stories Section End -->
+
+
+  <!-- Article2 start here -->
+  {% if getArticleData.status == 1 %}
+  <section class="kc_articles2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-7 kc_pl0">
+          
+          {% if getArticleData.data.4 is not empty %}
+            <div class="contentbar contentimgrow row borderbottom-1">
+              
+              <a href="{{ getArticleData.data.4.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.4.img }}" alt ="{{ getArticleData.data.4.ttl }}" class="col-md-5 img-responsive mob-display js-lazyload-image">
+              </a>
+
+              <div class="contentimg col-md-7 pr-0">
+                {% for key1, taxonomy in getArticleData.data.4.map_taxonomy %}
+                  <span class="kmcgbar"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></span>
+                {% endfor %}
+                <label><a href="{{ getArticleData.data.4.src }}">{{ getArticleData.data.4.ttl }}</a></label>
+                <p>{{ getArticleData.data.4.dsc|raw }}</p>
+                {# <div class="auidodetail"> <i class="fa fa-headphones"></i> AUDIO SUMMARY · 00:56</div> #}
+                <p class="articlebar">
+                  {% if getArticleData.data.4.scgrp is not empty %}
+                    {{ generateIconWithText(getArticleData.data.4.scgrp)|raw }} <b>{{ getArticleData.data.4.scgrp }}</b> 
+                  {% endif %}
+                  {% if getArticleData.data.4.duration is not empty %}
+                    · {{ getArticleData.data.4.duration }} 
+                  {% endif %}
+                  {% if getArticleData.data.4.athrinfo.nm is not empty %}
+                    · By &nbsp;{{ getArticleData.data.4.athrinfo.nm }} 
+                  {% endif %}
+                  {# **Bookmark code start #}
+                  {% if current_user_id is not empty %}
+                    <span class="kc-bookmark-btn" node-id="{{ getArticleData.data.4.vId }}" category-id="{{ getArticleData.data.4.map_taxonomy.0.id }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% else %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                  {% endif %}
+                  {# **Bookmark code End #}
+                </p>
+              </div>
+              <a href="{{ getArticleData.data.4.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.4.img }}" alt ="{{ getArticleData.data.4.ttl }}" class="col-md-5 img-responsive desk-display js-lazyload-image">
+              </a>
+            </div>
+          {% endif %}
+
+          {% if getArticleData.data.5 is not empty %}
+            <div class="contentbar contentimgrow row borderbottom-1">
+              <a href="{{ getArticleData.data.5.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.5.img }}" alt ="{{ getArticleData.data.5.ttl }}" class="col-md-5 img-responsive mob-display js-lazyload-image">
+              </a>
+              <div class="contentimg col-md-7 pr-0">
+                {% for key1, taxonomy in getArticleData.data.5.map_taxonomy %}
+                  <span class="kmcgbar"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></span>
+                {% endfor %}   
+                <label><a href="{{ getArticleData.data.5.src }}">{{ getArticleData.data.5.ttl }}</a></label>
+                <p>{{ getArticleData.data.5.dsc|raw }}</p>
+                {# <div class="auidodetail"> <i class="fa fa-headphones"></i> AUDIO SUMMARY · 00:56</div> #}
+                <p class="articlebar">
+                  {% if getArticleData.data.5.scgrp is not empty %}
+                    {{ generateIconWithText(getArticleData.data.5.scgrp)|raw }} <b>{{ getArticleData.data.5.scgrp }}</b> 
+                  {% endif %}
+                  {% if getArticleData.data.5.duration is not empty %}
+                    · {{ getArticleData.data.5.duration }} 
+                  {% endif %}
+                  {% if getArticleData.data.5.athrinfo.nm is not empty %}
+                    · By &nbsp;{{ getArticleData.data.5.athrinfo.nm }} 
+                  {% endif %}
+                  {# **Bookmark code start #}
+                  {% if current_user_id is not empty %}
+                    <span class="kc-bookmark-btn" node-id="{{ getArticleData.data.5.vId }}" category-id="{{ getArticleData.data.5.map_taxonomy.0.id }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% else %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                  {% endif %}
+                  {# **Bookmark code End #}
+                </p>
+              </div>
+              <a href="{{ getArticleData.data.5.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.5.img }}" alt ="{{ getArticleData.data.5.ttl }}" class="col-md-5 img-responsive desk-display js-lazyload-image">
+              </a>
+            </div>
+          {% endif %}
+
+          {% if getArticleData.data.6 is not empty %}
+            <div class="contentbar contentimgrow row borderbottom-1">
+              <a href="{{ getArticleData.data.6.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.6.img }}" alt ="{{ getArticleData.data.6.ttl }}" class="col-md-5 img-responsive mob-display js-lazyload-image">
+              </a>
+              <div class="contentimg col-md-7 pr-0">
+                {% for key1, taxonomy in getArticleData.data.6.map_taxonomy %}
+                  <span class="kmcgbar"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></span>
+                {% endfor %}   
+                <label><a href="{{ getArticleData.data.6.src }}">{{ getArticleData.data.6.ttl }}</a></label>
+                <p>{{ getArticleData.data.6.dsc|raw }}</p>
+                {# <div class="auidodetail"> <i class="fa fa-headphones"></i> AUDIO SUMMARY · 00:56</div> #}
+                {% set authorDataArray = getAuthorDataInKMS(getArticleData.data.6.athr) %}
+                <p class="articlebar">
+                  {% if getArticleData.data.6.scgrp is not empty %}
+                    {{ generateIconWithText(getArticleData.data.6.scgrp)|raw }} <b>{{ getArticleData.data.6.scgrp }}</b> 
+                  {% endif %}
+                  {% if getArticleData.data.6.duration is not empty %}
+                    · {{ getArticleData.data.6.duration }} 
+                  {% endif %}
+                  {% if getArticleData.data.6.athrinfo.nm is not empty %}
+                    · By &nbsp;{{ getArticleData.data.6.athrinfo.nm }} 
+                  {% endif %}
+                  {# **Bookmark code start #}
+                  {% if current_user_id is not empty %}
+                    <span class="kc-bookmark-btn" node-id="{{ getArticleData.data.6.vId }}" category-id="{{ getArticleData.data.6.map_taxonomy.0.id }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% else %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                  {% endif %}
+                  {# **Bookmark code End #}
+                </p>
+              </div>
+              <a href="{{ getArticleData.data.6.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.6.img }}" alt ="{{ getArticleData.data.6.ttl }}" class="col-md-5 img-responsive desk-display js-lazyload-image">
+              </a>
+            </div>
+          {% endif %}
+
+          {% if getArticleData.data.7 is not empty %}
+            <div class="contentbar contentimgrow row">
+              <a href="{{ getArticleData.data.7.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.7.img }}" alt ="{{ getArticleData.data.7.ttl }}" class="col-md-5 img-responsive mob-display js-lazyload-image">
+              </a>
+              <div class="contentimg col-md-7 pr-0">
+                {% for key1, taxonomy in getArticleData.data.7.map_taxonomy %}
+                  <span class="kmcgbar"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></span>
+                {% endfor %}   
+                <label><a href="{{ getArticleData.data.7.src }}">{{ getArticleData.data.7.ttl }}</a></label>
+                <p>{{ getArticleData.data.7.dsc|raw }}</p>
+                {# <div class="auidodetail"> <i class="fa fa-headphones"></i> AUDIO SUMMARY · 00:56</div> #}
+                <p class="articlebar">
+                  {% if getArticleData.data.7.scgrp is not empty %}
+                    {{ generateIconWithText(getArticleData.data.7.scgrp)|raw }} <b>{{ getArticleData.data.7.scgrp }}</b> 
+                  {% endif %}
+                  {% if getArticleData.data.7.duration is not empty %}
+                    · {{ getArticleData.data.7.duration }} 
+                  {% endif %}
+                  {% if getArticleData.data.7.athrinfo.nm is not empty %}
+                    · By &nbsp;{{ getArticleData.data.7.athrinfo.nm }} 
+                  {% endif %}
+                  {# **Bookmark code start #}
+                  {% if current_user_id is not empty %}
+                    <span class="kc-bookmark-btn" node-id="{{ getArticleData.data.7.vId }}" category-id="{{ getArticleData.data.7.map_taxonomy.0.id }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% else %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                  {% endif %}
+                  {# **Bookmark code End #}
+                </p>
+              </div>
+              <a href="{{ getArticleData.data.7.src }}">
+                <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.7.img }}" alt ="{{ getArticleData.data.7.ttl }}" class="col-md-5 img-responsive desk-display js-lazyload-image">
+              </a>
+            </div>
+          {% endif %}
+          
+        </div>
+        <div class="col-md-5">
+
+          <div class="kc_articles2_right">
+
+            {% if getArticleData.data.8 is not empty %}
+              <div class="contentbar contentimgrow">
+                <a href="{{ getArticleData.data.8.src }}">
+                  <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.8.img }}" alt ="{{ getArticleData.data.8.ttl }}" class="col-md-12 img-responsive js-lazyload-image">
+                </a>
+                {% for key1, taxonomy in getArticleData.data.8.map_taxonomy %}
+                  <span class="kmcgbar"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></span>
+                {% endfor %}   
+                <label><a href="{{ getArticleData.data.8.src }}">{{ getArticleData.data.8.ttl }}</a></label>
+                <div class="contentimg col-md-12">
+                  <p>{{ getArticleData.data.8.dsc|raw }}</p>
+                  {# <div class="auidodetail"> <i class="fa fa-headphones"></i> AUDIO SUMMARY · 00:56</div> #}
+                  <p class="articlebar">
+                  {% if getArticleData.data.8.scgrp is not empty %}
+                    {{ generateIconWithText(getArticleData.data.8.scgrp)|raw }} <b>{{ getArticleData.data.8.scgrp }}</b> 
+                  {% endif %}
+                  {% if getArticleData.data.8.duration is not empty %}
+                    · {{ getArticleData.data.8.duration }} 
+                  {% endif %}
+                  {% if getArticleData.data.8.athrinfo.nm is not empty %}
+                    · By &nbsp;{{ getArticleData.data.8.athrinfo.nm }} 
+                  {% endif %}
+                  {# **Bookmark code start #}
+                  {% if current_user_id is not empty %}
+                    <span class="kc-bookmark-btn" node-id="{{ getArticleData.data.8.vId }}" category-id="{{ getArticleData.data.8.map_taxonomy.0.id }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% else %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                  {% endif %}
+                  {# **Bookmark code End #}
+                </p>
+                </div>
+                
+              </div>
+            {% endif %}
+
+            {% if getArticleData.data.9 is not empty %}
+              <div class="contentbar contentimgrow">
+                <a href="{{ getArticleData.data.9.src }}">
+                  <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ getArticleData.data.9.img }}" alt ="{{ getArticleData.data.9.ttl }}" class="col-md-12 img-responsive js-lazyload-image">
+                </a>
+                {% for key1, taxonomy in getArticleData.data.9.map_taxonomy %}
+                  <span class="kmcgbar"><a href="{{ generateTaxonomyUrl(taxonomy.id) }}">{{ taxonomy.value }}</a></span>
+                {% endfor %}   
+                <label><a href="{{ getArticleData.data.9.src }}">{{ getArticleData.data.9.ttl }}</a></label>
+                <div class="contentimg col-md-12  kc_mb0">
+                  <p class="m-tb">{{ getArticleData.data.9.dsc|raw }}</p>
+                  {# <div class="auidodetail"> <i class="fa fa-headphones"></i> AUDIO SUMMARY · 00:56</div> #}
+                  <p class="articlebar">
+                  {% if getArticleData.data.9.scgrp is not empty %}
+                    {{ generateIconWithText(getArticleData.data.9.scgrp)|raw }} <b>{{ getArticleData.data.9.scgrp }}</b> 
+                  {% endif %}
+                  {% if getArticleData.data.9.duration is not empty %}
+                    · {{ getArticleData.data.9.duration }} 
+                  {% endif %}
+                  {% if getArticleData.data.9.athrinfo.nm is not empty %}
+                    · By &nbsp;{{ getArticleData.data.9.athrinfo.nm }} 
+                  {% endif %}
+                  {# **Bookmark code start #}
+                  {% if current_user_id is not empty %}
+                    <span class="kc-bookmark-btn" node-id="{{ getArticleData.data.9.vId }}" category-id="{{ getArticleData.data.9.map_taxonomy.0.id }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% else %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                  {% endif %}
+                  {# **Bookmark code End #}
+                </p>
+                
+                </div>
+                
+              </div>
+            {% endif %}
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+  <!-- Article2 end here -->
+
+  <!--Top category start here -->
+  {% if getTaxonomyData.status == 1 %}
+  <section class="kc_top_categoy">
+    <div class="container">
+      <h2 class="Pagetitle">Top Categories</h2>
+      <div class="row">
+        <div id="exampleSlider-kc">
+          <div class="MS-content">
+            {% for key, value in getTaxonomyData.data %}
+              <div class="item">
+                <div class="categoriesbar">
+                  <div class="img-box">
+                    <a href="{{ value.src }}"><img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ value.img }}" alt="{{ value.txn_name }}" class="js-lazyload-image"></a>
+                  </div>
+                  <div class="text-box">
+                    <label><a href="{{ value.src }}">{{ value.txn_name }}</a></label>
+                    <p>{{ value.dsc|raw }}</p>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          
+          </div>
+          <div class="MS-controls">
+            <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+            <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+  <!--top catogery end here -->
+
+
+<!--KC upcoming events start here-->
+{% if getEventsData.status == 1 %}
+  {% if getEventsData.data is not empty %}
+    <section class="upComingSliderEvent">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="col-md-9 col-xs-8 pl-0 pr-0">
+              <h2 class="Pagetitle"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> UPCOMING EVENTS</h2>
+            </div>
+            <div class="col-md-3 col-xs-4 pl-0">
+              <p class="kc_up_all"><a href="/india/kc-events?scgrp=Webinar&evtyp=schedule" class="viewResultListing_kc">View All <i class="fa fa-chevron-right pl-2"></i> </a></p>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="card-stack">
+            {% if getEventsData.data|length > 1 %}
+              <a class="buttons prev" href="javascript:"><i class="fa fa-chevron-left" aria-hidden="true"></i></a>
+            {% endif %}
+            <ul class="card-list">
+              {% for key, value in getEventsData.data %}
+              <li class="card">
+                <div class="uebar">                        
+                  <div class="img-box col-md-4">
+                    <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ value.img }}" alt="{{ value.ttl }}" class="img-responsive js-lazyload-image">                         
+                  </div>
+                  <div class="text-box col-md-8">
+                    <label><a href="{{ value.src }}" data-taxonomy="{{value.map_taxonomy.0.value}}">{{ value.ttl }}</a></label>
+                    <p class="upcimgeventPara">{{ value.dsc|raw }}</p>
+                    <p><span>FEATURED SPEAKER(S)</span></p>
+                    <div class="featuredrow row">
+                      {% if value.athrinfo is not empty %}
+                        <div class="col-md-4 col-xs-4">
+                          <span><img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ value.athrinfo.img }}" alt="{{ value.athrinfo.nm }}" class="js-lazyload-image"></span>
+                          <h4>{{ value.athrinfo.nm }}</h4>
+                          <h6>{{ value.athrinfo.ttl }}</h6>
+                        </div>
+                      {% endif %}           
+                    </div>
+                    <div class="datetimebar">
+                      <div class="col-md-6"> <i class="fa fa-calendar-o"></i> {{ value.evd|date("l, jS F  Y") }} </div>
+                      <div class="col-md-6"> <i class="fa fa-clock-o"></i> {{ value.evrdt|date("g:i A") }} - {{ value.evrcdt|date("g:i A") }} </div>
+                    </div>
+                  </div>        
+                </div>
+              </li>  
+              {% endfor %}          
+            </ul> 
+            {% if getEventsData.data|length > 1 %}
+              <a class="buttons next" href="javascript:"><i class="fa fa-chevron-right" style="padding-left: 7px;" aria-hidden="true"></i></a>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+{% endif %}
+<!--KC upcoming events end here-->
+
+  <!--Why shoud section satrt here-->
+  {% if user_signup_form_kc != 'Already_login' %}
+  <section class="kc_whyShouldSec">
+    <div class="why-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-8 py-5 mt-5">
+            {% if node.body.value is not empty %}
+                {{node.body.value|raw}}
+            {% endif %}
+          </div>
+          <div class="col-sm-4">
+            <div class="kc-signup-form">
+              <div class="user-form-modal">
+                <div class="modal-body">
+                  {{ user_signup_form_kc|raw }}
+                </div>
+                <!-- <div class="loginSignUpDropDown">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown ml-5 mt-3"> Are you an Existing user? 
+                            <button type="type" class="btn btn-default signin_btn" data-toggle="modal" data-target="#user_account_modal_form">Sign In</button>
+                        </li>
+                    </ul>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+  <!--Why shoud section end here-->
+
+  {% if getAuthorData.status == 1 %}
+  <section class="kc-home-contributor-sec">
+      <div class="container">
+        <h2 class="Pagetitle mb-5">OUR CONTRIBUTORS</h2>
+        <div class="row">
+          <div class="tab-content">
+            <div id="testimonial_video">
+              <div id="exampleSlider111-0" class="">
+                <div class="MS-content">
+
+                    {% for key, value in getAuthorData.data %}
+                      <div class="item">
+                        <img src="/india/sites/default/files/transparentimg.jpg" data-src="{{ value.img }}" class="img-responsive kc-contributor-img js-lazyload-image" alt="{{ value.nm }}">
+                        <a class="thumbnail" href="javascript:void(0);">
+                          
+                          <h5 class="mt-5">
+                            <b>{{ value.nm }}</b>                      
+                          </h5>
+                          <h6>{{ value.ttl }}</h6>
+                          <p class="mt-3">
+                            {{ value.dsc|raw }} 
+                          </p>
+                          
+                        </a>
+                      </div>
+                    {% endfor %}
+
+                </div>
+                <div class="MS-controls">
+                  <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                  <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+                </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+  {% endif %}
+
+</div>
+{% include directory ~ '/templates/layout/footer.html.twig' %}

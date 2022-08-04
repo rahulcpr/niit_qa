@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_top_salaried_students
+    - node.type.top_salaried_students
+    - paragraphs.paragraphs_type.top_salaried_students
+id: paragraph.top_salaried_students.field_top_salaried_students
+field_name: field_top_salaried_students
+entity_type: paragraph
+bundle: top_salaried_students
+label: 'Top Salaried Students'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      top_salaried_students: top_salaried_students
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

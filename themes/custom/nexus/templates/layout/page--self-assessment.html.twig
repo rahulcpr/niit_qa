@@ -1,0 +1,38 @@
+<section class="header-container" style="padding: 10px 0px;">
+  <div class="container">
+    <div class="row">
+      <div class="headerSection col-md-12">
+        <div class="logo">
+          <a href="/">
+            <img data-src="/india/themes/custom/nexus/assets/images/NIIT_logomobile.png" alt="NIIT" title="NIIT" class="scale hide600 js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+            <img data-src="/india/themes/custom/nexus/assets/images/NIIT_logomobile.png" alt="NIIT" title="NIIT" class="scale show600 js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Img Section Start -->
+{% if node.field_webinar_banner.entity.fileuri is not empty %}
+<section class="img-section-data">
+	<img data-src="{{ file_url(node.field_webinar_banner.entity.fileuri) }}" alt="webnier"  class="img-responsive webimg js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+  <div class="col-md-3 form-detail-btn">
+    {{ assessentform|raw }}
+	{{ assessent_form_hidden|raw }}
+  </div>
+</section>
+{% endif %}
+<!-- Img Section End -->
+
+<!-- Content Start -->
+<section class="webinar-data">
+	<div class="container">
+		<div class="col-md-12 web-content mt-5">
+			{{ node.body.value|raw }}
+		</div>
+	</div>
+</section>
+<!-- Content end -->
+
+{% include directory ~ '/templates/layout/footer.html.twig' %}

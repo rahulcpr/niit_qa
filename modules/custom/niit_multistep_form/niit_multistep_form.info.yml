@@ -1,0 +1,6 @@
+name: Multi Step Form Query Optimization
+type: module
+description: 'Form 1A and 1B Query Optimization'
+package: Custom
+version: '8.x-1.0'
+core: '8.x'

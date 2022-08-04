@@ -1,0 +1,221 @@
+
+.ms-ajax-form-popup .error{
+    border-color: red !important;
+}
+
+*{padding: 0;margin: 0;}
+
+
+.leadLightBox .close.leadCusCloseBtn {
+    margin-top: 0;
+    position: absolute;
+    right: -25px;
+    color: #fff;
+    top: -20px;
+    opacity: 1;
+    font-weight: 100;
+    background: #0900ce;
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 0;
+}
+.leadLightBoxLeft
+{
+	padding: 15px;
+}
+.leadLightBoxRight form
+{
+margin-top: 1rem;
+}
+.leadLightBoxRight form label {   
+    font-weight: 500;
+}
+.modal-body {
+    position: relative;
+    padding: 15px;
+}
+.leadLightBox-pl0{padding-left: 0;margin-bottom: 15px;}
+
+.leadLightBoxRight label input[type=checkbox], input[type=radio] {
+    height: 18px;
+    margin: 1px 0 0;
+    margin-top: 1px\9;
+    line-height: normal;
+    width: 18px;
+    left: 0px;
+}
+
+.leadLightBoxSubBtn
+{
+	background-color: #0060ae;
+    padding: 10px 30px;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 14px;
+    color: #fff;
+}
+.leadLightBoxSubBtn:hover{text-decoration: none;color: #fff;}
+
+.leadLightBox-pl0 .form-control
+{
+	
+    width: 100%;
+    border: 0;
+    padding: 12px 0 12px 12px;
+    font-family: inherit;
+    height: 42px;
+    font-size: 14px;
+    font-weight: 400;
+    border-bottom: 0px solid #c8ccd4;
+    background: #fff;
+    border-radius: 0;
+    color: #223254;
+    border-left: 0px solid #ffffff;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    border: 1px solid #ddd;
+  
+}
+.leadLightBox-pl0 select.form-control
+{
+	    color: #9b9a9a;
+}
+.leadLightBox .modal-dialog {
+    width: 730px;
+    margin: 30px auto;
+}
+
+.thankYouMsg
+{
+	    padding-top: 6rem;
+    padding-bottom: 7rem;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.5;
+    color: #3fb735;
+    font-style: italic;
+    font-weight: 600;}
+
+
+
+/* payment options css start here */
+
+.payment-optionsPopup .nav-pills>li {
+    float: left;
+    width: 100%;
+        border-bottom: 1px solid #ddd;
+}
+.payment-optionsPopup .nav-pills>li.active>a, .payment-optionsPopup .nav-pills>li.active>a:focus, .payment-optionsPopup .nav-pills>li.active>a:hover {
+    color: #000;
+    background-color: #d4d4d4;
+}
+
+.payment-optionsPopup .nav-pills>li>a {
+        border-radius: 0;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.payment-optionsPopup .modal-body {
+    position: relative;
+    padding: 0 15px 0px;
+}
+
+.payment-optionsPopup .nav.nav-pills { 
+   
+}
+
+#home h3{    margin-top: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 14px;
+    font-size: 16px;}
+#menu1 h3{    margin-top: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 14px;
+    font-size: 16px;}
+
+#menu2 h3{    margin-top: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 14px;
+    font-size: 16px;}
+
+
+ #menu3 h3{    margin-top: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 14px;
+    font-size: 16px;}   
+
+
+ .titleLine{font-size: 13px;margin-bottom: 2rem;}   
+ .pricePaymentOpsn{
+ 	    font-size: 20px;
+    font-weight: 700;
+    padding-left: 25px;
+ }
+.priceSection b
+ {
+ 	font-size: 18px;
+ }
+
+ .cust-btnEnrolNow .btn-danger {
+      background-color: #FF5722 !important;
+    color: #fff;
+    font-size: 1.7rem;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 5px 25px;
+    margin-top: 30px;
+}
+
+.payment-optionsPopup .paddingLeft-0
+{
+	    padding-bottom: 35px;
+	 border-left: 1px solid #DDD;
+}
+.leadLightBox-pr0{padding-right: 1px;}
+
+
+
+/*******************************
+* Does not work properly if "in" is added after "collapse".
+* Get free snippets on bootpen.com
+*******************************/
+    .myCustoAccordian .panel-group .panel {
+        border-radius: 0;
+        box-shadow: none;
+        border-color: #EEEEEE;
+    }
+
+    .myCustoAccordian .panel-default > .panel-heading {
+        padding: 0;
+        border-radius: 0;
+        color: #212121;
+        background-color: #FAFAFA;
+        border-color: #EEEEEE;
+    }
+
+    .myCustoAccordian .panel-title {
+        font-size: 14px;
+    }
+
+    .myCustoAccordian .panel-title > a {
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+    }
+
+   .myCustoAccordian .more-less {
+    float: right;
+    color: #636363;
+    font-weight: 100;
+    font-size: 10px;
+}
+
+    .myCustoAccordian .panel-default > .panel-heading + .panel-collapse > .panel-body {
+        border-top-color: #EEEEEE;
+    }
+
+/* ----- v CAN BE DELETED v ----- */

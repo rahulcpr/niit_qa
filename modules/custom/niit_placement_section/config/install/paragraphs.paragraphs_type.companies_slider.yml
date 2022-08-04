@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: companies_slider
+label: 'Companies slider'
+icon_uuid: null
+description: 'Companies slider'
+behavior_plugins: {  }

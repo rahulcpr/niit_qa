@@ -1,0 +1,10 @@
+<div class="listing">
+    {{ title_prefix }}
+    {% if label %}
+        <h4 class="list-hd">{{ label }}</h4>
+    {% endif %}
+    {{ title_suffix }}
+    {% block content %}
+        {{ content }}
+    {% endblock %}
+</div>

@@ -1,0 +1,99 @@
+{% set field_event_drive_gallery=content.field_event_drive_gallery %}
+{% set field_drive_video_url=content.field_drive_video_url[0]['#context']['value'] %}
+{% set field_live_streaming_url=content.field_live_streaming_url[0]['#context']['value'] %}
+<section class="mega_drive bgdrive">
+    <div class="containerbox">
+        <div class="col-lg-6 p-0">
+            <div class="imgvideowrap">
+                <figure class="w-100 if_video">
+                    {% if field_drive_video_url %}
+                        <a class="playicon"
+                            href="javascript:void(0)" data-toggle="modal"
+                            data-target="#field_drive_video_url-{{ node.id }}">
+                            <img
+                                src="{{ base_url }}/themes/custom/nexus/assets/images/icon-play.png">
+                        </a>
+
+                        <div class="modal fade"
+                            id="field_drive_video_url-{{ node.id }}"
+                            role="dialog">
+                            <div class="modal-dialog modal-lg">
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close"
+                                            data-dismiss="modal">
+                                            &times;
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <iframe width="100%" height="100%"
+                                            src="{{ field_drive_video_url }}"
+                                            frameborder="0"
+                                            allow="autoplay; encrypted-media"
+                                            allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <img src="{{ content.field_video_thumbnail[0] }}"
+                        class="img-responsive" />
+                    <figcaption>
+                        <span>{{ content.field_drive_date[0]['#text']|date("d") }}
+                            <sup>th</sup></span> <br>
+                        {{ content.field_drive_date[0]['#text']|date("M") }}
+                    </figcaption>
+                    {% if field_live_streaming_url %}
+                        <a href="javascript:void(0)" class="videoicon"
+                            data-toggle="modal"
+                            data-target="#field_live_streaming_url-{{ node.id }}"><img
+                                src="{{ base_url }}/themes/custom/nexus/assets/images/icon-video.png">
+                            <span>Live streaming available</span></a>
+                    {% endif %}
+                </figure>
+            </div>
+            {{ content.field_event_drive_gallery }}
+        </div>
+        <div class="col-lg-6 p-0">
+            <div class="megadrive_content">
+                <div class="headding text-left">
+                    <h2>{{ label }}</h2>
+                    <span class="underline"></span></div>
+                <div class="content">
+                    <p>{{ content.body }}</p>
+                    <p><strong>Venue:</strong> {{ content.field_venue }}</p>
+                    <p><strong>Recruiter:</strong> {{ content.field_recruiter }}
+                    </p>
+                    <p class="md-date"><img
+                            src="{{ base_url }}/themes/custom/nexus/assets/images/icon-date.png">
+                        {{ content.field_drive_date[0]['#attributes']['datetime']| date("dS M") }}
+                    </p>
+                    <p class="share_row"><span> Share this event:</span> <a
+                            href="#"><i class="fab fa-facebook-f"></i></a> <a
+                            href="#"><i class="fab fa-twitter"></i></a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="field_live_streaming_url-{{ node.id }}"
+    role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe width="100%" height="100%"
+                    src="{{ field_live_streaming_url }}"
+                    frameborder="0" allow="autoplay; encrypted-media"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clearfix"></div>

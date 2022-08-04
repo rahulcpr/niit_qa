@@ -1,0 +1,43 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.placement_mentors_advice.field_expert_mentor
+    - field.field.paragraph.placement_mentors_advice.field_mentor_advice
+    - field.field.paragraph.placement_mentors_advice.field_mentor_advice_label
+    - paragraphs.paragraphs_type.placement_mentors_advice
+id: paragraph.placement_mentors_advice.default
+targetEntityType: paragraph
+bundle: placement_mentors_advice
+mode: default
+content:
+  field_expert_mentor:
+    weight: 2
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_mentor_advice:
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_mentor_advice_label:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

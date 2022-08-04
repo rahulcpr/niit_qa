@@ -1,0 +1,520 @@
+<!-- Header Start-->
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+<!-- Header End -->
+<!-- Breadcrub Start -->
+<section class="course-page-breadcrub  mobile-hide">
+  <div class="container">
+    <div class="row">
+            <div class="col-lg-12">
+                <div class="page-breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="/">Home</a>
+                        </li>
+                        <li>
+                            <a id="courseCategory"
+                                href="{{ path('entity.node.canonical', {'node':  node.field_top_course_category.entity.id}) }}">{{ node.field_top_course_category[0].entity.title.value }}
+                            </a> 
+                        </li>
+                        <li>{{ node.label }}</li> 
+                    </ul>
+                </div>
+            </div>
+      </div>
+  </div>
+</section>
+<!-- Breadcrub End -->
+<!-- Product page banner desktop view start here -->
+{# <section class="productPageBanner mobile-hide {{ CourseTemplateCategory }}"> #}
+<section class="productPageBanner mobile-hide {{ CourseTemplateCategory }}">
+   <div class="container">
+      <div class="row">
+         <div class="col-md-3">
+                <div class="card-body card-body-cascade text-center video-cardSlider"> 
+               <div id="myCarousel55" class="carousel slide" data-ride="carousel">
+                   <!-- Indicators -->
+                     <ol class="carousel-indicators">
+                       {{ careerSliderDotDiv|raw }}
+                     </ol>
+                   <!-- Wrapper for slides -->
+                     <div class="carousel-inner">
+                         {{ career_imageVideo_div|raw }}                    
+                     </div>               
+                </div>
+               {{ drupal_view('course_testimonials', 'page_course_brochure', course_post_id ) }}
+               <p class="vide0Card-share-icons">Share
+                  <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ request_protocol_domain ~ request_path_uri }}"><i class="fa fa-facebook"></i></a>
+
+                  <a target="_blank" href="https://twitter.com/intent/tweet?url={{ request_protocol_domain ~ request_path_uri }}"><i class="fa fa-twitter"></i></a>
+
+                  <a target="_blank"  href="https://www.linkedin.com/cws/share?url={{ request_protocol_domain ~ request_path_uri }}&token=&isFramed=true"><i class="fa fa-linkedin"></i></a>
+
+               </p>
+               <p class="requesstBtn">
+                  <a class="btn btn-block btn-primary blue-btn career-btnrequest use-ajax" data-dialog-type="modal" href="/india/form/career-page-request-a-call-back?course_code={{main_course_code}}&destination={{current_path}}"><i class="fa fa-phone"></i> Request a call back</a>
+               </p>
+               </div>
+            </div>
+         <div class="col-md-6">
+            <div class="courseDetail-info">
+               <h1 class="courseTitle spacer">{{ course_post_title }}</h1>
+               <p class="coursedetail-text spacer">{{ course_post_short_desc }}</p>
+               {# <p class="rating spacer">{{ CourseStarRating| raw }} {{ CourseReview }}</p> #}
+               {# <p class="newBatchText spacer d2h-newBatchText"><img data-src="/india/themes/custom/nexus/assets/images/loading-batch.png" class="img-responsive animated pulse infinite js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg" align="batch-availablity"> {{ batchAvailable|raw }} <span class="cust-btnEnrolNow"><a href="#upcomingBatches" class="btn btn-danger searchbychar">View Batch Detail</a>
+              </span></p> #}
+            </div>
+         </div>   
+
+         <div class="col-md-3 flexCenter">
+            <div class="enrolNowBtn">
+            {% if MainEnrollFeeD2h is not empty %}
+              <p class="cousrePrice">
+                <i class="fa fa-rupee"></i> {{ MainEnrollFeeD2h }}
+                <small class="rupee-hover-text">{{ courseCMSFee|raw }}</small>
+              </p>
+              <small>( Excluding GST @ 18% )</small> 
+              {{ MainEnrollSelfPaced|raw }}
+              {% endif %}
+            </div>
+         </div>
+
+      </div>
+   </div>
+</section>
+<!-- Product page banner desktop view End here -->
+
+<!--Product page banner mobile view start here -------->
+<section class="desktop-hide mobile-mt2 mt10">
+   <div class="container">
+      <div class="col-xs-12">
+         <div id="myCarousel55" class="carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                  <ol class="carousel-indicators">
+                    {{ careerSliderDotDiv|raw }}
+                  </ol>
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                    {{ career_imageVideo_div|raw }}                    
+                </div>               
+            </div>
+              <div class="card-body card-body-cascade text-center video-cardSlider">   
+               <div class="sharebtn">
+                  <img data-src="/india/themes/custom/nexus/assets/images/share.png" class="img-responsive mobile-share-img js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+               </div>
+               <div class="vide0Card-share-icons vide0Card-share-icons-mobile">
+                  <p><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ request_protocol_domain ~ request_path_uri }}"><i class="fa fa-facebook"></i></a></p>
+
+                  <p><a target="_blank" href="https://twitter.com/intent/tweet?url={{ request_protocol_domain ~ request_path_uri }}"><i class="fa fa-twitter"></i></a></p>
+
+                  <p><a target="_blank"  href="https://www.linkedin.com/cws/share?url={{ request_protocol_domain ~ request_path_uri }}&token=&isFramed=true"><i class="fa fa-linkedin"></i></a></p>
+
+               </div>
+                    <div class="courseDetail-info">
+                     <h1 class="courseTitle spacer">{{ course_post_title }}</h1>
+                     <p class="coursedetail-text spacer">{{ course_post_short_desc }}</p>
+                     {# <p class="newBatchText spacer"><img data-src="/india/themes/custom/nexus/assets/images/loading-batch.png" class="img-responsive animated pulse infinite js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg" align="batch-availablity"> {{ batchAvailable|raw }}</p> #}
+
+                      <div class="row">
+                        <!-- <div class="col-xs-12 mobile-rating">
+                           {{ CourseStarRating| raw }}
+                           <small><b>{{ mobileCourseRating }}</b></small>
+                        </div>   -->                     
+                     </div>
+
+                    <div class="row m-mtb-cardDetail">
+                          <div class="col-xs-6 mobile-downloadBr">
+                            <span class="phone-mobile-css-1">
+                              {{ drupal_view('course_testimonials', 'mobile_course_brochure', course_post_id ) }}
+                            </span>
+                          </div>
+                          <div class="col-xs-6">
+                            <span class="phone-mobile-css">
+                              <a class="career-btnrequest use-ajax" data-dialog-type="modal" href="/india/form/career-page-request-a-call-back?course_code={{main_course_code}}&destination={{current_path}}"><i class="fa fa-phone"></i> Call back</a>
+                            </span>
+                          </div>
+                    </div>
+
+                    <div class="row mobile-pt2">
+                        <div class="col-xs-12 mobile-price-1">
+                          {% if MainEnrollFeeD2h is not empty %}
+                           <div class="mobile-price selfPacedMobilePrice">
+                            <i class="fa fa-rupee"></i> <b class="fontSizePrice">{{ MainEnrollFeeD2h }} </b>
+                            <small class="rupee-hover-text">{{ courseCMSFee|raw }}</small>
+                            <small class="gstFont">(Excluding GST @ 18%)</small>
+                           </div>
+                         {% endif %}
+                        </div>
+                        
+                        
+                        <div class="col-xs-12"><!-- {{ mainEnroll|raw }} -->
+                           {{ MainEnrollSelfPaced|raw }}
+                        </div>
+                     </div>
+
+                  </div>
+            </div>
+      </div>
+   </div>
+</section>
+<!--Product page banner mobile view end here -------->
+
+<!--Product page 5 boxes start here -------->
+<section class="fiveFeture mobile-hide">
+   <div class="container">
+   <div class="row"> 
+      <div class="col-md-offset-3 col-md-9">
+         <div class="fiveFetureBoxes d2h-FiveFeatureBox">
+            <ul>
+               {{ drupal_view('course_testimonials', 'page_course_quick_view', course_post_id ) }}
+            </ul>
+         </div>
+      </div>
+   </div>
+   </div>
+</section>
+<!--Product page 5 boxes start here -------->
+
+<!--Product page 5 boxes start here for mobile-------->
+<section class="desktop-hide mobie-mt-5">
+   <div class="container ">
+      <div class="row">
+         <div class="fiveFetureBoxes">
+            {{ drupal_view('course_testimonials', 'mobile_course_quick_view', course_post_id ) }}
+         </div>
+      </div>
+   </div>
+</section>
+<!--Product page 5 boxes end here mobile -------->
+
+<!--program view start here -------->
+<section class="progrmDetailsSection modular-mt">
+   <div class="container">    
+      <div class="row">
+         <div class="col-md-7">        
+            <div class="programDetailText">
+               <h2>Programme Overview</h2>
+               <h4>Key Highlights</h4>
+            </div>
+            <div class="row spacer">
+               {{ drupal_view('course_testimonials', 'page_course_key_hghlights', course_post_id ) }}
+            </div>
+         </div>
+         <div class="col-md-5 flexEnd">
+            <div class="keyHighlighted">
+               <div class="row">
+                  {{ drupal_view('course_testimonials', 'page_overview_detail_icons', course_post_id ) }}
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+<!--program view start here -------->
+
+<!--search page sticky menu start here -------->
+<!--search page multiColor-border start here -------->
+<section class="multiColor-border"></section>
+<!--search page multiColor-border end here -------->
+<section class="sticky-navbar mobile-hide"  id="navbar">
+   <div class="container">
+      <div class="row">                                    
+         <div class="col-md-9">
+            <div class="stickyNavbar">
+               <ul class="list-unstyled">
+               {# <li><a href="#upcomingBatches" class="link searchbychar active">Batch Details</a></li>    #}
+               <li><a href="#courseDetailModule" class="link searchbychar">Course Details</a></li>  
+               <li><a href="#instructorsFacultySec" class="link searchbychar">Instructors</a></li> 
+               <li><a href="#eligibility" class="link searchbychar">Audience</a></li>
+               <li><a href="#selfPacedRequirements" class="link searchbychar">Requirements</a></li>
+               <li><a href="#TestimonialBlock" class="link searchbychar">Testimonials</a></li>
+               <li><a href="#certification-sec" class="link searchbychar">Certification</a></li>
+               {# <li><a href="#courseCenter" class="link searchbychar">Centres</a></li> #}
+               <li><a href="#courseModuleSec" class="link searchbychar">Course Module</a></li>
+               <li><a href="#whyNiit" class="link searchbychar">Why NIIT?</a></li>
+               <li><a href="#faq-sec" class="link searchbychar">{{ courseFAQTitle|raw }}</a></li>
+               
+               </ul>             
+            </div>
+         </div>
+         <div class="col-md-3">
+            <a href="tel:1800 3000 6448" class="phone-icon"><i class="fa fa-phone"></i> 1800 3000 6448</a>
+            <div class="phoneNum-getBtn m-stickyNavEnr stickynva"><a href="javascript:void(0);" {{ MainEnrollSelfPacedSticky|raw }} class="btn btn-block btn-danger searchbychar">Enroll Now</a></div>  
+         </div>
+      </div>
+   </div>
+</section>
+<!--search page sticky menu end here -------->
+
+<!--search page sticky menu mobile view start here -------->
+<section class="sticky-navbar desktop-hide"  id="navbar">
+   <div class="container">
+      <div id="exampleSliders"> 
+         <!-- Give wrapper ID to target with jQuery & CSS -->
+          <div class="MS-content stickynva">
+            {# <div class="item"><a href="#upcomingBatches" class="link searchbychar active">Batch Details</a></div>    #}
+            <div class="item"><a href="#courseDetailModule" class="link searchbychar">Course Details</a></div>  
+            <div class="item"><a href="#instructorsFacultySec" class="link searchbychar">Instructors</a></div> 
+            <div class="item"><a href="#eligibility" class="link searchbychar">Audience</a></div>
+            <div class="item"><a href="#selfPacedRequirements" class="link searchbychar">Requirements</a></div>
+            <div class="item"><a href="#TestimonialBlock-mobile" class="link searchbychar">Testimonials</a></div>
+            <div class="item"><a href="#certification-sec" class="link searchbychar">Certification</a></div>
+            {# <div class="item"><a href="#courseCenter" class="link searchbychar">Centres</a></div> #}
+            <div class="item"> <a href="#courseModuleSec" class="link searchbychar">Course Module</a> </div>
+            <div class="item"><a href="#whyNiit" class="link searchbychar">Why NIIT?</a></div>
+            <div class="item"><a href="#faq-sec" class="link searchbychar">{{ courseFAQTitle|raw }}</a></div>
+               <div class="item"> 
+               <a href="tel:1800 3000 6448" class="phone-icon"><i class="fa fa-phone"></i> 1800 3000 6448</a> 
+            </div>
+              <div class="item m-stickyNavEnr stickynva"> <a href="javascript:void(0);" {{ MainEnrollSelfPacedSticky|raw }} class="btn btn-block btn-danger searchbychar">Enroll Now</a> </div>
+          </div>
+          <div class="MS-controls">
+              <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+              <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+          </div>
+      </div>
+   </div>
+</section>
+<!--search page sticky menu mobile view end here -------->
+<div class="page-wrapper">
+
+<section class="upcomingBatches" id="upcomingBatches" style="display:none;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="courseDetaiTitle">Batch Details</h3>
+                <div class="row">
+                    <div class="col-md-12">
+                      <div class="bgBoxShadow">
+                          <div class="row">
+                              <div class="col-md-9 upComBat-pR">
+                                  {{ batchDataOutput|raw }}
+                              </div>
+                              <div class="col-md-3 leftsideBatchBorder">
+                                  {{ batchDataOutputPrice|raw }}
+                              </div>
+
+                          </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+{{ batchDataOutputPriceModal|raw }}
+<!--courseDetailModule end here -------->
+<section id="courseDetailModule" class="courseDetailModule">
+   <div class="container">
+      <h3 class="courseDetaiTitle">Course Details</h3>
+      {{ course_details|raw }}
+   </div>
+</section>
+<!--courseDetailModule end here -------->
+
+<!--instructors Faculty section start here -------->
+
+<section  id="instructorsFacultySec">
+   <div class="container">
+      <h3 class="courseDetaiTitle">Instructors</h3>
+   </div>
+</section>
+<section class="instructorsFaculty">
+  <div class="container">
+    <div class="row">
+      {{ batchFacultyDetailsDiv|raw }}
+    </div>
+  </div>
+</section>
+<!--instructors Faculty section end here -------->
+
+<!--eligibility section start here -------->
+<section id="eligibility" class="eligibility mt3 selfPacedEligibility">
+   <div class="container">
+      <h2 class="desktop-hide eligibilityTitle">Audience</h2>
+         {{ course_eligibility|raw }}
+   </div>
+</section>
+<!--eligibility section end here -------->
+
+<!--eligibility section start here -------->
+<section id="selfPacedRequirements" class="selfPacedRequirements">
+   <div class="container">
+      <div class="col-md-12">
+         <h3 class="courseDetaiTitle">Requirements</h3>
+         {{ drupal_view('course_testimonials', 'page_2', course_post_id ) }}
+      </div>
+   </div>
+</section>
+<!--eligibility section end here -------->
+
+<!--testimonial section end here -------->
+<section id="TestimonialBlock" class="testimonial-sec mt3 mobile-hide">
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-md-6 testPad-1">
+            <div class="textTestimonial">
+               {{ course_image_desc|raw }}
+               <hr class="bottm-border">
+               <div class="testimonial-vedio-bg"> 
+                  {{ drupal_view('course_testimonials', 'course_testimonials_page', course_post_id ) }}
+                </div>
+            </div>
+         </div>
+         <div class="col-md-6 testPad-2">
+            <div class="textTestimonial textTestimonial-white">
+               {{ course_video_desc|raw }}
+               <hr class="bottm-border">
+               <div class="testimonial-vedio-bg"> 
+                  {{ drupal_view('course_testimonials', 'course_review_videos_page', course_post_id ) }}
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+<!--testimonial section end here -------->
+
+<!--testimonial section for mobile start here -------->
+<section id="TestimonialBlock-mobile" class="desktop-hide mt3 mobile-tes">
+   <div class="container">
+      <div class="row">
+         <div class="textTestimonial-title-2">
+            {{ course_image_desc|raw }}
+            {{ drupal_view('course_testimonials', 'course_testimonials_page', course_post_id ) }}
+         </div>
+      </div>
+   </div>
+</section>
+<!--testimonial section for mobile end here -------->
+
+<!--testimonial section for mobile start here -------->
+<section class="desktop-hide  mobile-tes-1">
+   <div class="container">
+      <div class="row">
+         <div class="textTestimonial-title-2 textTestimonial-white">
+            {{ course_video_desc|raw }}
+            {{ drupal_view('course_testimonials', 'mobile_course_review_videos_page', course_post_id ) }}
+         </div>
+      </div>
+   </div>
+</section>
+<!--testimonial section for mobile end here -------->
+
+<!--certification start here -------->
+<section id="certification-sec" class="certification-sec {{ CourseTemplateCategory }}">
+   <div class="container">
+      <div class="row">
+         {{ drupal_view('course_testimonials', 'page_niit_certificate', course_post_id ) }}
+      </div>
+   </div>
+</section>
+<!--certification end here -------->
+
+
+
+<!--Course centre start here -------->
+{# {% if currentCourseCenterList is not empty %}
+<section id="courseCenter" class="courseCenter">
+   <div class="container-fluid">
+      <h2 class="Pagetitle">Centers available for this course</h2>
+      <div class="row">
+         <div id="exampleSlider-1">
+               <div class="MS-content">
+                  {{ currentCourseCenterList|raw }}
+              </div>
+               <div class="MS-controls">
+                 <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                 <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+               </div>
+            </div>
+      </div>
+   </div>
+</section>
+{% endif %} #}
+<!--Course centre end here -------->
+
+<!-- course module section-------->
+<section class="courseModuleNewSec" id="courseModuleSec">
+    <div class="container">
+        <h2 class="Pagetitle">Course Module</h2>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="coursedetail-textHighlighted">
+                    <div class="corseMod">
+                      {{ drupal_view('course_testimonials', 'course_module_faq', course_post_id ) }}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- course module section-------->
+
+<!--Why NIIT start here -------->
+<section id = "whyNiit" class="whyNiit">
+   <div class="container">
+      <div class="row">
+         <div class="col-md-4 col-xs-12 flexColumnCenter">
+            <div class="whyniit-title">
+               {{ course_field_why_niit_content|raw }}
+            </div>
+         </div>
+         <div class="col-md-8 col-xs-12 p100">
+            <div class="row">
+               {{ drupal_view('course_testimonials', 'page_why_with_us', course_post_id ) }}
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+<!--Why NIIT end here -------->
+
+<!--FAQ start here -------->
+<section id="faq-sec" class="faq">
+   <div class="container">
+      <h2 class="Pagetitle">{{ courseFAQTitle|raw }}</h2>
+      {{ drupal_view('course_testimonials', 'page_course_faq', course_post_id ) }}
+   </div>
+</section>
+<!--FAQ end here -------->
+
+
+<!--Related course start here -------->
+<section class="related-course mt2" id="related-course">
+   <div class="container">
+      <h2 class="Pagetitle">related courses</h2>
+      <div class="row">
+         <div id="exampleSlider">
+               <div class="MS-content">
+                  {{ related_course_list|raw }}
+               </div>
+               <div class="MS-controls">
+                 <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                 <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+               </div>
+            </div>
+      </div>
+   </div>
+</section>
+<!--Related course end here -------->
+<div id="course_modal" class="modal course_modal centre_modal modal_full fade" role="dialog">
+<!-- Append  -->
+</div>
+<!--Connect -form start here -------->
+<section class="connect-sec {{ CourseTemplateCategory }}">
+   <div class="container con-bg">
+      <h3 class="con-title">Need help? Connect with us.</h3>
+      <div class="row quick-connect-form">   
+         {{ drupal_entity('webform', 'course_detail_quick_connect') }}     
+      </div>
+   </div>
+</section>
+<!--Connect -form end here -------->
+</div>
+
+
+{% include directory ~ '/templates/layout/footer.html.twig' %}

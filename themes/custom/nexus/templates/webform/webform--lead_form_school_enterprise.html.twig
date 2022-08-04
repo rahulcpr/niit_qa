@@ -1,0 +1,55 @@
+<section class="sliderinner-wrap sliderinnerbg cat-popular slidetrending">
+    <div class="container">
+        <ul class="leadform-breadcrum">
+            <li><a href="">Home</a><span>/</span></li>
+            <li>{{ school_enterprises }}</li>
+        </ul>
+        <div class="headding headeleft-leadform leadpadbot">
+            <h2>{{ school_enterprises }}</h2>
+        </div>
+        {{ element.elements.form_token }}
+        {{ element.elements.form_build_id }}
+        {{ element.elements.form_id }}
+        {{ element.elements.form_description }}
+        <form{{ attributes }} onsubmit="jQuery('#formResponse').fadeIn();">
+            <div class="leadform-box">
+                <div class="col-xs-12 col-sm-6">
+                    <div class="lead-form-group">
+                        {{ element.elements.full_name }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="lead-form-group">
+                        {{ element.elements.email_id }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="lead-form-group">
+                        {{ element.elements.mobile_number }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="lead-form-group leadmobmrg">
+                        {{ element.elements.company_name }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12">
+                    <div class="lead-form-group leadwidth">
+                        {{ element.elements.query }}
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12">
+                    <div class="publish_checkbox">
+                        {{ element.elements.privacy_policy }}
+                    </div>
+                    {{ element.elements.theme }}
+                    {{ element.form_token }}
+                    {{ element.form_build_id }}
+                    {{ element.form_id }}
+                    {{ element.elements.actions_submit }}
+                    {{ title_suffix }}
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

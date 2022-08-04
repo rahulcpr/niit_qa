@@ -1,0 +1,7 @@
+rest_log.settings:
+  path: '/admin/config/services/rest_log/settings'
+  defaults:
+    _title: 'Rest Log settings'
+    _form: 'Drupal\rest_log\Form\RestLogSettingsForm'
+  requirements:
+    _permission: 'administer site configuration'

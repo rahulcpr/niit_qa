@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.niit_job_profile_view
+label: 'Niit Job profile view'
+targetEntityType: node
+cache: true

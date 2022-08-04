@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_gallery_title
+    - paragraphs.paragraphs_type.center_page_gallery_tabs
+id: paragraph.center_page_gallery_tabs.field_gallery_title
+field_name: field_gallery_title
+entity_type: paragraph
+bundle: center_page_gallery_tabs
+label: 'Gallery Title'
+description: 'Gallery Title , it will be show top of gallery section.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

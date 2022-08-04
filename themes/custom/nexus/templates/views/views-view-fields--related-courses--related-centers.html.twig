@@ -1,0 +1,21 @@
+<div class="col-sm-12">
+    <div class="map-box">
+        <div class="detailbox">
+            <h2>{{ fields.title.content|striptags|trim }}</h2>
+            <p>{{ fields.field_center_location.content|striptags|trim }}</p>
+            <p>
+                <strong>Phone:</strong>{{ fields.field_center_phone.content|striptags|trim }}
+            </p>
+            <p>
+                <strong>E-mail:</strong> {{ fields.field_center_email.content|striptags|trim }}
+            </p>
+            <p>Directorsions:</p>
+        </div>
+        <div class="mapframe">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d14025.05225441243!2d77.0764709697754!3d28.50173205000001!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1531380452871"
+                width="600" height="450" frameborder="0"
+                style="border:0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>

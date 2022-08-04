@@ -1,0 +1,347 @@
+<section class="search_sec ProductBox">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumbs">
+                    <ul>
+                        <li><a href="">Home / </a></li>
+                        <li>Search Course</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Search box wrapper start -->
+        <div class="search-box">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- This tag is for drupal default form for search -->
+                    {#{{ exposed }}#}
+                    <!-- End -->
+                    <form action="/india/search/content" method="get"
+                        class="search-content-form">
+                        <div class="input-group">
+                            <input type="text" id="search-form-big-input"
+                                class="form-control"
+                                placeholder="Search for courses"
+                                name="keys">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">Search</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Search box wrapper end -->
+        <div class="search-list">
+            <div class="pagination-list">
+                <div class="row">
+                    <div class="col-md-6">
+                        {#<h2>You found 133 search result page for courses.</h2>#}
+                        {% if header %}
+                            <h2>{{ header }}</h2>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="filtrmob"><span><i class="fa fa-filter"></i> Filter</span>
+                        </div>
+                        {{ pager }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <!-- Filter and content listing strat -->
+        <div class="row filtrboxwrap">
+            <div class="col-lg-2 col-md-3 filtrbx">
+                <div class="filter-list">
+                    <h4 class="text-uppercase">Filter & refine</h4>
+                    {# <div class="listing">
+                        <h4 class="list-hd">category</h4>
+                        <form id="top-category-filters-forms">
+                            <ul class="list-unstyled" id="top-category-filters">
+                                <li>
+                                    <div class="checkbox">
+                                        <input id="checkbox1" type="checkbox">
+                                        <label for="checkbox1">
+                                            Digital Marketing <span class="list-value pull-right">6</span>
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="checkbox">
+                                        <input id="checkbox1" type="checkbox">
+                                        <label for="checkbox1">
+                                            Information Technology <span class="list-value pull-right">6</span>
+                                        </label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="checkbox">
+                                        <input id="checkbox1" type="checkbox">
+                                        <label for="checkbox1">
+                                            Banking and Finance <span class="list-value pull-right">6</span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </form>
+                    </div>
+
+                    <div class="listing">
+                        <h4 class="list-hd">Mode of Learning </h4>
+                        <ul class="list-unstyled">
+                            <li>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="checkbox4">
+                                    <label for="checkbox4">
+                                        Classroom <span class="list-value pull-right">6</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="checkbox5">
+                                    <label for="checkbox5">
+                                        Live Online <span class="list-value pull-right">47</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="checkbox6">
+                                    <label for="checkbox6">
+                                        Self Packed <span class="list-value pull-right">56</span>
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="listing">
+                        <h4 class="list-hd">Batches on </h4>
+                        <ul class="list-unstyled">
+                            <li>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="checkbox7">
+                                    <label for="checkbox7">
+                                        Weekdays <span class="list-value pull-right">86</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="checkbox8">
+                                    <label for="checkbox8">
+                                        Weekends <span class="list-value pull-right">107</span>
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="listing">
+                        <h4 class="list-hd">Batch Timings </h4>
+                        <ul class="list-unstyled">
+                            <li>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="checkbox9">
+                                    <label for="checkbox9">
+                                        Afternoon <span class="list-value pull-right">80</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="checkbox10">
+                                    <label for="checkbox10">
+                                        Evening <span class="list-value pull-right">97</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="checkbox11">
+                                    <label for="checkbox11">
+                                        Evening <span class="list-value pull-right">16</span>
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="listing">
+                        <h4 class="list-hd">Certification from </h4>
+                        <ul class="list-unstyled">
+                            <li>
+                                <div class="checkbox">
+                                    <input type="checkbox" id="checkbox12">
+                                    <label for="checkbox12">
+                                        Microsoft <span class="list-value pull-right">39</span>
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div> #}
+                </div>
+            </div>
+            <div class="col-lg-10 col-md-9">
+                <div class="filter-content">
+                    <style>
+                        .thumbnail-img img {
+                            width: 100%;
+                            height: 100%;
+                        }
+                    </style>
+                    {{ attachment_before }}
+
+                    {{ rows }}
+                    {{ empty }}
+
+                    {{ attachment_after }}
+                    {{ more }}
+                    <!-- filter item list -->
+                    {#<div class="content-box">#}
+                    {#<div class="box-one">#}
+                    {#<div class="thumbnail-img" #} {#style="background-image: url({{ request_path }}themes/custom/nexus/assets/images/search/img01.jpg)"></div>#}
+                    {#<div class="content-detail">#}
+                    {#<h6>AI and Deep Learning with TensorFlow</h6>#}
+                    {#<p>Master Deep Learning - the mean to culminate Machine Learning into#}
+                    {#Artificial Intelligence. Deep Learning is the technique to implement#}
+                    {#Machine Learning and eventually achieve practical implementations of#}
+                    {#artificial intelligence. </p>#}
+                    {#<a href="javascript:;" class="btn-more">Show More</a>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#<div class="box-two">#}
+                    {#<div class="price">19,000/-</div>#}
+                    {#<div class="btm-detail">#}
+                    {#<div class="time">#}
+                    {#<span>24 Hours</span>#}
+                    {#<span>Starting from 14<sup>th</sup> April</span>#}
+                    {#</div>#}
+                    {#<div class="show">#}
+                    {#<a href="javasript:;" class="btn-show">Show Batches</a>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {##}
+                    {#<div class="content-box">#}
+                    {#<div class="box-one">#}
+                    {#<div class="thumbnail-img" #} {#style="background-image: url({{ request_path }}themes/custom/nexus/assets/images/search/img02.jpg)"></div>#}
+                    {#<div class="content-detail">#}
+                    {#<h6>AI and Deep Learning with TensorFlow</h6>#}
+                    {#<p>Master Deep Learning - the mean to culminate Machine Learning into#}
+                    {#Artificial Intelligence. Deep Learning is the technique to implement#}
+                    {#Machine Learning and eventually achieve practical implementations of#}
+                    {#artificial intelligence. </p>#}
+                    {#<a href="javascript:;" class="btn-more">Show More</a>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#<div class="box-two">#}
+                    {#<div class="price">19,000/-</div>#}
+                    {#<div class="btm-detail">#}
+                    {#<div class="time">#}
+                    {#<span>24 Hours</span>#}
+                    {#<span>Starting from 14<sup>th</sup> April</span>#}
+                    {#</div>#}
+                    {#<div class="show">#}
+                    {#<a href="javasript:;" class="btn-show">Show Batches</a>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {##}
+                    {#<div class="content-box">#}
+                    {#<div class="box-one">#}
+                    {#<div class="thumbnail-img" #} {#style="background-image: url({{ request_path }}themes/custom/nexus/assets/images/search/img03.jpg)"></div>#}
+                    {#<div class="content-detail">#}
+                    {#<h6>AI and Deep Learning with TensorFlow</h6>#}
+                    {#<p>Master Deep Learning - the mean to culminate Machine Learning into#}
+                    {#Artificial Intelligence. Deep Learning is the technique to implement#}
+                    {#Machine Learning and eventually achieve practical implementations of#}
+                    {#artificial intelligence. </p>#}
+                    {#<a href="javascript:;" class="btn-more">Show More</a>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#<div class="box-two">#}
+                    {#<div class="price">19,000/-</div>#}
+                    {#<div class="btm-detail">#}
+                    {#<div class="time">#}
+                    {#<span>24 Hours</span>#}
+                    {#<span>Starting from 14<sup>th</sup> April</span>#}
+                    {#</div>#}
+                    {#<div class="show">#}
+                    {#90 days#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {##}
+                    {#<div class="content-box">#}
+                    {#<div class="box-one">#}
+                    {#<div class="thumbnail-img" #} {#style="background-image: url({{ request_path }}themes/custom/nexus/assets/images/search/img04.jpg)"></div>#}
+                    {#<div class="content-detail">#}
+                    {#<h6>AI and Deep Learning with TensorFlow</h6>#}
+                    {#<p>Master Deep Learning - the mean to culminate Machine Learning into#}
+                    {#Artificial Intelligence. Deep Learning is the technique to implement#}
+                    {#Machine Learning and eventually achieve practical implementations of#}
+                    {#artificial intelligence. </p>#}
+                    {#<a href="javascript:;" class="btn-more">Show More</a>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#<div class="box-two">#}
+                    {#<div class="price">19,000/-</div>#}
+                    {#<div class="btm-detail">#}
+                    {#<div class="time">#}
+                    {#<span>24 Hours</span>#}
+                    {#<span>Starting from 14<sup>th</sup> April</span>#}
+                    {#</div>#}
+                    {#<div class="show">#}
+                    {#<a href="javasript:;" class="btn-show">Show Batches</a>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {##}
+                    {#<div class="content-box">#}
+                    {#<div class="box-one">#}
+                    {#<div class="thumbnail-img" #} {#style="background-image: url({{ request_path }}themes/custom/nexus/assets/images/search/img05.jpg)"></div>#}
+                    {#<div class="content-detail">#}
+                    {#<h6>AI and Deep Learning with TensorFlow</h6>#}
+                    {#<p>Master Deep Learning - the mean to culminate Machine Learning into#}
+                    {#Artificial Intelligence. Deep Learning is the technique to implement#}
+                    {#Machine Learning and eventually achieve practical implementations of#}
+                    {#artificial intelligence. </p>#}
+                    {#<a href="javascript:;" class="btn-more">Show More</a>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#<div class="box-two">#}
+                    {#<div class="price">19,000/-</div>#}
+                    {#<div class="btm-detail">#}
+                    {#<div class="time">#}
+                    {#<span>24 Hours</span>#}
+                    {#<span>Starting from 14<sup>th</sup> April</span>#}
+                    {#</div>#}
+                    {#<div class="show">#}
+                    {#<a href="javasript:;" class="btn-show">Show Batches</a>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#</div>#}
+                    {#</div>#}
+                    <!-- filter item list -->
+                </div>
+            </div>
+        </div>
+        <div class="search-list bottom-pagination">
+            <div class="pagination-list">
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ pager }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: faq
+label: FAQ
+icon_uuid: 83f7fffa-bcff-4883-81c3-9aa4f2859eac
+description: 'This is testing Paragraphs.'
+behavior_plugins: {  }

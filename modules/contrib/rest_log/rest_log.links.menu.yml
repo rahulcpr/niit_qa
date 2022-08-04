@@ -1,0 +1,4 @@
+rest_log.list:
+  title: Rest log
+  parent: system.admin_config_services
+  url: 'internal:/admin/config/services/rest_log'

@@ -1,0 +1,72 @@
+{% block paragraph %}
+    {% block content %}
+
+{% set field_past_event_tab_label=content.field_past_event_tab_label[0]['#context']['value'] %}
+{% set field_upcoming_event_tab_label=content.field_upcoming_event_tab_label[0]['#context']['value'] %}
+{% set field_show_past_events=content.field_show_past_events %}
+{% set field_show_upcoming_events=content.field_show_upcoming_events %}
+<section class="sliderinner-wrap centre_event">
+    <div class="container">
+        <div class="tabbing_sec">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Nav tabs -->
+                    <div class="text-center">
+                        <ul class="nav nav-tabs" role="tablist">
+                            
+                            {% if '1' in content.field_show_upcoming_events[0] %}
+                            <li role="presentation" class="active"><a
+                                    href="#events_upcoming"
+                                    aria-controls="events_upcoming" role="tab"
+                                    data-toggle="tab">{{ field_upcoming_event_tab_label }}</a>
+                            </li>
+                           {% endif %}
+                           
+                           {% if '1' in content.field_show_past_events[0] %}
+                            <li role="presentation"><a href="#events_past"
+                                    aria-controls="events_past" role="tab"
+                                    data-toggle="tab">{{ field_past_event_tab_label }}</a>
+                            </li>
+                           {% endif %}
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content">
+            
+            {% if '1' in content.field_show_upcoming_events[0] %}
+
+                <div role="tabpanel" class="tab-pane fade in active"
+                    id="events_upcoming">
+                    <div class="slidebox">
+                        <div class="event_carousel">
+                            {% if field_show_upcoming_events %}
+                                {{ drupal_view('upcoming_event', 'upcoming_event') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if '1' in content.field_show_past_events[0] %}
+                <div role="tabpanel" class="tab-pane fade {% if '0' in content.field_show_upcoming_events[0] %} in active {% endif %}" id="events_past">
+                    <div class="slidebox">
+                        <div class="event_carousel">
+                            {% if field_show_past_events %}
+                                {{ drupal_view('upcoming_event', 'past_event') }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+              {% endif %}  
+            </div>
+            <div class="clr"></div>
+            {{ drupal_view('in_india_placement_drive_modal', 'in_india_placement_drive_modal') }}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+{% endblock paragraph %}
+

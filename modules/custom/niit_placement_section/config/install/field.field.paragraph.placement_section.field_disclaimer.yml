@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_disclaimer
+    - paragraphs.paragraphs_type.placement_section
+id: paragraph.placement_section.field_disclaimer
+field_name: field_disclaimer
+entity_type: paragraph
+bundle: placement_section
+label: Disclaimer
+description: Disclaimer
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

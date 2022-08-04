@@ -1,0 +1,42 @@
+<div class="banner-slider">
+    <div class="banner-img">
+        <div class="banner-wide">
+            <img class="img-responsive js-lazyload-image" data-src="{{ fields.field_slider_image.content }}" alt="{{ fields.title.content }}" src="/sites/default/files/transparentimg.jpg" />
+            <!-- <picture>
+              <source class="img-responsive js-lazyload-image" data-srcset="{{ webp_image_get(fields.field_slider_image.content) }}" type="image/webp" srcset="/sites/default/files/transparentimg.jpg" alt="{{ title }}"/>
+              <img class="img-responsive js-lazyload-image" data-src="{{ field_slider_image }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ fields.title.content }}" />
+            </picture> -->
+        </div>
+        <div class="banner-content">
+            <img class="img-responsive js-lazyload-image desktop-hide" data-src="{{ fields.field_mobile_image.content }}" alt="{{ fields.title.content }}" src="/sites/default/files/transparentimg.jpg" />
+            <!-- <picture>
+              <source class="img-responsive js-lazyload-image desktop-hide" data-srcset="{{ webp_image_get(fields.field_mobile_image.content) }}" type="image/webp" srcset="/sites/default/files/transparentimg.jpg" alt="{{ fields.title.content }}"/>
+              <img class="img-responsive js-lazyload-image desktop-hide" data-src="{{ fields.field_slider_image.content }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ title }}" />
+            </picture> -->
+            <div class="new-hp-banner-content">
+                <div class="container">
+                    <div class="row-flex">
+                        <div class="col-sm-4 col-xs-12 banner-slider">
+                            <div>
+                                <h1>{{ fields.title.content }}</h1>
+                                {{ fields.body.content }}
+                                {% if fields.field_slider_image_url.content is not empty %}
+                                <div class="button button-primary"><a href="{{ fields.field_slider_image_url.content }}">VIEW COURSE</a></div>
+                                {% endif %}
+                                {% if fields.field_hide_video_button.content != 'Yes' %}
+                                {% if fields.field_course_video_review.content is not empty %}
+                                <p class="col-md-5 col-xs-12 newIntroVideo" onclick="video_iframe_popup('{{ fields.field_course_video_review.content }}')">
+                                 <img data-src="/india/themes/custom/nexus/assets/images/Group 3488.png" class="img-responsive js-lazyload-image loaded" 
+                                  src="/india/themes/custom/nexus/assets/images/Group 3488.png" alt="NIIT program video"> 
+                                 <span class="icon-space-hpage">{{ fields.field_video_button_.content }}</span></p>
+                               {% endif %}
+                               {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

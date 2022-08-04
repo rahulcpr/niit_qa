@@ -1,0 +1,5 @@
+bundle: niit
+excluded:
+  - block.block.niitdigitalmarketingprogrammeletyourcareergrowthgoviral.
+  - tb_megamenu.menu_config.main__niit
+required: true

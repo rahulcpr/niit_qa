@@ -1,0 +1,1770 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\Core\Render\Element;
+use Drupal\user\Entity\User;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+/**
+ * Implements hook_preprocess_form_element().
+ */
+function custom_campaign_preprocess_form_element(array &$variables) {
+  if (!isset($variables['label'])) {
+    return;
+  }
+
+  if (isset($variables['element']['#form_id'])) {
+    $variables['label']['#form_id'] = $variables['element']['#form_id'];
+  }
+
+  if(isset($variables['element']['#type']) && $variables['element']['#type'] == 'radio'){
+  	$variables['label']['radio_label'] = 'radio_label';
+  }
+
+}
+
+/**
+ * Implements hook_theme_suggestions_form_element_label().
+ */
+function custom_campaign_theme_suggestions_form_element_label(array $variables) {
+  $suggestions = [];
+
+  if (isset($variables['element']['#form_id'])) {
+    $suggestions[] = 'form_element_label__' . $variables['element']['#form_id'];
+  }
+
+
+  return $suggestions;
+}
+
+/**
+ * Implements hook_theme_suggestions_form_element().
+ */
+function custom_campaign_theme_suggestions_form_element(array $variables) {
+  $suggestions = ['form_element__type__' . $variables['element']['#type']];
+  if (isset($variables['element']['#form_id'])) {
+    $suggestions[] = 'form_element__form_id__' . $variables['element']['#form_id'];
+  }
+
+  return $suggestions;
+}
+
+/**
+ * Attaches form id to all form elements.
+ *
+ * @param $form
+ *   The form or form element which children should have form id attached.
+ * @param $form_id
+ *   The form id attached to form elements.
+ *
+ * @return array
+ */
+function custom_campaign_attach_form_id(&$form, $form_id) {
+  foreach (Element::children($form) as $child) {
+    if (!isset($form[$child]['#form_id'])) {
+      $form[$child]['#form_id'] = $form_id;
+    }
+    custom_campaign_attach_form_id($form[$child], $form_id);
+  }
+}
+
+function custom_campaign_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+	if($form_id == 'ms_ajax_form_example' || $form_id == 'ms_ajax_form_embed_popup' || $form_id == 'ms_ajax_form_popup' || $form_id == 'ms_ajax_callback_form_popup' || $form_id == 'sso_user_login_form' || $form_id == 'sso_user_register_form'  || $form_id == 'sso_user_joinwebinar_form' || $form_id == 'stackathon_lead_form_id'){
+       custom_campaign_attach_form_id($form, $form_id);
+	}
+
+    if($form_id == 'camp_ms_form_state_master_form' || $form_id == 'camp_ms_form_state_master_edit_form'){
+      $form['#validate'][] = 'camp_state_code_validate';
+    }
+
+    if($form_id == 'camp_ms_form_city_master_form'  || $form_id == 'camp_ms_form_city_master_edit_form'){
+      $form['#validate'][] = 'camp_city_code_validate';
+    }
+
+    // if($form_id == 'camp_ms_form_intent_master_form'   || $form_id == 'camp_ms_form_intent_master_edit_form'){
+    //   $form['#validate'][] = 'camp_intent_code_validate';
+    // }
+
+    if($form_id == 'camp_ms_form_profile_master_form' || $form_id == 'camp_ms_form_profile_master_edit_form'){
+      $form['#validate'][] = 'camp_profile_code_validate';
+    }
+
+    if($form_id == 'camp_ms_form_camp_code_master_form'   || $form_id == 'camp_ms_form_camp_code_master_edit_form'){
+      $form['#validate'][] = 'camp_campaign_code_validate';
+    }
+
+    // if($form_id == 'camp_ms_form_campaign_form_fields_form'   || $form_id == 'camp_ms_form_campaign_form_fields_edit_form'){
+    //   $form['#validate'][] = 'camp_form_fields_code_validate';
+    // }
+
+    if($form_id == 'camp_ms_form_event_master_form'   || $form_id == 'camp_ms_form_event_master_edit_form'){
+      $form['#validate'][] = 'camp_event_code_validate';
+    }
+
+    if($form_id == 'camp_ms_form_cp_journey_form'   || $form_id == 'camp_ms_form_cp_journey_edit_form'){
+      $form['#validate'][] = 'camp_cp_journey_validate';
+    }
+
+    if($form_id == 'camp_ms_form_select_options_form'   || $form_id == 'camp_ms_form_select_options_edit_form'){
+      $form['#validate'][] = 'camp_select_options_validate';
+    }
+
+}
+
+function camp_state_code_validate(array &$form, FormStateInterface $form_state) {
+
+	$form_id = $form_state->getValue('form_id');
+	$state_code = $form_state->getValue('field_state_code')[0]['value'];
+	$database = \Drupal::database();
+
+	if($form_id == 'camp_ms_form_state_master_form'){
+		$query=  db_select('camp_ms_form__field_state_code','sm');
+	    $query->fields('sm',array('entity_id','bundle', 'field_state_code_value'));
+	    $query->condition('sm.bundle','state_master');
+	    $query->condition('sm.field_state_code_value',$state_code);
+	    $result = $query->execute()->fetchField();
+
+		if(!empty($result)){
+		   $form_state->setErrorByName('field_state_code', t('Duplicate Entry'));
+		}
+	}
+	elseif($form_id == 'camp_ms_form_state_master_edit_form'){
+		$current_path = \Drupal::service('path.current')->getPath();
+		$cur_array = explode('/', $current_path);
+		$entity_id = $cur_array[2];
+		if(is_numeric($entity_id)){
+			$query=  db_select('camp_ms_form__field_state_code','sm');
+		    $query->fields('sm',array('entity_id','bundle', 'field_state_code_value'));
+		    $query->condition('sm.bundle','state_master');
+		    $query->condition('sm.field_state_code_value', $state_code, '=');
+		    $query->condition('sm.entity_id',$entity_id, '!=');
+		    $result = $query->execute()->fetchField(); 
+
+			if(!empty($result)){
+			   $form_state->setErrorByName('field_state_code', t('Duplicate Entry'));
+			}
+		}
+
+	}
+	
+}
+
+function camp_city_code_validate(array &$form, FormStateInterface $form_state) {
+
+    $form_id = $form_state->getValue('form_id');
+	$city_code = $form_state->getValue('field_city_code')[0]['value'];
+	$database = \Drupal::database();
+
+	if($form_id == 'camp_ms_form_city_master_form'){
+		$query=  db_select('camp_ms_form__field_city_code','sm');
+	    $query->fields('sm',array('entity_id','bundle', 'field_city_code_value'));
+	    $query->condition('sm.bundle','city_master');
+	    $query->condition('sm.field_city_code_value',$city_code);
+	    $result = $query->execute()->fetchField();
+
+		if(!empty($result)){
+		   $form_state->setErrorByName('field_city_code', t('Duplicate Entry'));
+		}
+    }
+    elseif($form_id == 'camp_ms_form_city_master_edit_form'){
+    	$current_path = \Drupal::service('path.current')->getPath();
+		$cur_array = explode('/', $current_path);
+		$entity_id = $cur_array[2];
+		if(is_numeric($entity_id)){
+			$query=  db_select('camp_ms_form__field_city_code','sm');
+		    $query->fields('sm',array('entity_id','bundle', 'field_city_code_value'));
+		    $query->condition('sm.bundle','city_master');
+		    $query->condition('sm.field_city_code_value', $city_code, '=');
+		    $query->condition('sm.entity_id',$entity_id, '!=');
+		    $result = $query->execute()->fetchField(); 
+
+			if(!empty($result)){
+			   $form_state->setErrorByName('field_city_code', t('Duplicate Entry'));
+			}
+		}
+
+    }
+}
+
+function camp_intent_code_validate(array &$form, FormStateInterface $form_state) {
+
+	$form_id = $form_state->getValue('form_id');
+	$intent_code = $form_state->getValue('field_intent_code')[0]['value'];
+	$database = \Drupal::database();
+
+	if($form_id == 'camp_ms_form_intent_master_form'){
+		$query=  db_select('camp_ms_form__field_intent_code','sm');
+	    $query->fields('sm',array('entity_id','bundle', 'field_intent_code_value'));
+	    $query->condition('sm.bundle','intent_master');
+	    $query->condition('sm.field_intent_code_value',$intent_code);
+	    $result = $query->execute()->fetchField();
+
+		if(!empty($result)){
+		   $form_state->setErrorByName('field_intent_code', t('Duplicate Entry'));
+		}
+	}
+	elseif($form_id == 'camp_ms_form_intent_master_edit_form'){
+    	$current_path = \Drupal::service('path.current')->getPath();
+		$cur_array = explode('/', $current_path);
+		$entity_id = $cur_array[2];
+		if(is_numeric($entity_id)){
+			$query=  db_select('camp_ms_form__field_intent_code','sm');
+		    $query->fields('sm',array('entity_id','bundle', 'field_intent_code_value'));
+		    $query->condition('sm.bundle','intent_master');
+		    $query->condition('sm.field_intent_code_value',$intent_code);
+		    $query->condition('sm.entity_id',$entity_id, '!=');
+		    $result = $query->execute()->fetchField();
+
+			if(!empty($result)){
+			   $form_state->setErrorByName('field_intent_code', t('Duplicate Entry'));
+			}
+		}
+
+    }
+}
+
+function camp_profile_code_validate(array &$form, FormStateInterface $form_state) {
+
+    $form_id = $form_state->getValue('form_id');
+	$main_profile_code = $form_state->getValue('field_main_profile_code')[0]['value'];
+	$sub_profile_code = $form_state->getValue('field_sub_profile_code')[0]['value'];
+	$database = \Drupal::database();
+
+    if($form_id == 'camp_ms_form_profile_master_form'){
+		$profile_query = $database->query("SELECT entity_id FROM d8_camp_ms_form__field_main_profile_code WHERE bundle='profile_master' AND field_main_profile_code_value='$main_profile_code'");
+		$main_profile_result =$profile_query->fetchCol();
+
+		if(!empty($main_profile_result)){
+		   $ids = join("','",$main_profile_result ); 
+		   $sub_profile_query = $database->query("SELECT * FROM d8_camp_ms_form__field_sub_profile_code WHERE bundle='profile_master' AND field_sub_profile_code_value='$sub_profile_code' AND entity_id IN ('$ids') ");
+		   $sub_profile_result =$sub_profile_query->fetchField();
+
+	       if(!empty($sub_profile_result)){
+		       $form_state->setErrorByName('field_sub_profile_code', t('Duplicate Entry'));
+		   }
+		}
+	}
+	elseif($form_id == 'camp_ms_form_profile_master_edit_form'){
+		$current_path = \Drupal::service('path.current')->getPath();
+		$cur_array = explode('/', $current_path);
+		$entity_id = $cur_array[2];
+		$profile_query = $database->query("SELECT entity_id FROM d8_camp_ms_form__field_main_profile_code WHERE bundle='profile_master' AND field_main_profile_code_value='$main_profile_code' AND entity_id!=$entity_id ");
+		$main_profile_result =$profile_query->fetchCol();
+
+		if(!empty($main_profile_result)){
+			$ids = join("','",$main_profile_result ); 
+		   $sub_profile_query = $database->query("SELECT * FROM d8_camp_ms_form__field_sub_profile_code WHERE bundle='profile_master' AND field_sub_profile_code_value='$sub_profile_code' AND entity_id IN ('$ids') ");
+		   $sub_profile_result =$sub_profile_query->fetchField();
+
+	       if(!empty($sub_profile_result)){
+		       $form_state->setErrorByName('field_sub_profile_code', t('Duplicate Entry'));
+		   }
+		}
+
+	}
+}
+
+function camp_campaign_code_validate(array &$form, FormStateInterface $form_state) {
+
+	$form_id = $form_state->getValue('form_id');
+	$campaign_code = $form_state->getValue('field_campaign_code')[0]['value'];
+	$database = \Drupal::database();
+
+	if($form_id == 'camp_ms_form_camp_code_master_form'){
+		$query=  db_select('camp_ms_form__field_campaign_code','sm');
+	    $query->fields('sm',array('entity_id','bundle', 'field_campaign_code_value'));
+	    $query->condition('sm.bundle','camp_code_master');
+	    $query->condition('sm.field_campaign_code_value',$campaign_code);
+	    $result = $query->execute()->fetchField();
+
+		if(!empty($result)){
+		   $form_state->setErrorByName('field_campaign_code', t('Duplicate Entry'));
+		}
+	}
+	elseif($form_id == 'camp_ms_form_camp_code_master_edit_form'){
+		$current_path = \Drupal::service('path.current')->getPath();
+		$cur_array = explode('/', $current_path);
+		$entity_id = $cur_array[2];
+		if(is_numeric($entity_id)){
+			$query=  db_select('camp_ms_form__field_campaign_code','sm');
+		    $query->fields('sm',array('entity_id','bundle', 'field_campaign_code_value'));
+		    $query->condition('sm.bundle','camp_code_master');
+		    $query->condition('sm.field_campaign_code_value', $campaign_code);
+		    $query->condition('sm.entity_id',$entity_id, '!=');
+		    $result = $query->execute()->fetchAll(); 
+
+			if(!empty($result)){
+			   $form_state->setErrorByName('field_campaign_code', t('Duplicate Entry'));
+			}
+		}
+
+	}
+	
+}
+
+function camp_form_fields_code_validate(array &$form, FormStateInterface $form_state) {
+
+	$form_id = $form_state->getValue('form_id');
+	$campaign_code = $form_state->getValue('field_form_item_id')[0]['value'];
+	$database = \Drupal::database();
+
+	if($form_id == 'camp_ms_form_campaign_form_fields_form'){
+		$query=  db_select('camp_ms_form__field_form_item_id','sm');
+	    $query->fields('sm',array('entity_id','bundle', 'field_form_item_id_value'));
+	    $query->condition('sm.bundle','campaign_form_fields');
+	    $query->condition('sm.field_form_item_id_value',$campaign_code);
+	    $result = $query->execute()->fetchField();
+
+		if(!empty($result)){
+		   $form_state->setErrorByName('field_form_item_id', t('Duplicate Entry'));
+		}
+	}
+	elseif($form_id == 'camp_ms_form_campaign_form_fields_edit_form'){
+		$current_path = \Drupal::service('path.current')->getPath();
+		$cur_array = explode('/', $current_path);
+		$entity_id = $cur_array[2];
+		if(is_numeric($entity_id)){
+			$query=  db_select('camp_ms_form__field_form_item_id','sm');
+		    $query->fields('sm',array('entity_id','bundle', 'field_form_item_id_value'));
+		    $query->condition('sm.bundle','campaign_form_fields');
+		    $query->condition('sm.field_form_item_id_value', $campaign_code);
+		    $query->condition('sm.entity_id',$entity_id, '!=');
+		    $result = $query->execute()->fetchAll(); 
+
+			if(!empty($result)){
+			   $form_state->setErrorByName('field_form_item_id', t('Duplicate Entry'));
+			}
+		}
+
+	}
+	
+}
+
+function camp_event_code_validate(array &$form, FormStateInterface $form_state) {
+
+	$form_id = $form_state->getValue('form_id');
+	$campaign_code = $form_state->getValue('field_event_code')[0]['value'];
+	$database = \Drupal::database();
+
+	if($form_id == 'camp_ms_form_event_master_form'){
+		$query=  db_select('camp_ms_form__field_event_code','sm');
+	    $query->fields('sm',array('entity_id','bundle', 'field_event_code_value'));
+	    $query->condition('sm.bundle','event_master');
+	    $query->condition('sm.field_event_code_value',$campaign_code);
+	    $result = $query->execute()->fetchField();
+
+		if(!empty($result)){
+		   $form_state->setErrorByName('field_event_code', t('Duplicate Entry'));
+		}
+	}
+	elseif($form_id == 'camp_ms_form_event_master_edit_form'){
+		$current_path = \Drupal::service('path.current')->getPath();
+		$cur_array = explode('/', $current_path);
+		$entity_id = $cur_array[2];
+		if(is_numeric($entity_id)){
+			$query=  db_select('camp_ms_form__field_event_code','sm');
+		    $query->fields('sm',array('entity_id','bundle', 'field_event_code_value'));
+		    $query->condition('sm.bundle','event_master');
+		    $query->condition('sm.field_event_code_value', $campaign_code);
+		    $query->condition('sm.entity_id',$entity_id, '!=');
+		    $result = $query->execute()->fetchAll(); 
+
+			if(!empty($result)){
+			   $form_state->setErrorByName('field_event_code', t('Duplicate Entry'));
+			}
+		}
+
+	}
+	
+}
+
+function camp_select_options_validate(array &$form, FormStateInterface $form_state) {
+
+	$form_id = $form_state->getValue('form_id');
+	$campaign_code = $form_state->getValue('field_profile_code')[0]['value'];
+
+	if($form_id == 'camp_ms_form_select_options_form'){
+		$query=  db_select('camp_ms_form__field_profile_code','sm');
+	    $query->fields('sm',array('entity_id','bundle', 'field_profile_code_value'));
+	    $query->condition('sm.bundle','select_options');
+	    $query->condition('sm.field_profile_code_value',$campaign_code);
+	    $result = $query->execute()->fetchField();
+
+		if(!empty($result)){
+		   $form_state->setErrorByName('field_profile_code', t('Duplicate Entry'));
+		}
+	}
+	elseif($form_id == 'camp_ms_form_select_options_edit_form'){
+		$current_path = \Drupal::service('path.current')->getPath();
+		$cur_array = explode('/', $current_path);
+		$entity_id = $cur_array[2];
+		if(is_numeric($entity_id)){
+			$query=  db_select('camp_ms_form__field_profile_code','sm');
+		    $query->fields('sm',array('entity_id','bundle', 'field_profile_code_value'));
+		    $query->condition('sm.bundle','select_options');
+		    $query->condition('sm.field_profile_code_value', $campaign_code);
+		    $query->condition('sm.entity_id',$entity_id, '!=');
+		    $result = $query->execute()->fetchAll(); 
+
+			if(!empty($result)){
+			   $form_state->setErrorByName('field_profile_code', t('Duplicate Entry'));
+			}
+		}
+
+	}
+	
+}
+
+function camp_cp_journey_validate(array &$form, FormStateInterface $form_state) {
+
+	$form_id = $form_state->getValue('form_id');
+	$campaign_code = $form_state->getValue('field_campaign_reference')[0]['target_id'];
+	$event = $form_state->getValue('field_event')[0]['target_id'];
+	$intent = $form_state->getValue('field_intent')[0]['target_id'];
+	$form_field = $form_state->getValue('field_form_field_reference')[0]['target_id'];
+	$database = \Drupal::database();
+
+	if($form_id == 'camp_ms_form_cp_journey_form'){
+		$query=  db_select('camp_ms_form__field_campaign_reference','sm');
+        $query->innerJoin('camp_ms_form__field_event', 'ev', 'ev.entity_id= sm.entity_id');
+        $query->innerJoin('camp_ms_form__field_intent', 'it', 'it.entity_id= sm.entity_id');
+        $query->innerJoin('camp_ms_form__field_form_field_reference', 're', 're.entity_id= sm.entity_id');
+        $query->fields('sm',array('entity_id','bundle', 'field_campaign_reference_target_id'));
+        $query->fields('ev',array('bundle', 'field_event_target_id'));
+        $query->fields('it',array('bundle', 'field_intent_target_id'));
+        $query->fields('re',array('bundle', 'field_form_field_reference_target_id'));
+        $query->condition('sm.bundle','cp_journey');
+        $query->condition('ev.bundle','cp_journey');
+        $query->condition('it.bundle','cp_journey');
+        $query->condition('re.bundle','cp_journey');
+	    $query->condition('sm.field_campaign_reference_target_id',$campaign_code);
+	    $query->condition('ev.field_event_target_id',$event);
+	    $query->condition('it.field_intent_target_id',$intent);
+	    $query->condition('re.field_form_field_reference_target_id',$form_field);
+	    $result = $query->execute()->fetchField();
+
+		if(!empty($result)){
+		   $form_state->setErrorByName('field_form_field_reference', t('Duplicate Entry'));
+		}
+	}
+	elseif($form_id == 'camp_ms_form_cp_journey_edit_form'){
+		$current_path = \Drupal::service('path.current')->getPath();
+		$cur_array = explode('/', $current_path);
+		$entity_id = $cur_array[2];
+		if(is_numeric($entity_id)){
+			$query=  db_select('camp_ms_form__field_campaign_reference','sm');
+	        $query->innerJoin('camp_ms_form__field_event', 'ev', 'ev.entity_id= sm.entity_id');
+	        $query->innerJoin('camp_ms_form__field_intent', 'it', 'it.entity_id= sm.entity_id');
+	        $query->innerJoin('camp_ms_form__field_form_field_reference', 're', 're.entity_id= sm.entity_id');
+	        $query->fields('sm',array('entity_id','bundle', 'field_campaign_reference_target_id'));
+	        $query->fields('ev',array('bundle', 'field_event_target_id'));
+	        $query->fields('it',array('bundle', 'field_intent_target_id'));
+	        $query->fields('re',array('bundle', 'field_form_field_reference_target_id'));
+	        $query->condition('sm.bundle','cp_journey');
+	        $query->condition('ev.bundle','cp_journey');
+	        $query->condition('it.bundle','cp_journey');
+	        $query->condition('re.bundle','cp_journey');
+	        $query->condition('sm.field_campaign_reference_target_id',$campaign_code);
+	        $query->condition('ev.field_event_target_id',$event);
+	        $query->condition('it.field_intent_target_id',$intent);
+		    $query->condition('re.field_form_field_reference_target_id',$form_field);
+		    $query->condition('sm.entity_id',$entity_id, '!=');
+		    $result = $query->execute()->fetchAll(); 
+
+			if(!empty($result)){
+			   $form_state->setErrorByName('field_form_field_reference', t('Duplicate Entry'));
+			}
+		}
+
+	}
+	
+}
+
+function getBrowsername(){
+    $u_agent = $_SERVER['HTTP_USER_AGENT'];
+    $bname = 'Unknown';
+    $platform = 'Unknown';
+    $version= "";
+
+    //First get the platform?
+    if (preg_match('/linux/i', $u_agent)) {
+        $platform = 'linux';
+    }
+    elseif (preg_match('/macintosh|mac os x/i', $u_agent)) {
+        $platform = 'mac';
+    }
+    elseif (preg_match('/windows|win32/i', $u_agent)) {
+        $platform = 'windows';
+    }
+   
+    // Next get the name of the useragent yes seperately and for good reason
+    if(preg_match('/MSIE/i',$u_agent) && !preg_match('/Opera/i',$u_agent))
+    {
+        $bname = 'Internet Explorer';
+        $ub = "MSIE";
+    }
+    elseif(preg_match('/Firefox/i',$u_agent))
+    {
+        $bname = 'Mozilla Firefox';
+        $ub = "Firefox";
+    }
+    elseif(preg_match('/Chrome/i',$u_agent))
+    {
+        $bname = 'Google Chrome';
+        $ub = "Chrome";
+    }
+    elseif(preg_match('/Safari/i',$u_agent))
+    {
+        $bname = 'Apple Safari';
+        $ub = "Safari";
+    }
+    elseif(preg_match('/Opera/i',$u_agent))
+    {
+        $bname = 'Opera';
+        $ub = "Opera";
+    }
+    elseif(preg_match('/Netscape/i',$u_agent))
+    {
+        $bname = 'Netscape';
+        $ub = "Netscape";
+    }
+   
+    // finally get the correct version number
+    $known = array('Version', $ub, 'other');
+    $pattern = '#(?<browser>' . join('|', $known) .
+    ')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
+    if (!preg_match_all($pattern, $u_agent, $matches)) {
+        // we have no matching number just continue
+    }
+   
+    // see how many we have
+    $i = count($matches['browser']);
+    if ($i != 1) {
+        //we will have two since we are not using 'other' argument yet
+        //see if version is before or after the name
+        if (strripos($u_agent,"Version") < strripos($u_agent,$ub)){
+            $version= $matches['version'][0];
+        }
+        else {
+            $version= $matches['version'][1];
+        }
+    }
+    else {
+        $version= $matches['version'][0];
+    }
+    if ($version==null || $version=="") {$version="?";}
+   
+    return array(
+        'userAgent' => $u_agent,
+        'name'      => $bname,
+        'version'   => $version,
+        'platform'  => $platform,
+        'pattern'    => $pattern
+    );
+}
+
+function encrypt($key){
+    $data = array(
+	    "Data" => "This validation is for consent form.",
+	    "UseHash" => true,
+	    "UserID" => $key,
+    );
+
+    $data_json = json_encode($data);
+
+    $headers = array(
+    	"content-type: application/json",
+    	"token : 401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429090fb337591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1a0812e1081c39b75f201d8b3727429090f"
+    );
+    
+    $url = "https://ccdev.niiteducation.com/CRMCallcenterAPI/api/GetConsentToken";
+   // $url = $_ENV['CRMCallcenterAPI_Token'] ;
+
+    $ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL,$url);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	$response = curl_exec($ch);
+	curl_close($ch);
+    $data_response = json_decode($response);
+
+    return $data_response->StrToken;
+}
+
+
+function multistep_user_consentapi($formdata){
+	$browser = getBrowsername();
+
+	$UserID = $formdata['uid'];
+	$UserName = $formdata['enqry_f_nm'];
+	$EmailID = $formdata['enqry_crsspndnc_eml'];
+	$IPAddress = $_SERVER['REMOTE_ADDR'];
+
+	$securitykey = $EmailID . "'" . $UserName;
+	$TokenNo = $securitykey;
+	$token = encrypt($securitykey);
+
+    $GMTDateTime = gmdate('Y-m-d\TH:i:s', $formdata['time']);
+	date_default_timezone_set('Asia/Kolkata');
+	$ClientDateTime = date('Y-m-d\TH:i:s', $formdata['time']);
+	
+	$CompanyName = "NIIT";
+	$Country = "India";
+	$PortalName = "NIIT.com";
+	$ApplicationName = "NIIT.com";
+
+    $data = array(
+	    "UserID" => $UserID,
+	    "UserName" => $UserName,
+	    "EmailID" => $EmailID,
+	    "IPAddress" => $IPAddress,
+	    "TokenNo" => $TokenNo,
+	    "ClientDateTime" => $ClientDateTime,
+	    "GMTDateTime" => $GMTDateTime,
+	    "CompanyName" => $CompanyName,
+	    "Browser" => $browser['name'],
+	    "Consent_Flag" => 1,
+	    "Country" => $Country,
+	    "PortalName" => $PortalName,
+	    "ApplicationName" => $ApplicationName,
+    );
+
+    $data_json = json_encode($data);
+
+    $headers = array(
+    	"content-type: application/json"
+    );
+
+    // $url = $_ENV['ConsentAPI_UserConsent_Token']."?Token=$token";
+   $url = "https://ppmqa.niit.com/ConsentAPI/Api/UserConsent/PostData?Token=$token";
+
+    $ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	$response = curl_exec($ch);
+	curl_close($ch);
+
+    $str = str_replace('"',"", $response );
+    $result_data = explode(";",$str );
+    $result = 1;
+    if($result_data[0] == 'Success'){
+      $result = $result_data[1];
+	}
+	return $result;
+}
+
+function jwt_mutlistep_token(){
+    $url = "https://ccdev.niiteducation.com/CRMCallCenterAPI/api/JWTtoken/GenerateToken";
+  //  $url = $_ENV['CRMCallCenterAPI_JWTtoken'];
+
+	$curl = curl_init();
+
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 30,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => array(
+        "cid: 1",
+        "key: 401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429090fb337591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1",
+        "name: training"
+      ),
+    ));
+
+    $response = curl_exec($curl);
+    $data = json_decode($response );
+    curl_close($curl);
+    $token = $data->token;
+
+    return $token;
+}
+
+function base64UrlEncode($text){
+    return str_replace(
+        ['+', '/', '='],
+        ['-', '_', ''],
+        base64_encode($text)
+    );
+}
+
+function multistep_postapidate($type, $formdata){
+   $vendor_code = "NIIT";
+   $encryptd_mbl_no = '';
+  if(!empty($formdata['enqry_crsspndnc_mbl'])){
+   $encryptd_mbl_no = md5($formdata['enqry_crsspndnc_mbl']);
+  }
+// print_r ($formdata);
+ //die();
+   $ga_cookie = '';
+    if(!empty($_COOKIE['_ga'])){
+      $cookie_all = explode('.', $_COOKIE['_ga']);
+      $ga_cookie = $cookie_all[2].'.'.$cookie_all[3];
+    }
+
+   $data = array(
+    'vendor_code'=> $vendor_code,
+    'TYPE'=> $type,
+    'cookieid' => $ga_cookie,
+    'orgid' => 1,
+	'encryptd_mbl_no' => $encryptd_mbl_no,
+    );
+
+    $all_data = array_merge($data,$formdata);
+ 
+    $token = jwt_mutlistep_token();
+
+    $data_json = json_encode($all_data);
+
+    $headers = array(
+    	"content-type: application/json",
+        "token: $token",
+    );
+
+    $url = "https://ccdev.niiteducation.com/CRMCallCenterAPI/api/GenerateLeadCode";
+ //   $url = $_ENV['CRMCallCenterAPI_GenerateLeadCode'];
+
+    $ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL,$url);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	$response = curl_exec($ch);
+	curl_close($ch);
+    return $response;
+}
+
+function check_eligibility($formdata){
+
+	$current_id = \Drupal::currentUser()->id();
+	if($current_id == 0 || empty($current_id)){
+      $current_id = 0;
+	}
+	$crs_cd = $formdata['intrstd_prgrm'];
+
+    $data_array = array();
+	foreach($formdata as $key => $val){
+      $data_array[] = [
+      		'Profile_code' => $key,
+      		'Profile_value' => $val
+      ];
+	}
+
+    $data_json = json_encode($data_array);
+
+    $headers = array(
+    	"content-type: application/json",
+    	"crs_cd: $crs_cd",
+	    "customer_id: $current_id",
+	    "stage: NiitCom"
+    );
+
+    $url = "https://qa.training.com/DigitalAPI/api/IFBI/ChktStdntElgibility";
+  //  $url = $_ENV['Digital_API_CheckEligibity'];
+
+    $ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL,$url);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	$response = curl_exec($ch);
+	curl_close($ch);
+    $data_response = json_decode($response);
+
+    $IsEligible = '';
+    $reason = array();
+    if($data_response->ErrorYN == 'N'){
+    	if($data_response->IsEligible == 'Y'){
+           $IsEligible = 1;
+    	}
+    	else{
+    	   foreach($data_response->NonEligibilityReasons as $res){
+             $reason[] = $res->Reason;
+    	   }
+    	   $IsEligible = 0;
+    	}
+    }
+    else{
+    	$reason = $data_response->Message;
+    }
+
+    return array('IsEligible' => $IsEligible, 'reason' => $reason);
+}
+
+function custom_randomPassword() {
+    $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789!@#$%&*";
+    $pass = array(); //remember to declare $pass as an array
+    $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+    for ($i = 0; $i < 12; $i++) {
+        $n = rand(0, $alphaLength);
+        $pass[] = $alphabet[$n];
+    }
+    return implode($pass); //turn the array into a string
+}
+
+function automatic_registration($formdata){
+
+	$email = $formdata['enqry_crsspndnc_eml'];
+	$pass = custom_randomPassword();
+	$name = $formdata['enqry_f_nm'];
+	$mobile_number = $formdata['enqry_crsspndnc_mbl'];
+	$CountryCode = '91';
+	if(!empty($formdata['enqry_Crrspndnc_PhnStdCd'])){
+       $CountryCode = $formdata['enqry_Crrspndnc_PhnStdCd'];
+	}
+	$CountryName = 'India';
+	if(!empty($formdata['enqry_prmnnt_cntry'])){
+       $CountryName = $formdata['enqry_prmnnt_cntry'];
+	}
+	 
+
+	$data = [
+		"EMAIL_ID" => $email,
+		"NAME" => $name,
+		"MOBILENO" => $mobile_number,
+		"PASSWORD" => $pass,
+		"ORG_ID" => 1,
+		"BU_NAME" => "ONLINE",
+		"ORG_NAME" => "NIIT",
+		"CountryCode" => $CountryCode,
+		"CountryName" => $CountryName,
+		"ParentOrgId" => 1,
+		"Currency" => "INR",
+		"Theme" => "en-us",
+		"ServerIP" => $_SERVER['SERVER_ADDR'],
+		"ClientIP" => $_SERVER['SERVER_ADDR'],
+		"SendPasswordRequestLink" => "Y",
+		"RequestFrom" => "NIITCOM",
+	];
+
+    $data_json = json_encode($data);
+
+    $headers = array(
+    	"content-type: application/json"
+    );
+
+    $signup_url = "https://qa.training.com/DigitalAPI/api/signUp/user/";
+   // $signup_url = $_ENV['Digital_API_SIGNUP'];
+
+    $ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $signup_url);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	$response = curl_exec($ch);
+	curl_close($ch);
+    $data_response = json_decode($response);
+    $result = array();
+    $success = 'Fail';
+    if($data_response->ERROR_NY == 'N' || !empty($data_response->CUSTOMER_ID)){ 
+       $CUSTOMER_ID = $data_response->CUSTOMER_ID;
+       if(!empty($data_response->EMAIL_ID)){
+          $newaccount = 'true';
+       }
+       else{
+       	 $newaccount = 'false';
+       }
+
+        if(is_numeric($CUSTOMER_ID)){
+        	$check_user = user_load_by_mail($email);
+            if(!is_object($check_user)){
+	            $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+	            $user = User::create();
+	            $user->setPassword($pass);
+			    $user->setEmail($email);
+			    $user->setUsername($email);
+	            $user->enforceIsNew();
+	            $user->set('field_customer_id',$CUSTOMER_ID);
+	            $user->set('field_user_name',$name);
+	            $user->set('field_mobile_number',$mobile_number);
+	            $user->set("init", 'email');
+	            $user->addRole('niit');
+	            $user->set("langcode", $language);
+	            $user->set("preferred_langcode", $language);
+	            $user->set("preferred_admin_langcode", $language);
+	            $user->activate();
+	            $user->save();
+	            $uid = $user->id();
+	            // $account = \Drupal\user\Entity\User::load($uid);
+	            //user_login_finalize($user);
+	             $user=\Drupal\user\Entity\User::load($uid);
+		        \Drupal::service('session')->migrate();
+		        \Drupal::service('session')->set('uid', $uid);
+		        \Drupal::moduleHandler()->invokeAll('user_login', array($user));
+	        }
+	        else
+	        {
+	            $uid = $check_user->id();
+	            $user=\Drupal\user\Entity\User::load($uid);
+		        \Drupal::service('session')->migrate();
+		        \Drupal::service('session')->set('uid', $uid);
+		        \Drupal::moduleHandler()->invokeAll('user_login', array($user));
+	        }
+
+           // $success = $uid;
+        }
+
+       $result = [
+       	'CUSTOMER_ID' => $CUSTOMER_ID,
+       	'newaccount' => $newaccount,
+    //   	'success' => $uid,
+       ];
+    }
+    if($data_response->ERROR_NY == 'Y'){
+       $CUSTOMER_ID = $data_response->CUSTOMER_ID;
+
+       $result = [
+       	'CUSTOMER_ID' => $CUSTOMER_ID,
+       	'newaccount' => 'true',
+    //   	'success' => 0,
+       ];
+    }
+
+    return $result;
+}
+
+
+
+function automatic_registration_1a($formdata){
+
+	$email = $formdata['enqry_crsspndnc_eml'];
+	$pass = custom_randomPassword();
+	$name = $formdata['enqry_f_nm'];
+	$mobile_number = $formdata['enqry_crsspndnc_mbl'];
+	$CountryCode = '91';
+	if(!empty($formdata['enqry_Crrspndnc_PhnStdCd'])){
+       $CountryCode = $formdata['enqry_Crrspndnc_PhnStdCd'];
+	}
+	$CountryName = 'India';
+	if(!empty($formdata['enqry_prmnnt_cntry'])){
+       $CountryName = $formdata['enqry_prmnnt_cntry'];
+	}
+	 
+
+	$data = [
+		"EMAIL_ID" => $email,
+		"NAME" => $name,
+		"MOBILENO" => $mobile_number,
+		"PASSWORD" => $pass,
+		"ORG_ID" => 1,
+		"BU_NAME" => "ONLINE",
+		"ORG_NAME" => "NIIT",
+		"CountryCode" => $CountryCode,
+		"CountryName" => $CountryName,
+		"ParentOrgId" => 1,
+		"Currency" => "INR",
+		"Theme" => "en-us",
+		"ServerIP" => $_SERVER['SERVER_ADDR'],
+		"ClientIP" => $_SERVER['SERVER_ADDR'],
+		"SendPasswordRequestLink" => "Y",
+		"RequestFrom" => "NIITCOM",
+	];
+
+    $data_json = json_encode($data);
+
+    $headers = array(
+    	"content-type: application/json"
+    );
+
+    $signup_url = "https://qa.training.com/DigitalAPI/api/signUp/user/";
+   // $signup_url = $_ENV['Digital_API_SIGNUP'];
+
+    $ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $signup_url);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	$response = curl_exec($ch);
+	curl_close($ch);
+    $data_response = json_decode($response);
+    $result = array();
+    $success = 'Fail';
+    if($data_response->ERROR_NY == 'N'){ 
+	//if($data_response->ERROR_NY == 'N' || !empty($data_response->CUSTOMER_ID)){
+       $CUSTOMER_ID = $data_response->CUSTOMER_ID;
+       if(!empty($data_response->EMAIL_ID)){
+          $newaccount = 'true';
+       }
+       else{
+       	 $newaccount = 'false';
+       }
+
+        if(is_numeric($CUSTOMER_ID)){
+        	$check_user = user_load_by_mail($email);
+            if(!is_object($check_user)){
+	            $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+	            $user = User::create();
+	            $user->setPassword($pass);
+			    $user->setEmail($email);
+			    $user->setUsername($email);
+	            $user->enforceIsNew();
+	            $user->set('field_customer_id',$CUSTOMER_ID);
+	            $user->set('field_user_name',$name);
+	            $user->set('field_mobile_number',$mobile_number);
+	            $user->set("init", 'email');
+	            $user->addRole('niit');
+	            $user->set("langcode", $language);
+	            $user->set("preferred_langcode", $language);
+	            $user->set("preferred_admin_langcode", $language);
+	            $user->activate();
+	            $user->save();
+	            $uid = $user->id();
+	            // $account = \Drupal\user\Entity\User::load($uid);
+	            //user_login_finalize($user);
+	            // $user=\Drupal\user\Entity\User::load($uid);
+		        // \Drupal::service('session')->migrate();
+		        // \Drupal::service('session')->set('uid', $uid);
+		        // \Drupal::moduleHandler()->invokeAll('user_login', array($user));
+	        }
+
+           // $success = $uid;
+        }
+
+       $result = [
+       	'CUSTOMER_ID' => $CUSTOMER_ID,
+       	'newaccount' => $newaccount,
+    //   	'success' => $uid,
+       ];
+    }
+    if($data_response->ERROR_NY == 'Y'){
+       $CUSTOMER_ID = $data_response->CUSTOMER_ID;
+
+       $result = [
+       	'CUSTOMER_ID' => $CUSTOMER_ID,
+       	'newaccount' => 'false',
+    //   	'success' => 0,
+       ];
+    }
+
+    return $result;
+}
+
+
+function automatic_registration_hp($formdata){
+
+	$email = $formdata['enqry_crsspndnc_eml'];
+	$pass = custom_randomPassword();
+	$name = $formdata['enqry_f_nm'];
+	$mobile_number = $formdata['enqry_crsspndnc_mbl'];
+	$CountryCode = '91';
+	/*if(!empty($formdata['enqry_Crrspndnc_PhnStdCd'])){
+       $CountryCode = $formdata['enqry_Crrspndnc_PhnStdCd'];
+	}*/
+	$CountryName = 'India';
+	/*if(!empty($formdata['enqry_prmnnt_cntry'])){
+       $CountryName = $formdata['enqry_prmnnt_cntry'];
+	}
+	 */
+
+	$data = [
+		"EMAIL_ID" => $email,
+		"NAME" => $name,
+		"MOBILENO" => $mobile_number,
+		"PASSWORD" => $pass,
+		"ORG_ID" => 1,
+		"BU_NAME" => "ONLINE",
+		"ORG_NAME" => "NIIT",
+		"CountryCode" => $CountryCode,
+		"CountryName" => $CountryName,
+		"ParentOrgId" => 1,
+		"Currency" => "INR",
+		"Theme" => "en-us",
+		"ServerIP" => $_SERVER['SERVER_ADDR'],
+		"ClientIP" => $_SERVER['SERVER_ADDR'],
+		"SendPasswordRequestLink" => "Y",
+		"RequestFrom" => "NIITCOM",
+	];
+
+    $data_json = json_encode($data);
+
+    $headers = array(
+    	"content-type: application/json"
+    );
+
+    $signup_url = "https://qa.training.com/DigitalAPI/api/signUp/user/";
+   // $signup_url = $_ENV['Digital_API_SIGNUP'];
+
+    $ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $signup_url);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	$response = curl_exec($ch);
+	curl_close($ch);
+    $data_response = json_decode($response);
+    $result = array();
+    $success = 'Fail';
+    if($data_response->ERROR_NY == 'N'){ 
+	//if($data_response->ERROR_NY == 'N' || !empty($data_response->CUSTOMER_ID)){
+       $CUSTOMER_ID = $data_response->CUSTOMER_ID;
+       if(!empty($data_response->EMAIL_ID)){
+          $newaccount = 'true';
+       }
+       else{
+       	 $newaccount = 'false';
+       }
+
+        if(is_numeric($CUSTOMER_ID)){
+        	$check_user = user_load_by_mail($email);
+            if(!is_object($check_user)){
+	            $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+	            $user = User::create();
+	            $user->setPassword($pass);
+			    $user->setEmail($email);
+			    $user->setUsername($email);
+	            $user->enforceIsNew();
+	            $user->set('field_customer_id',$CUSTOMER_ID);
+	            $user->set('field_user_name',$name);
+	            $user->set('field_mobile_number',$mobile_number);
+	            $user->set("init", 'email');
+	            $user->addRole('niit');
+	            $user->set("langcode", $language);
+	            $user->set("preferred_langcode", $language);
+	            $user->set("preferred_admin_langcode", $language);
+	            $user->activate();
+	            $user->save();
+	            $uid = $user->id();
+	            // $account = \Drupal\user\Entity\User::load($uid);
+	            //user_login_finalize($user);
+	             $user=\Drupal\user\Entity\User::load($uid);
+		         \Drupal::service('session')->migrate();
+		         \Drupal::service('session')->set('uid', $uid);
+		         \Drupal::moduleHandler()->invokeAll('user_login', array($user));
+	        }
+
+           // $success = $uid;
+        }
+
+       $result = [
+       	'CUSTOMER_ID' => $CUSTOMER_ID,
+       	'newaccount' => $newaccount,
+    //   	'success' => $uid,
+       ];
+    }
+    if($data_response->ERROR_NY == 'Y'){
+       $CUSTOMER_ID = $data_response->CUSTOMER_ID;
+
+       $result = [
+       	'CUSTOMER_ID' => $CUSTOMER_ID,
+       	'newaccount' => 'false',
+    //   	'success' => 0,
+       ];
+    }
+
+    return $result;
+}
+
+
+function create_application($formdata){
+
+    if($formdata['BatchId'] == 0 || empty($formdata['BatchId'])){
+    	$mainCoursedetails = \Drupal::service('niit_common.niit_related_courses')->get_course_fee_and_details($formdata['CourseType'] , $formdata['intrstd_prgrm']);
+	    if(!empty($mainCoursedetails['courseBatchDetail'][0])){
+	        $formdata['courseID'] = $mainCoursedetails['courseBatchDetail'][0]['courseID'];
+	        $formdata['BatchId'] = $mainCoursedetails['courseBatchDetail'][0]['batchID'];
+	    }
+    }
+    $first_json = json_encode($formdata);
+
+    $new = array('InputData' => $first_json );
+
+    $data_json = json_encode($new);
+
+    $headers = array(
+    	"content-type: application/json",
+    );
+
+    $url = 'https://qa.training.com/DigitalAPI/api/encryption/aes256';
+    //$url = $_ENV['Digital_API_Encryption'];
+
+    $ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL,$url);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	$response = curl_exec($ch);
+	$data_response = json_decode($response);
+	curl_close($ch);
+    $result = 'Fail';
+	if($data_response->ErrorYN == 'N'){
+       $result = $data_response->Message;
+	}
+
+    return $result;
+}
+
+function get_preferred_center_per_camp($camp){
+	$url = 'https://ccdev.niiteducation.com/CRMCallcenterAPI/api/CallCenter/GetCntrDtls';
+	//$url = $_ENV['CRMCallcenterAPI_GetCntrDtls'];
+    $headers = array(
+        "content-type: application/json",
+        "Cmpgn_Cd: $camp",
+        "Vrtcl_cd: ",
+        "Ctgry: ",
+        "Product_cd: ",
+        "cntr_cd: ",
+        "Cntr_cty: ",
+        "Cntr_stt: "
+    );
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $finalDataArray = json_decode($response);
+    $locations = array();
+    if($finalDataArray->ErrorYN == 'N'){
+        if(!empty($finalDataArray->dataSet)){
+            foreach ($finalDataArray->dataSet->Table as $key => $value) {
+            	$centerValue = $value->cntr_cd.'_'.$value->cntr_nm;
+               	$locations[$centerValue] = $value->cntr_nm;
+            }
+        }
+    }
+    return $locations;
+}
+
+function application_form_status($campaignCode, $courseCode, $cookieid, $type){
+	$headers = array();
+	$userCustomerId = '';
+	if($type == 'cookieid'){
+	    $headers = array(
+	    	"Lead_encrypt: ",
+			"Unique_id: ",
+			"Cmpgn_cd: $campaignCode",
+			"Crs_cd: $courseCode",
+			"Ip_adrss: ",
+			"Email_id: ",
+			"Mbl_no: ",
+			"Custmr_id: ",
+			"cookieid: $cookieid",
+			"cntry_cd: ",
+	    ); 
+
+	}
+	else if($type == 'current_user'){
+		$user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+	    if(!empty($user->get('field_communication_emailid')->value)){
+          $userMail = $user->get('field_communication_emailid')->value;
+        }
+        else{
+          $userMail = $user->get('mail')->value;
+        }
+	    $userCustomerId = $user->get('field_customer_id')->value;
+	    $userMobileNo = $user->get('field_mobile_number')->value;
+
+	    $userdetils = userdetails_getbyemail($userMail);
+	    $cntry_cd = $userdetils->Country_Code;
+
+	    $headers = array(
+	    	"Lead_encrypt: ",
+			"Unique_id: ",
+			"Cmpgn_cd: $campaignCode",
+			"Crs_cd: $courseCode",
+			"Ip_adrss: ",
+			"Email_id: $userMail",
+			"Mbl_no: $userMobileNo",
+			"Custmr_id: $userCustomerId",
+			"cookieid: ",
+			"cntry_cd: $cntry_cd",
+	    ); 
+	}
+
+    $url = "https://ccdev.niiteducation.com/CRMCallcenterAPI/api/CallCenter/GetApiLeadDetails";
+   // $url = $_ENV['CRMCallcenterAPI_GetApiLeadDetails'] ;
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 30,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => $headers
+    ));
+
+    $response = curl_exec($curl);
+    $data = json_decode($response );
+    curl_close($curl);
+    $data_response = json_decode($response);
+
+    $check_eligibility = '';
+    $data_json = '';
+    $applctn_opn = '';
+    $leadformstg = '';
+    if($data_response->ErrorYN == 'N'){
+    	if(!empty($data_response->dataSet->Table[0]->eligibleflg) && $data_response->dataSet->Table[0]->eligibleflg == 'Y'){
+    		$check_eligibility = 'Y';
+    		$data_json = $data_response->dataSet->Table[0];
+    		$applctn_opn = $data_response->dataSet->Table[0]->applctn_opn;
+    		$leadformstg = $data_response->dataSet->Table[0]->leadformstg;
+    	}
+    	if(!empty($data_response->dataSet->Table[0]->eligibleflg) && $data_response->dataSet->Table[0]->eligibleflg == 'N'){
+    		if($data_response->dataSet->Table[0]->leadformstg == 'application'){
+    			$check_eligibility = 'Y';
+                $data_json = $data_response->dataSet->Table[0];
+                $applctn_opn = $data_response->dataSet->Table[0]->applctn_opn;
+                $leadformstg = $data_response->dataSet->Table[0]->leadformstg;
+    		}
+    		else{
+    			$check_eligibility = 'N';
+                $data_json = $data_response->dataSet->Table[0];
+                $applctn_opn = $data_response->dataSet->Table[0]->applctn_opn;
+                $leadformstg = $data_response->dataSet->Table[0]->leadformstg;
+    		}       
+    	}
+    	if(empty($data_response->dataSet->Table[0]->eligibleflg) && $data_response->dataSet->Table[0]->leadformstg == '1a'){
+    		$check_eligibility = '';
+    		$data_json = $data_response->dataSet->Table[0];
+    		$applctn_opn = $data_response->dataSet->Table[0]->applctn_opn;
+    		$leadformstg = $data_response->dataSet->Table[0]->leadformstg;
+    	}
+    }
+
+    $data = [
+        'check_eligibility' => $check_eligibility,
+        'json_data' => $data_json,
+        'CUSTOMER_ID' => $userCustomerId,
+        'applctn_opn' => $applctn_opn,
+        'leadformstg' => $leadformstg,
+    ];
+
+    return $data;
+
+}
+
+function lead_form_status($campaignCode, $courseCode){
+	$headers = array();
+
+	$user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+    if(!empty($user->get('field_communication_emailid')->value)){
+	  $userMail = $user->get('field_communication_emailid')->value;
+	}
+	else{
+	  $userMail = $user->get('mail')->value;
+	}
+    $userCustomerId = $user->get('field_customer_id')->value;
+    $userMobileNo = $user->get('field_mobile_number')->value;
+
+    $userdetils = userdetails_getbyemail($userMail);
+    $cntry_cd = $userdetils->Country_Code;
+
+    $headers = array(
+    	"Lead_encrypt: ",
+		"Unique_id: ",
+		"Cmpgn_cd: $campaignCode",
+		"Crs_cd: $courseCode",
+		"Ip_adrss: ",
+		"Email_id: $userMail",
+		"Mbl_no: $userMobileNo",
+		"Custmr_id: $userCustomerId",
+		"cookieid: ",
+		"cntry_cd: $cntry_cd",
+    ); 
+
+    $url = "https://ccdev.niiteducation.com/CRMCallcenterAPI/api/CallCenter/GetApiLeadDetails";
+    // $url = $_ENV['CRMCallcenterAPI_GetApiLeadDetails'] ;
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 30,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => $headers
+    ));
+
+    $response = curl_exec($curl);
+    $data = json_decode($response );
+    curl_close($curl);
+    $data_response = json_decode($response);
+    //echo '<pre>'; print_r($data_response); die('g');
+
+    $check_eligibility = '';
+    $data_json = '';
+    $applctn_opn = '';
+    $leadformstg = '';
+    if($data_response->ErrorYN == 'N'){
+    	$check_eligibility = 'Y';
+		$data_json = $data_response->dataSet->Table[0];
+		$applctn_opn = $data_response->dataSet->Table[0]->applctn_opn;
+		$leadformstg = $data_response->dataSet->Table[0]->leadformstg;
+    }
+
+    $data = [
+        'check_eligibility' => $check_eligibility,
+        'json_data' => $data_json,
+        'CUSTOMER_ID' => $userCustomerId,
+        'applctn_opn' => $applctn_opn,
+        'leadformstg' => $leadformstg,
+    ];
+
+    return $data;
+
+}
+
+function Check_EligibleMobileOTP($formdata){
+	$result = array();
+
+	$headers = array(
+      "content-type: application/json"
+    );
+
+    $url = 'https://qa.training.com/NIITDigitalPlatformAPI/api/signIn/GenerateEmailMobileOTP';
+  //  $url = $_ENV['NIITDigitalPlatformAPI_GenerateEmailMobileOTP'];
+
+    $data_array = array(
+      "OldValue" => $formdata['mobile'],
+      "Type" => "OTP",
+      "OrgId" => "1",
+      "serverip" => $_SERVER['SERVER_ADDR'],
+      "clientip" => $_SERVER['SERVER_ADDR'],
+      "EmailID" => $formdata['email'],
+      "RequestFrom" => "NIITCOM",
+      "Name" => $formdata['name']
+    );
+    $data_json = json_encode($data_array);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $result = json_decode($response); 
+
+    return $result;
+}
+
+function SendOTPSMSAPI_MOBILE($data){
+	$headers = array(
+	    "content-type: application/json"
+	);
+	 $url = 'http://qa.training.com/DigitalApi/api/signIN/SendOTPSMS';
+	//$url = $_ENV['DigitalApi_SendOTPSMS'];
+	//$msg = $data->OTP.' is the One Time Password(OTP) generated� for your contact verification.';
+    $msg = 'Your One Time Password (OTP) is '.$data->OTP.' - NIIT'; 
+
+	$transactionId = rand(0000000000,9999999999999999);
+	$data_array = array(
+	  "appId" => '63',
+	  "transactionId" => $transactionId,
+	  "mobileNo" => $data->MobileNo,
+	  "messageText" => $msg,
+	);
+	$data_json = json_encode($data_array);
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL,$url);
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	$response = curl_exec($ch);
+	curl_close($ch);
+	$result = json_decode($response); 
+	 // echo '<pre>'; print_r($data_array); print_r($response);  die();
+	return $result;
+	
+}
+
+function Check_EligibleMobileOTPVerify($formdata){
+	$result = array();
+
+	$headers = array(
+      "content-type: application/json"
+    );
+
+    $url = 'https://qa.training.com/NIITDigitalPlatformAPI/api/signIn/VerifyEmailMobileOTP';
+   // $url = $_ENV['NIITDigitalPlatformAPI_VerifyEmailMobileOTP'];
+
+    $data_array = array(
+      "OTP" => $formdata['otp'],
+      "OrgId" => "1",
+      "ServerIP" => $_SERVER['SERVER_ADDR'],
+      "ClientIP" => $_SERVER['SERVER_ADDR'],
+      "Type" => "OTP",
+      "EmailID" => $formdata['email'],
+      "MobileNo" => $formdata['mobile'],
+    );
+
+    $data_json = json_encode($data_array);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $result = json_decode($response); 
+//echo '<pre>'; print_r($result); print_r($response);  die();
+    return $result;
+}
+
+function Getwebniarlead_details($lead_encrypt, $cmpgn_cd){
+	$result = array();
+	$headers = array(
+		    	"lead_encrypt : $lead_encrypt",
+	            "cmpgn_cd : $cmpgn_cd",
+		       ); 
+
+    $url = 'https://ccdev.niiteducation.com/CRMCallCenterAPI/api/CallCenter/GetWebinarEngagementDetails';
+    // $url = $_ENV['CallCenter_GetWebinarEngagementDetails'];
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 30,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => $headers
+    ));
+
+    $response = curl_exec($curl);
+    $data = json_decode($response );
+    curl_close($curl);
+    if(is_object($data->dataSet->Table[0])){
+       $result = (array) $data->dataSet->Table[0];
+    }
+
+    return $result;
+
+}
+
+function SaveWebinarEngagementDetails($formdata){
+	$result = array();
+
+	$headers = array(
+      "content-type: application/json"
+    );
+
+    $url = 'https://ccdev.niiteducation.com/CRMCallCenterAPI/api/CallCenter/SaveWebinarEngagementDetails';
+    // $url = $_ENV['SaveWebinarEngagementDetails'];
+
+    $data_array = array(
+      "lead_encrypt" => $formdata['lead_encrypt'],
+      "lead_cd" => $formdata['lead_cd'],
+      "cmpgn_cd" => $formdata['cmpgn_cd'],
+      "page_url" => $formdata['page_url'],
+      "engagement_type" => $formdata['engagement_type'],
+      "webinar_dt" => $formdata['webinar_dt'],
+      "webinar_tm" => $formdata['webinar_tm'],
+      "call_type" => $formdata['call_type'],
+      "mbl_no" => $formdata['mbl_no'],
+    );
+
+    $data_json = json_encode($data_array);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL,$url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $result = json_decode($response); 
+//echo '<pre>'; print_r($data_array); print_r($response);  die();
+    return $result;
+}
+
+
+function Enrollment_SaveUserProductInfo($formdata){
+	$data = '';
+
+	if(!empty($formdata['CustomerID']) && !empty($formdata['CourseCode']) && !empty($formdata['Centercode']) && !empty($formdata['Fee_Pttrn_Code'])){
+		$headers = array(
+	      "content-type: application/json"
+	    );
+
+	    $url = 'https://qa.training.com/NIITDigitalPlatformAPI/api/Modular/Enrollment/SaveUserProductInfo';
+	   // $url = $_ENV['Enrollment_SaveUserProductInfo'];
+
+	    $data_array = array(
+	      "CustomerID" => $formdata['CustomerID'],
+	      "CourseCode" => $formdata['CourseCode'],
+	      "BatchID" => $formdata['BatchID'],
+	      "Centercode" => $formdata['Centercode'],
+	      "Fee_Pttrn_Code" => $formdata['Fee_Pttrn_Code'],
+	      "Fee_Value" => $formdata['Fee_Value'],
+	    );
+
+
+	    $data_json = json_encode($data_array);
+	    $ch = curl_init();
+	    curl_setopt($ch, CURLOPT_URL,$url);
+	    curl_setopt($ch, CURLOPT_POST, 1);
+	    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	    $response = curl_exec($ch);
+	    curl_close($ch);
+	    $result = json_decode($response);
+	    if(!empty($result->Message)){
+	       $data = $result->Message;
+	    }
+	}
+	//echo '<pre>'; print_r($formdata); print_r($result);  die();
+
+    return $data;
+}
+
+
+function check_useremail($email){
+	$result = 0;
+	$headers = array(
+		    	"LoginId : $email",
+	            "OrgId : 1",
+		       ); 
+
+    $url = 'https://qa.training.com/DigitalAPI/api/signIn/VerifyLoginRequest';
+  //  $url = $_ENV['Useremail_VerifyLoginRequest'];
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 30,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => $headers
+    ));
+
+    $response = curl_exec($curl);
+    $data = json_decode($response );
+    curl_close($curl);
+    if($data->ErrorYN == 'N' && $data->Message == 'Success'){
+       $result = 1;
+    }
+
+    return $result;
+
+}
+
+function userdetails_getbyemail($email){
+	$result = '';
+	$headers = array(
+		    	"LoginId : $email",
+	            "OrgId : 1",
+		       ); 
+
+    $url = 'https://qa.training.com/DigitalAPI/api/signIn/VerifyLoginRequest';
+  //  $url = $_ENV['Useremail_VerifyLoginRequest'];
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 30,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => $headers
+    ));
+
+    $response = curl_exec($curl);
+    $data = json_decode($response );
+    curl_close($curl);
+    if($data->ErrorYN == 'N' && $data->Message == 'Success'){
+       $result = $data;
+    }
+
+    return $result;
+
+}
+
+function myapplication_continue_data($userMobileNo){
+
+    $data = array();
+    $headers = array(
+		//"Email_id: $userMail",
+		"Mbl_no: $userMobileNo",
+    ); 
+
+    $url = "https://ccdev.niiteducation.com/CRMCallCenterAPI/api/CallCenter/GetApiLeadDetailsMobile";
+   // $url = $_ENV['CRMCallcenterAPI_Myapplication'] ;
+
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 30,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => $headers
+    ));
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+    $data_response = json_decode($response);
+    if($data_response->ErrorYN == 'N' && !empty($data_response->dataSet->Table)){
+    	$data = $data_response->dataSet->Table;
+    }
+
+    return $data;
+
+}
+
+function myapplication_prefilled_data($userMobileNo){
+
+    $data = array();
+    $headers = array(
+		//"Email_id: $userMail",
+		"mbl_no: $userMobileNo"
+    );  
+
+    $url = "https://ccdev.niiteducation.com/CRMCallcenterAPI/api/CallCenter/GetLatestCustomerDetails";
+    //$url = $_ENV['CRMCallcenterAPI_Myfieldsdata'];
+
+    $curl = curl_init();
+
+	curl_setopt_array($curl, array(
+	  CURLOPT_URL => $url,
+	  CURLOPT_RETURNTRANSFER => true,
+	  CURLOPT_ENCODING => "",
+	  CURLOPT_MAXREDIRS => 10,
+	  CURLOPT_TIMEOUT => 30,
+	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	  CURLOPT_CUSTOMREQUEST => "GET",
+	  CURLOPT_HTTPHEADER => $headers
+	));
+
+    $response = curl_exec($curl);
+    curl_close($curl);
+    $data_response = json_decode($response);
+    if($data_response->ErrorYN == 'N' && !empty($data_response->dataSet->Table)){
+    	$data = $data_response->dataSet->Table;
+    }
+
+    return $data;
+
+}

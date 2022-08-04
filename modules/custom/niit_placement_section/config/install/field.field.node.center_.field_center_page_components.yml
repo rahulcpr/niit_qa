@@ -1,0 +1,138 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_center_page_components
+    - node.type.center_
+    - paragraphs.paragraphs_type.center_address_detail
+    - paragraphs.paragraphs_type.center_connect_help_section
+    - paragraphs.paragraphs_type.coming_past_event
+    - paragraphs.paragraphs_type.placement_section
+    - paragraphs.paragraphs_type.placement_testimonial
+    - paragraphs.paragraphs_type.show_appointment_form
+    - paragraphs.paragraphs_type.start_faculty_star_alumni_slider
+  module:
+    - entity_reference_revisions
+id: node.center_.field_center_page_components
+field_name: field_center_page_components
+entity_type: node
+bundle: center_
+label: 'Center Page components'
+description: 'Center Page components'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      placement_section: placement_section
+      placement_testimonial: placement_testimonial
+      center_address_detail: center_address_detail
+      coming_past_event: coming_past_event
+      center_connect_help_section: center_connect_help_section
+      start_faculty_star_alumni_slider: start_faculty_star_alumni_slider
+      show_appointment_form: show_appointment_form
+    target_bundles_drag_drop:
+      placement_section:
+        enabled: true
+        weight: -51
+      after_event_gallery:
+        weight: -50
+        enabled: false
+      assured_job_section:
+        weight: -49
+        enabled: false
+      assured_job_slider_placement:
+        weight: -48
+        enabled: false
+      center_slider_and_expert_contact:
+        weight: -47
+        enabled: false
+      companies_slider:
+        weight: -46
+        enabled: false
+      enrollment_contact_form:
+        weight: -45
+        enabled: false
+      faq:
+        weight: -44
+        enabled: false
+      faqs:
+        weight: -43
+        enabled: false
+      from_library:
+        weight: -42
+        enabled: false
+      header_slider_section:
+        weight: -41
+        enabled: false
+      mega_drive_image_video_gallery:
+        weight: -40
+        enabled: false
+      niit_job_profile_paragraph:
+        weight: -39
+        enabled: false
+      placement_mega_drive:
+        weight: -38
+        enabled: false
+      placement_mentors_advice:
+        weight: -37
+        enabled: false
+      placement_slider:
+        weight: -36
+        enabled: false
+      placement_student_recruiter:
+        weight: -35
+        enabled: false
+      placement_testimonial:
+        enabled: true
+        weight: -34
+      recruitment_job_assured_icons:
+        weight: -33
+        enabled: false
+      recruitment_job_assured_section:
+        weight: -32
+        enabled: false
+      student_project_showcase:
+        weight: -31
+        enabled: false
+      tips_of_the_day:
+        weight: -30
+        enabled: false
+      tips_of_the_day_embed:
+        weight: -29
+        enabled: false
+      top_salaried_students:
+        weight: -28
+        enabled: false
+      upcoming_drive:
+        weight: -27
+        enabled: false
+      center_address_detail:
+        enabled: true
+        weight: 30
+      coming_past_event:
+        enabled: true
+        weight: 33
+      alumni_faculty:
+        weight: 34
+        enabled: false
+      center_connect_help_section:
+        enabled: true
+        weight: 34
+      connect_help:
+        weight: 38
+        enabled: false
+      start_faculty_star_alumni_slider:
+        enabled: true
+        weight: 58
+      show_appointment_form:
+        enabled: true
+        weight: 59
+      star_faculty:
+        weight: 59
+        enabled: false
+field_type: entity_reference_revisions

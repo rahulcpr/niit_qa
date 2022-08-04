@@ -1,0 +1,7 @@
+ms_ajax_form_popup.library:
+  version: 1.x
+  css:
+    theme:
+      css/ms_ajax_form_popup.css: {}
+  js:
+    js/ms_ajax_form_popup.js: {}

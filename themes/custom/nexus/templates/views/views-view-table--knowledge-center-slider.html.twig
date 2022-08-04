@@ -1,0 +1,47 @@
+{% for row in rows %} 
+   
+        {% set field_slider_image = row.columns.field_slider_image.content %}
+        {% set field_mobile_image = row.columns.field_mobile_image.content %}
+        {% set field_label= row.columns.title.content %}
+        {% set field_image_description = row.columns.body.content %}
+
+        {% set field_slider_cta_title = 'Know More' %}
+        {% set field_slider_cta_url = row.columns.field_slider_image_url.content %}
+        <div class="slidewrap"><img src="{{ field_slider_image }}"
+                class="hide600" width="" height="">
+            <img src="{{ field_mobile_image }}" class="show600" width=""
+                height="">
+
+           {% if  field_label != '' or field_image_description != '' or field_slider_cta_url != '' %}
+
+            <div class="contantbox">
+               
+               {% if  field_label != '' %}
+
+                    <h2><span>{{ field_label }} </span></h2>
+
+                {% endif %}    
+
+                 {% if  field_image_description != '' or field_slider_cta_url != '' %}
+
+                <div class="banner-text"> {% if  field_image_description != '' %} {{ field_image_description }}</p> {% endif %}
+
+                    {% if  field_slider_cta_url != '' and field_slider_cta_title != '' %}
+                   
+                    <a href="{{ field_slider_cta_url }}"
+                        class="bannerbtn">{{ field_slider_cta_title }}<span>&#8594;</span></a>  
+
+                     {% endif %}  
+
+                </div>
+            
+            {% endif %}
+                
+
+            </div>
+           {% endif %} 
+
+        </div>
+    {% endfor %}
+  
+{{ drupal_entity('webform','talk_to_expert') }}

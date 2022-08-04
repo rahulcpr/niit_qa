@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_rec
+    - node.type.niit_job_profile
+id: node.niit_job_profile.field_course_rec
+field_name: field_course_rec
+entity_type: node
+bundle: niit_job_profile
+label: Course/Certification
+description: Course/Certification
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

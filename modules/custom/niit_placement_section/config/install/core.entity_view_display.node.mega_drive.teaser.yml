@@ -1,0 +1,58 @@
+langcode: en
+status: false
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.mega_drive.body
+    - field.field.node.mega_drive.field_after_event_images
+    - field.field.node.mega_drive.field_center
+    - field.field.node.mega_drive.field_drive_city
+    - field.field.node.mega_drive.field_drive_date
+    - field.field.node.mega_drive.field_drive_video_url
+    - field.field.node.mega_drive.field_event_drive_gallery
+    - field.field.node.mega_drive.field_live_streaming_url
+    - field.field.node.mega_drive.field_month
+    - field.field.node.mega_drive.field_recruiter
+    - field.field.node.mega_drive.field_venue
+    - field.field.node.mega_drive.field_venue_latitude
+    - field.field.node.mega_drive.field_venue_longitude
+    - field.field.node.mega_drive.field_video_thumbnail
+    - field.field.node.mega_drive.field_year
+    - node.type.mega_drive
+  module:
+    - text
+    - user
+id: node.mega_drive.teaser
+targetEntityType: node
+bundle: mega_drive
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden:
+  field_after_event_images: true
+  field_center: true
+  field_drive_city: true
+  field_drive_date: true
+  field_drive_video_url: true
+  field_event_drive_gallery: true
+  field_live_streaming_url: true
+  field_month: true
+  field_recruiter: true
+  field_venue: true
+  field_venue_latitude: true
+  field_venue_longitude: true
+  field_video_thumbnail: true
+  field_year: true

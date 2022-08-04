@@ -1,0 +1,131 @@
+{% set verticalleft =  arguments.vertical.0 %}
+{% set verticalright =  arguments.vertical.1 %}
+{% set horizontalData =  arguments.horizontal %}
+<!--Network Code updated By Prabhat Kumar Tiwari-->
+{% if arguments is not empty %}
+
+<section class="sliderinner-wrap sliderinnerbg">
+    <div class="container">
+        <div class="headding text-center">
+            <h2 id="alumni">Aspirational Careers</h2>
+            <span class="underline"></span>
+        </div>
+        <div class="network-container achieve">
+            <div class="knowledge">
+                {% if verticalleft is not empty %}
+                <div class="col-xs-12 col-sm-4">
+                        <div class="achieve-box">
+                            <div class="img-box square">
+                                {% if( verticalleft.verticalImage is not null) %}
+                                <img data-lazy="{{ verticalleft.verticalImage }}" class="scale" alt="img">
+                                {% endif %}
+                                <div class="overlay">
+
+                                    <div class="head">
+
+                                        <h3>
+
+                                            {% if verticalleft.title is not null and verticalleft.title is not empty %} {{
+                                            verticalleft.title }} {% endif %}
+                                        </h3>
+
+                                        <p>{% if verticalleft.shortText is not null %} {{
+                                            verticalleft.shortText }} {% endif %}</p>
+                                    </div>
+
+                                    <div class="info">
+                                        <div class="detailsinfo">
+                                            {{verticalleft.body|raw}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                 {% if horizontalData is not empty %}
+                    <div class="col-xs-12 col-sm-4">
+                    <div class="achieve-box">
+
+                        {% for horizontal in horizontalData %}
+                    <div class="img-box square">
+                        {% if( horizontal.horizontalImage is not null) %}
+                        <img data-lazy="{{ horizontal.horizontalImage }}" class="scale js-lazyload-image" alt="img">
+                        {% endif %}
+                        <div class="overlay">
+                            <div class="head">
+                                <h3>
+
+                                    {% if horizontal.title is not null %} {{
+                                    horizontal.title }} {% endif %}
+                                </h3>
+                                <p>{% if horizontal.shortText is not null %} {{ horizontal.shortText
+                                    }} {% endif %}
+
+                                </p>
+                            </div>
+                            <div class="info">
+                                <div class="detailsinfo smallimgmrg">
+
+                                    {% if horizontal.body is not null %} {{
+                                    horizontal.body |raw }} {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                   {% endfor %}
+                        </div>
+                        </div>
+                 {% endif %}
+                {% if verticalright is not empty %}
+                <div class="col-xs-12 col-sm-4">
+                    <div class="achieve-box">
+                        <div class="img-box square video">
+                            {% if verticalright.networkYoutube != '' %}
+                            <iframe height="405px" src="{{ verticalright.networkYoutube }}" frameborder="0"
+                                    allow="autoplay; encrypted-media"></iframe>
+                            {% else %}
+                            {% if verticalright.verticalImage is not null  %}
+                            <img data-lazy="{{ verticalright.verticalImage }}" class="scale js-lazyload-image" alt="img">
+                            {% endif %}
+
+                            <div class="overlay videoo">
+                                <div class="head">
+                                    <h3>
+
+                                        {% if verticalright.title is not null %} {{
+                                        verticalright.title }} {% endif %}
+                                    </h3>
+                                    <p>{% if verticalright.shortText is not null %} {{ verticalright.shortText
+                                        }} {% endif %}
+
+                                    </p>
+
+                                </div>
+                                <div class="info">
+                                    <div class="detailsinfo">
+
+                                        {% if verticalright.body is not null %} {{
+                                        verticalright.body |raw }} {% endif %}
+
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+                                {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+                {% endif %}
+</section>
+{% endif %}
+<!--Network  End -->
+
+

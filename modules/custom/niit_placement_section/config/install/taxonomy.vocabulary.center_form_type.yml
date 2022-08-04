@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+name: 'Center Form Type'
+vid: center_form_type
+description: 'This is use for identify form type. to show on pop. '
+hierarchy: 0
+weight: 0

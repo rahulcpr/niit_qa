@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_icon_title
+    - paragraphs.paragraphs_type.recruitment_job_assured_icons
+id: paragraph.recruitment_job_assured_icons.field_icon_title
+field_name: field_icon_title
+entity_type: paragraph
+bundle: recruitment_job_assured_icons
+label: 'Icon Title'
+description: 'Icon Title'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

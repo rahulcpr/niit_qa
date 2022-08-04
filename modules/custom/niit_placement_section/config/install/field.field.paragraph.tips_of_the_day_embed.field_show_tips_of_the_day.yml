@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_show_tips_of_the_day
+    - paragraphs.paragraphs_type.tips_of_the_day_embed
+id: paragraph.tips_of_the_day_embed.field_show_tips_of_the_day
+field_name: field_show_tips_of_the_day
+entity_type: paragraph
+bundle: tips_of_the_day_embed
+label: 'Show Tips Of The Day'
+description: 'Show Tips Of The Day'
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

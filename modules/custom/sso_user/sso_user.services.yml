@@ -1,0 +1,9 @@
+services:
+  sso_user.user:
+    class: Drupal\sso_user\UserService
+    arguments: ['@current_user']
+  sso_user.custom_redirect:
+    class: '\Drupal\sso_user\EventSubscriber\CustomRedirects'
+    tags:
+      - { name: 'event_subscriber' }
+  

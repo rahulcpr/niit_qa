@@ -1,0 +1,488 @@
+{#
+/**
+ * @file
+ * Default theme implementation for the basic structure of a single Drupal page.
+ *
+ * Variables:
+ * - logged_in: A flag indicating if user is logged in.
+ * - root_path: The root path of the current page (e.g., node, admin, user).
+ * - node_type: The content type for the current node, if the page is a node.
+ * - head_title: List of text elements that make up the head_title variable.
+ *   May contain or more of the following:
+ *   - title: The title of the page.
+ *   - name: The name of the site.
+ *   - slogan: The slogan of the site.
+ * - page_top: Initial rendered markup. This should be printed before 'page'.
+ * - page: The rendered page markup.
+ * - page_bottom: Closing rendered markup. This variable should be printed after
+ *   'page'.
+ * - db_offline: A flag indicating if the database is offline.
+ * - placeholder_token: The token for generating head, css, js and js-bottom
+ *   placeholders.
+ *
+ * @see template_preprocess_html()
+ *
+ * @ingroup themeable
+ */
+#}
+<!DOCTYPE html>
+<html{{ html_attributes }}>
+<head>    
+    <link rel= "canonical" href= "{{ actual_link }}" />
+    <link rel="alternate" href="{{ actual_link }}" hreflang="en-in">
+    <link rel="alternate" href="https://www.niit.com/bangladesh/" hreflang="en-BD">
+    <link rel="alternate" href="https://www.niit.com/Bhutan/" hreflang="en-BT">
+    <link rel="alternate" href="https://www.niit.com/botswana/" hreflang="en-BW">
+    <link rel="alternate" href="http://www.niit.com.cn/" hreflang="en-CN">
+    <link rel="alternate" href="https://www.niit.com/ghana/" hreflang="en-GH">
+    <link rel="alternate" href="https://www.niit.com/Indonesia/" hreflang="en-ID">
+    <link rel="alternate" href="https://www.niit.com/kenya/" hreflang="en-KE">
+    <link rel="alternate" href="https://www.niit.com/malaysia/" hreflang="en-MY">
+    <link rel="alternate" href="https://www.niit.com/mauritius/" hreflang="en-MU">
+    <link rel="alternate" href="https://www.niit.com/nigeria/" hreflang="en-NG">
+    <link rel="alternate" href="https://www.niit.com/senegal/" hreflang="en-SN">
+    <link rel="alternate" href="https://www.niit.com/south-africa/" hreflang="en-ZA">
+    <link rel="alternate" href="https://www.niit.com/vietnam/" hreflang="en-VN">
+    <link rel="alternate" href="https://www.niit.com/" hreflang="x-default" />
+
+	
+	<link rel='preload'  media="all"  href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" as='style' onload="this.rel='stylesheet'"  />
+    <noscript><link rel="stylesheet" media="all" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"/></noscript>
+    <link rel='preload'  media="all"  href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" as='style' onload="this.rel='stylesheet'"  />
+    <noscript><link rel="stylesheet" media="all" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/></noscript>
+    <!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AAAIzaSyDPyjrDb8IT-r70TliuokYxVca2VuE52AMMM"></script> -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<meta name="robots" content ="noindex, nofollow">-->
+    <!--[if lt IE 11]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	
+    <head-placeholder token="{{ placeholder_token|raw }}">
+        <title>{{ head_title|safe_join(' | ') }}</title>
+        <css-placeholder token="{{ placeholder_token|raw }}">
+            <js-placeholder token="{{ placeholder_token|raw }}">
+                <script>
+                    window.serverRootPath = "{{ request_path }}";
+                </script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TNCKW3M');</script>
+<!-- End Google Tag Manager -->
+                <!--  Widget Code -->
+                <!-- <script type="text/javascript">((function () {
+                    var load = function () {
+                        var script = "https://s.acquire.io/a-7591e/init.js?full";
+                        var x = document.createElement('script');
+                        x.src = script;
+                        x.async = true;
+                        var sx = document.getElementsByTagName('script')[0];
+                        sx.parentNode.insertBefore(x, sx);
+
+                    };
+                    if (document.readyState === "complete") {
+                        load();
+                    }
+                    else {
+                        if (window.addEventListener) {
+                            window.addEventListener('load', load, false);
+                        }
+                        else {
+                            if (window.attachEvent) {
+                                window.attachEvent("onload", load);
+                            }
+                        }
+                    }
+                })());</script> -->
+                <!-- <noscript><a href="https://www.acquire.io?welcome"
+                    title="live chat software" rel="nofollow">Acquire</a></noscript> -->
+
+                <!--  ---------------------------------------------------------- -->
+                <script>
+                    function getCookie(cname) {
+                        let name = cname + "=";
+                        let decodedCookie = decodeURIComponent(document.cookie);
+                        let ca = decodedCookie.split(';');
+                        for(let i = 0; i <ca.length; i++) {
+                            let c = ca[i];
+                            while (c.charAt(0) == ' ') {
+                            c = c.substring(1);
+                            }
+                            if (c.indexOf(name) == 0) {
+                             return c.substring(name.length, c.length);
+                            }
+                        }
+                        return "";
+                    }
+                </script>
+                <script type="text/javascript">
+                    var finalFields = "";
+                    if(getCookie("UTMParams")){
+                        var cookie = JSON.parse(getCookie("UTMParams"));
+                        if(cookie.utmApplcbl == 'Y'){
+                            for (const property in cookie.utm_params) {
+                              finalFields +=`${property}=${cookie.utm_params[property]}`+"&";
+                            }
+                            finalFields = finalFields.substring(0, finalFields.length - 1);
+                        }
+                    }else{
+                        var url = window.location.search;
+                        finalFields = url.substring(1);
+                    }                    
+                    /* Put visitor details programmatically. */ 
+                    window.acquire=window.acquire||[];
+                    acquire.push({
+                        userDetails:{
+                         
+                        fields : { 
+                                    utm_field : finalFields, 
+                            }
+                      },
+                      lang:'<?php echo $language_code ?>' //LANGUAGE CODE
+                    });
+                </script>    
+
+
+
+                    <script>
+                        window.acquire = window.acquire || [];
+                         acquire.push(function(app){
+                             var setUIConfogFn = function(){
+                                        if(app) {
+                                            app.ui.setHorizontalMargin(10);
+                                        }
+                                    }
+                             app.on('ui_reloaded', (socket, cr, sr) => {
+                                        setUIConfogFn();
+                                    });
+
+                            setUIConfogFn();
+                         });
+                    </script>
+                <!-- / Widget Code -->
+				
+                    <script>
+                        window.acquire = window.acquire || [];
+                         acquire.push(function(app){
+                             var setUIConfogFn = function(){
+                                        if(app) {
+                                            app.ui.setHorizontalMargin(10);
+                                        }
+                                    }
+                             app.on('ui_reloaded', (socket, cr, sr) => {
+                                        setUIConfogFn();
+                                    });
+
+                            setUIConfogFn();
+                         });
+                    </script>
+                <!-- / Widget Code -->
+                
+                 <!-- 20th May'19 -->
+                <script>
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date()); 
+                </script>
+
+                <!-- Facebook Pixel Code -->
+                {#<script>
+                !function(f,b,e,v,n,t,s)
+                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                n.queue=[];t=b.createElement(e);t.async=!0;
+                t.src=v;s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)}(window, document,'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '222289008513920');
+                fbq('track', 'PageView');
+                fbq('track', 'Lead');
+                </script>
+                <noscript><img height="1" width="1" style="display:none"
+                src="https://www.facebook.com/tr?id=222289008513920&ev=PageView&noscript=1"
+                /></noscript> #}
+                <!-- End Facebook Pixel Code -->
+
+                <!-- Event snippet for DT_Launch_Conversion_Code conversion page -->
+                <!--script>
+                  gtag('event', 'conversion', {'send_to': 'AW-935775742/ZO0bCMjZx2oQ_pubvgM'});
+                </script-->
+
+            
+              
+
+                <!-- Webengage sdk code -->
+                    <script id='_webengage_script_tag' type='text/javascript'>
+                    var webengage;!function(w,e,b,n,g){function o(e,t){e[t[t.length-1]]=function(){r.__queue.push([t.join("."),
+                    arguments])}}var i,s,r=w[b],z=" ",l="init options track screen onReady".split(z),a="feedback survey notification".split(z),c="options render clear abort".split(z),p="Open Close Submit Complete View Click".split(z),u="identify login logout setAttribute".split(z);if(!r||!r.__v){for(w[b]=r={__queue:[],__v:"6.0",user:{}},i=0;i < l.length;i++)o(r,[l[i]]);for(i=0;i < a.length;i++){for(r[a[i]]={},s=0;s < c.length;s++)o(r[a[i]],[a[i],c[s]]);for(s=0;s < p.length;s++)o(r[a[i]],[a[i],"on"+p[s]])}for(i=0;i < u.length;i++)o(r.user,["user",u[i]]);setTimeout(function(){var f=e.createElement("script"),d=e.getElementById("_webengage_script_tag");f.type="text/javascript",f.async=!0,f.src=("https:"==e.location.protocol?"https://ssl.widgets.webengage.com":"http://cdn.widgets.webengage.com")+"/js/webengage-min-v-6.0.js",d.parentNode.insertBefore(f,d)})}}(window,document,"webengage");webengage.init("d3a4ab1d");
+                    </script>
+                <!-- End Webengage sdk code -->
+    
+    <script>
+         dataLayer.push({
+                        ClientId:'{{datalayer_ClientId}}',
+                        Country:'{{datalayer_Country}}',
+                        pageCategory :'{{datalayer_PageCategory}}',
+                        pageSubCategory:'{{datalayer_PageSubCategory}}',
+                        PageSubSubCategory:'{{datalayer_PageSubSubCategory}}',
+                        PageName:'{{datalayer_PageName}}',
+                        CourseCatogery:'{{datalayer_CourseCatogery}}',
+                        CourseSubCatogery:'{{datalayer_CourseSubCatogery}}',
+                        CourseName:'{{datalayer_CourseName}}',
+                        CourseCode:'{{datalayer_CourseCode}}',
+                        CourseDuration:'{{datalayer_CourseDuration}}',
+                        CourseFees:'{{datalayer_CourseFees}}',
+                        CourseBaseFee:'{{datalayer_CourseBaseFee}}',
+                        CourseFeesTax:'{{datalayer_CourseFeesTax}}',
+                        CourseType:'{{datalayer_CourseType}}',
+                        CourseRating:'{{datalayer_CourseRating}}',
+                        CourseReviews:'{{datalayer_CourseReviews}}',
+                        CourseEnrollmentNow:'{{datalayer_CourseEnrollmentNow}}',
+                        LeadId:'{{datalayer_LeadId}}',
+                        CentreName:'{{datalayer_CentreName}}',
+                        CentreId:'{{datalayer_CentreId}}',
+                        CenterState:'{{datalayer_CenterState}}',
+                        CenterCity:'{{datalayer_CenterCity}}',
+                        AvailableBatches:'{{datalayer_AvailableBatches}}',
+                        SelectedBatch:'{{datalayer_SelectedBatch}}',
+                        CourseStartDate:'{{datalayer_CourseStartDate}}',
+                        StudentEncryptedMobileNumber:'{{datalayer_StudentEncryptedMobileNumber}}',
+                        StudentRegistrationNumber:'{{datalayer_StudentRegistrationNumber}}',
+                        StudentDOB:'{{datalayer_StudentDOB}}',
+                        StudentGender:'{{datalayer_StudentGender}}',
+                        StudentCountry:'{{datalayer_StudentCountry}}',
+                        StudentState:'{{datalayer_StudentState}}',
+                        StudentCity:'{{datalayer_StudentCity}}',
+                        StudentPinCode:'{{datalayer_StudentPinCode}}',
+                        
+                        StudentEncryptedEmailID:'{{datalayer_StudentEncryptedEmailID}}',
+                        StudentName:'{{datalayer_StudentName}}',
+                        CouponCode:'{{datalayer_CouponCode}}',
+                        CampaignCode:'{{datalayer_CampaignCode}}',
+
+                        articleName:'{{datalayer_articleName}}',
+                        articleCategory:'{{datalayer_articleCategory}}',
+                        articleSubCategory:'{{datalayer_articleSubCategory}}'
+                        
+                    });
+    </script>
+    <script type="application/ld+json">
+		{
+		 "@context": "https://schema.org",
+		 "@type": "Organization",
+		 "name": "NIIT",
+		 "URL": "https://www.niit.com/india/",
+		 "logo": "https://www.niit.com/india/themes/custom/nexus/assets/images/NIIT_logomobile.png"
+		}
+	</script>
+    {{ faq_json_script|raw }}
+    {{ breadcrumb_script|raw }}
+
+    {% if coursecampaigncode == 'BTCSTCK' %}
+
+		<!-- Quora Pixel Code (JS Helper) -->
+		<script>
+		!function(q,e,v,n,t,s){if(q.qp) return; n=q.qp=function(){n.qp?n.qp.apply(n,arguments):n.queue.push(arguments);}; n.queue=[];t=document.createElement(e);t.async=!0;t.src=v; s=document.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t,s);}(window, 'script', 'https://a.quora.com/qevents.js');
+		qp('init', 'd71866b2433142e7a1156082898d0a0d');
+		qp('track', 'ViewContent');
+		</script>
+		<noscript><img height="1" width="1" style="display:none" src="https://q.quora.com/_/ad/d71866b2433142e7a1156082898d0a0d/pixel?tag=ViewContent&noscript=1"/></noscript>
+		<!-- End of Quora Pixel Code -->
+
+		<!-- Facebook Pixel Code Start -->
+		<script>
+		  !function(f,b,e,v,n,t,s)
+		  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+		  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+		  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+		  n.queue=[];t=b.createElement(e);t.async=!0;
+		  t.src=v;s=b.getElementsByTagName(e)[0];
+		  s.parentNode.insertBefore(t,s)}(window, document,'script',
+		  'https://connect.facebook.net/en_US/fbevents.js');
+		  fbq('init', '264523044782335');
+		  fbq('track', 'PageView');
+		</script>
+		<noscript><img height="1" width="1" style="display:none"
+		  src="https://www.facebook.com/tr?id=264523044782335&ev=PageView&noscript=1"
+		/></noscript>
+		<!-- End Facebook Pixel Code -->
+
+        <!-- Global site tag (gtag.js) start -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-627052457"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'AW-627052457');
+        </script>
+        <!-- Global site tag (gtag.js) End -->
+
+
+	{% endif %} 
+<!-- Hotjar Tracking Code for https://sandbox-qa.niit.com/india/ -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:2678896,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script> 
+</head>
+<body{{ attributes }}>
+<div class="formAutoRedirectLoaderSec"></div>
+
+
+<div id="pageTitleAll" style="display:none;">{{ pageTitle }}</div>
+<div id="pageNodeId" style="display:none;">{{ pageNodeId }}</div>
+<div id="pageNodeBundle" style="display:none;">{{ pageNodeBundle }}</div>
+<div id="formStudentName" style="display:none;">{{ formStudentName }}</div>
+<div id="formStudentEmail" style="display:none;">{{ formStudentEmail }}</div>
+<div id="formStudentMobile" style="display:none;">{{ formStudentMobile }}</div>
+<div id="formStudentCity" style="display:none;">{{ formStudentCity }}</div>
+<div id="formStudentState" style="display:none;">{{ formStudentState }}</div>
+<div id="formStudentDOB" style="display:none;">{{ formStudentDOB }}</div>
+<div id="gaCookie" style="display:none;">{{ gaCookie }}</div>
+<div id="pageCourseCode" style="display:none;">{{ CourseCode }}</div>
+<div id="pageModeOfDelevery" style="display:none;">{{ ModeOfDelevery }}</div>
+<div id="coursefeedetails" style="display:none;">{{ coursefeedetails }}</div>
+
+ <!-- Google Tag Manager (noscript) -->
+ 
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TNCKW3M"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+{{ page_top }}
+{{ page }}
+{{ page_bottom }}
+<js-bottom-placeholder token="{{ placeholder_token|raw }}">
+
+  <!-- My application modal Start -->
+  {{ user_application_myModal|raw }}
+  <!-- My application modal End --> 
+  {#  {{ user_modal_form|raw }} #}
+  <div id="beforelogin-regform"></div>
+  <!-- My Course modal Popup --> 
+  {# {{ myCourseUserPopUpModal|raw }} #}
+  <div id="mycourse-userpopup"></div>
+<div class="loading-modal"></div>
+
+{% if coursecampaigncode == 'BTCSTCK' %}
+
+	<!-- Linkedin Pixel Code Start -->
+	<script type="text/javascript">
+	_linkedin_partner_id = "2287452";
+	window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+	window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+	</script><script type="text/javascript">
+	(function(){var s = document.getElementsByTagName("script")[0];
+	var b = document.createElement("script");
+	b.type = "text/javascript";b.async = true;
+	b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+	s.parentNode.insertBefore(b, s);})();
+	</script>
+	<noscript>
+	<img height="1" width="1" style="display:none;" alt="" src="https://px.ads.linkedin.com/collect/?pid=2287452&fmt=gif" />
+	</noscript>
+	<!-- Linkedin Pixel Code End -->
+
+{% endif %} 
+
+<!--For Digital marketing page Student's project section on click flip card -->
+<script type="text/javascript">
+jQuery(document).ready(function($){
+var cards = document.querySelectorAll('.tcard_flipflop');
+
+[...cards].forEach((tcard_flipflop)=>{
+  tcard_flipflop.addEventListener( 'click', function() {
+    tcard_flipflop.classList.toggle('is-flipped');
+  });
+});
+});
+</script>
+
+<!--  Widget Code -->
+<!-- <script type="text/javascript">((function () {
+    setTimeout(function(){
+        var load=function(){
+            var script="https://s.acquire.io/a-7591e/init.js?full";
+            var x=document.createElement('script');
+            x.src=script;x.async=true;
+            var sx=document.getElementsByTagName('script')[0];
+            sx.parentNode.insertBefore(x, sx);
+        };
+        if(document.readyState === "complete")
+            load();
+        else if (window.addEventListener)
+            window.addEventListener('load',load,false);
+        else if (window.attachEvent) {
+            window.attachEvent("onload", load);
+        }
+    }, 5000);
+})());</script> -->
+<script>
+    var ravenUrl='https://cdn.ravenjs.com/3.26.2/raven.min.js';
+    var ravenProdConfig='{{ sentry_url }}';
+
+    var s = document.createElement( 'script' );
+              s.setAttribute( 'src', ravenUrl );
+              s.setAttribute( 'crossorigin', 'anonymous' );
+              s.onload=RavenCallback;
+              document.body.appendChild( s );
+
+    var uid = '654';//jQuery('#currentuid').val();
+
+    function RavenCallback(){         
+        Raven.config(ravenProdConfig).install();
+        Raven.setUserContext({
+            id : '{{ user_event }}',
+        })
+    }
+
+    var sp=sp||[];(function(){var e=["init","identify","track","trackLink","pageview"],t=function(e){return function(){sp.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var n=0;n<e.length;n++)sp[e[n]]=t(e[n])})(),sp.load=function(e,o){sp._endpoint=e;if(o){sp.init(o)};var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src=("https:"===document.location.protocol?"https://":"http://")+"events.niit-mts.com/sp-v2.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(t,n)};
+    sp.load("{{ event_url }}", {track_pageview: false});
+
+    var lastAccessObj = new Object()
+    lastAccessObj.uid = '{{ user_event }}';
+    lastAccessObj.vid = '{{ event_nid }}';//jQuery('#currentuid').val()
+    lastAccessObj.ev = "view";
+    lastAccessObj.page = '{{ datalayer_PageCategory }}';
+    lastAccessObj.cgrp = '{{ cgrp }}';
+    lastAccessObj.scgrp = '{{ scgrp }}';
+    lastAccessObj.category = '{{ category }}';
+    lastAccessObj.pageurl = window.location.href;
+    {# console.log(lastAccessObj); #}
+    
+    sp.track('view', lastAccessObj);
+
+</script>
+
+<script type="text/javascript">
+    jQuery( document ).ready(function() {
+        setTimeout(function(){
+            var clientID = jQuery('#gaCookie').text();
+            if(clientID == '.'){
+                    jQuery.ajax({
+                    url : '/india/get_ga_client_id',
+                    type: 'POST',
+                    success: function(response) {
+                        if(response) {
+                            $("#gaCookie").empty();
+                            $("#gaCookie").append(response.data);
+                        }
+                    }
+                });
+            }
+        }, 5000);
+	});
+</script>
+</body>
+</html>

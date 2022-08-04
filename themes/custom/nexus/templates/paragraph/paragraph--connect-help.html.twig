@@ -1,0 +1,75 @@
+{% set field_connect_label=content.field_connect_label[0]['#context']['value'] %}
+{% set field_connect_description=content.field_connect_description[0]['#context']['value'] %}
+{% set field_connect_icon=content.field_connect_icon[0] %}
+{% set field_connect_cta_title=content.field_connect_cta[0]['#title'] %}
+{% set field_connect_cta_url=content.field_connect_cta[0]['#url']|render %}
+
+{% if content.field_form == 'Alumni'%}
+  {% set alumniType = 'alumni' %}
+{% endif %}
+{% if content.field_form == 'Need Help'%}
+  {% set needhelpType = 'needhelp' %}
+{% endif %}
+
+
+<div class="col-xs-12 col-sm-6 notsure-box connectborder">
+    <div class="headding text-center colorwhite">
+        <h2>{{ field_connect_label }}</h2>
+        <span></span>
+    </div>
+    <div class="detailbox">
+        <h2><img src="{{ field_connect_icon }}" class="scale"></h2>
+        <p>{{ field_connect_description }}</p>
+          
+          {% if content.field_form[0]['#title'] == 'Alumni' %}
+           {% set alumniType = 'alumniId' %}
+           
+           <a class="{{alumniType}} morebtn" href="{{field_connect_cta_url}}" data-toggle="modal" data-target="#{{alumniType}}" tabindex="0"  > {{ field_connect_cta_title }}</a> 
+
+          {% endif %}
+              
+          {% if content.field_form[0]['#title'] == 'Need Help' %}
+           {% set needHelp = 'needHelpId' %}
+           <a class="{{needHelp}} morebtn" href="{{field_connect_cta_url}}" data-toggle="modal" data-target="#{{needHelp}}" tabindex="0"  > {{ field_connect_cta_title }}</a> 
+
+          {% endif %}         
+
+    </div>
+</div> 
+
+
+
+<!-- Need  form --> 
+  <div class="modal fade" id="{{needHelp}}" role="dialog">
+    <div class="modal-dialog modal-md">    
+      <!-- Modal content-->
+      <div class="modal-content">     
+        <div class="modal-header text-center">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3>Need Help</h3>       
+        </div>      
+        <div class="modal-body moreinfo_container">
+          {{ drupal_entity('webform','center_need_help_contact') }}  
+        </div>        
+      </div>      
+    </div>
+  </div>    
+<!-- Need end -->
+
+
+<!-- Alumni connect form --> 
+  <div class="modal fade" id="{{alumniType}}" role="dialog">
+    <div class="modal-dialog modal-md">    
+      <!-- Modal content-->
+      <div class="modal-content">     
+        <div class="modal-header text-center">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3>Alumni Connect</h3>       
+        </div>      
+        <div class="modal-body moreinfo_container">
+          {{ drupal_entity('webform','connect_to_center') }}  
+        </div>        
+      </div>      
+    </div>
+  </div>    
+<!-- Alumni connect end -->

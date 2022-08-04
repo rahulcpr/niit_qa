@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.student_project_showcase.field_project_references
+    - field.field.paragraph.student_project_showcase.field_project_showcase_label
+    - paragraphs.paragraphs_type.student_project_showcase
+id: paragraph.student_project_showcase.default
+targetEntityType: paragraph
+bundle: student_project_showcase
+mode: default
+content:
+  field_project_references:
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_project_showcase_label:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

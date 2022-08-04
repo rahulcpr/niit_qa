@@ -1,0 +1,5 @@
+name: NIIT Course Details API
+description: Course details page where all the fileds data render for this content type.
+package: Niit Custom API
+type: module
+core: 8.x

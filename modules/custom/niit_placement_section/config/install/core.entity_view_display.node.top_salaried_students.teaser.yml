@@ -1,0 +1,40 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.top_salaried_students.body
+    - field.field.node.top_salaried_students.field_company_name
+    - field.field.node.top_salaried_students.field_course
+    - field.field.node.top_salaried_students.field_designation
+    - field.field.node.top_salaried_students.field_student_image
+    - field.field.node.top_salaried_students.field_student_name
+    - node.type.top_salaried_students
+  module:
+    - text
+    - user
+id: node.top_salaried_students.teaser
+targetEntityType: node
+bundle: top_salaried_students
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden:
+  field_company_name: true
+  field_course: true
+  field_designation: true
+  field_student_image: true
+  field_student_name: true

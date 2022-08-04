@@ -1,0 +1,43 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.tips_of_the_day.field_active
+    - field.field.paragraph.tips_of_the_day.field_date
+    - field.field.paragraph.tips_of_the_day.field_tips
+    - paragraphs.paragraphs_type.tips_of_the_day
+  module:
+    - datetime
+    - text
+id: paragraph.tips_of_the_day.default
+targetEntityType: paragraph
+bundle: tips_of_the_day
+mode: default
+content:
+  field_active:
+    weight: 4
+    label: hidden
+    settings:
+      format: boolean
+      format_custom_true: ''
+      format_custom_false: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_date:
+    weight: 2
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: placement_project_date
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_tips:
+    weight: 3
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+hidden: {  }

@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: assured_job_slider_placement
+label: 'Assured Job Slider Placement'
+icon_uuid: null
+description: 'Job placement assured job slider.'
+behavior_plugins: {  }

@@ -1,0 +1,119 @@
+<!-- Footer Start -->
+<footer>
+   <section class="container">
+       <div class="row landing-page-footer">
+           <div class="col-xs-12 col-lg-12">
+               <div class="row">
+                <div class="col-md-4">
+                  {% if node.field_click_to_call_phone_number.value is not empty %}
+                    <div class="phone-icon icon-data"><i class="fa fa-phone-square"></i>  {{ node.field_click_to_call_phone_number.value }}</div>
+                  {% endif %}
+                  {% if node.field_footer_email.value is not empty %}
+                    <div class="mt-4 email-icon icon-data"><i class="fa fa-envelope"></i> {{ node.field_footer_email.value }}</div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  
+                </div>
+                <div class="col-md-4">
+                  <div class="social-icons">
+                       <h2 class="mt-0 linkhead">Follow Us:</h2>
+                       <ul>
+                           <li>
+                               <a href="https://www.facebook.com/NIIT4u/"
+                                   target="_blank" rel="nofollow">
+                                   <i class="fab fa-facebook-f"></i>
+                               </a>
+                           </li>
+                           <li>
+                               <a href="https://twitter.com/NIITLtd"
+                                   class="twi" target="_blank" rel="nofollow">
+                                   <i class="fab fa-twitter"></i>
+                               </a>
+                           </li>
+                           <li>
+                               <a href="https://www.youtube.com/channel/UCtE0wET2olVOwVw7ELCP35w"
+                                   class="tube"
+                                   target="_blank" rel="nofollow">
+                                   <i class="fab fa-youtube"></i>
+                               </a>
+                           </li>
+                           <li>
+                               <a href="https://www.linkedin.com/company/niit-limited"
+                                   class="lin"
+                                   target="_blank" rel="nofollow">
+                                   <i class="fab fa-linkedin-in"></i>
+                               </a>
+                           </li>
+                       </ul>
+                   </div>
+                </div>                   
+               </div>
+           </div>
+       </div>
+   </section>
+</footer>
+<!--fofooter-listlinkoter-->
+<!-- listing see more and less more start here--->
+
+
+<!-- listing see more and less more start here---->
+<div class="overlay4"></div>
+<div class="tcbox" id="review" style="display:none;">
+    <span class="closetcpop">x</span>
+    <div class="home-searchbar">
+        <div class="searchbar-top">
+            <form action="/india/search/content" method="get"
+                class="search-content-form">
+                <!-- <div class="regular-growth">
+                    <div class="select1">
+                        <select id="select-box1"
+                            class="select-styled1"
+                            onChange="DisplayDiv(this.value);"
+                            name="f[0]">
+                            <option value="course_category:6">
+                                College Students
+                            </option>
+                            <option value="course_category:7">
+                                Graduates
+                            </option>
+                            
+                            <option value="course_category:8">
+                                Working Professionals
+                            </option> 
+            <option value="course_period:241">
+                                Short Term Courses
+                            </option>
+                            <option value="">All</option>
+                        </select>
+                    </div>
+                </div> -->
+                <input name="keys" id="textfield"
+                    class="searchbar-top-style"
+                    placeholder="Search for Courses"
+                    type="text">
+                <button id="button" class="homesearch" type="submit"
+                    style="text-align: center; display: inline-block; line-height: 70px;">
+                    Search
+                </button>
+            </form>
+        </div>
+        <div class="clr"></div>
+    </div>
+</div>
+
+
+<div class="back-top"><a href="javascript://" title="Top"><img
+src="/india/themes/custom/nexus/assets/images/top-icon.png"
+class="scale" alt="Top"></a></div>
+<div class="modal fade check_eligibility_display_popup" id="check_eligibility_display" role="dialog">
+<div class="modal-dialog">
+
+  <div class="modal-content">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <div class="modal-body full_data">
+    </div>
+  </div>
+  
+</div>
+</div>

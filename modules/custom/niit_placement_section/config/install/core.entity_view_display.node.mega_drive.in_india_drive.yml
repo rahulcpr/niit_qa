@@ -1,0 +1,137 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.in_india_drive
+    - field.field.node.mega_drive.body
+    - field.field.node.mega_drive.field_after_event_images
+    - field.field.node.mega_drive.field_center
+    - field.field.node.mega_drive.field_drive_city
+    - field.field.node.mega_drive.field_drive_date
+    - field.field.node.mega_drive.field_drive_video_url
+    - field.field.node.mega_drive.field_event_drive_gallery
+    - field.field.node.mega_drive.field_live_streaming_url
+    - field.field.node.mega_drive.field_month
+    - field.field.node.mega_drive.field_recruiter
+    - field.field.node.mega_drive.field_venue
+    - field.field.node.mega_drive.field_venue_latitude
+    - field.field.node.mega_drive.field_venue_longitude
+    - field.field.node.mega_drive.field_video_thumbnail
+    - field.field.node.mega_drive.field_year
+    - image.style.medium
+    - node.type.mega_drive
+  module:
+    - datetime
+    - entity_reference_revisions
+    - image
+    - text
+    - user
+id: node.mega_drive.in_india_drive
+targetEntityType: node
+bundle: mega_drive
+mode: in_india_drive
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_drive_city:
+    weight: 112
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_drive_date:
+    weight: 105
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: html_datetime
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_drive_video_url:
+    weight: 110
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_event_drive_gallery:
+    type: entity_reference_revisions_entity_view
+    weight: 111
+    label: hidden
+    settings:
+      view_mode: placement_mega_drive_gallery
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_live_streaming_url:
+    weight: 107
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_recruiter:
+    weight: 106
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_venue:
+    weight: 102
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_venue_latitude:
+    weight: 103
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_venue_longitude:
+    weight: 104
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_video_thumbnail:
+    weight: 108
+    label: hidden
+    settings:
+      image_style: medium
+    third_party_settings: {  }
+    type: image_url
+    region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  share_everywhere:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_after_event_images: true
+  field_center: true
+  field_month: true
+  field_year: true

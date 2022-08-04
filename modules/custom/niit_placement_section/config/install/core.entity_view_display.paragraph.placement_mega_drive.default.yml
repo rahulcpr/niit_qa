@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.placement_mega_drive.field_mega_drive_name
+    - paragraphs.paragraphs_type.placement_mega_drive
+id: paragraph.placement_mega_drive.default
+targetEntityType: paragraph
+bundle: placement_mega_drive
+mode: default
+content:
+  field_mega_drive_name:
+    weight: 0
+    label: hidden
+    settings:
+      view_mode: placement_mega_drive
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+    region: content
+hidden: {  }

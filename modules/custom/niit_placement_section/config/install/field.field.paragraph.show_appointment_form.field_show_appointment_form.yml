@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_show_appointment_form
+    - paragraphs.paragraphs_type.show_appointment_form
+id: paragraph.show_appointment_form.field_show_appointment_form
+field_name: field_show_appointment_form
+entity_type: paragraph
+bundle: show_appointment_form
+label: 'Show Appointment form'
+description: 'Show Appointment form'
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

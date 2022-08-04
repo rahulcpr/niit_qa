@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.mega_drive_image_video_gallery.field_drive_images
+    - field.field.paragraph.mega_drive_image_video_gallery.field_gallery_video
+    - paragraphs.paragraphs_type.mega_drive_image_video_gallery
+  module:
+    - image
+id: paragraph.mega_drive_image_video_gallery.default
+targetEntityType: paragraph
+bundle: mega_drive_image_video_gallery
+mode: default
+content:
+  field_drive_images:
+    type: image
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+  field_gallery_video:
+    weight: 0
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

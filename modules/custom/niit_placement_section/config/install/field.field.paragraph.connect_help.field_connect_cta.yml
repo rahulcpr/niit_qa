@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_connect_cta
+    - paragraphs.paragraphs_type.connect_help
+  module:
+    - link
+id: paragraph.connect_help.field_connect_cta
+field_name: field_connect_cta
+entity_type: paragraph
+bundle: connect_help
+label: 'Connect CTA'
+description: 'Connect CTA'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 1
+field_type: link

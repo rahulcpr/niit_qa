@@ -1,0 +1,81 @@
+<section class="ProductBox blog-details-wrp knowledgee-centre">
+	
+	<div class="container">
+		<div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumbs">
+                    <ul>
+                        <li><a href="\">Home </a> </li>
+                        <li><a href="\india\knowledge-center"> / Knowledge Center </a></li>  
+                       	<li> / {{ node.label }} </li> 
+
+                    </ul>
+                </div>
+            </div>     
+        </div>
+
+        <div class="row">
+            <div class="col-md-9">
+		
+		<div class="blog-details">
+		<div class="imgmain">
+		{{ content.field_banner }} 
+		</div>
+
+		<div class="resp-tab" id="horizontalTab2">
+		<h1> {{ node.label }}</h1>
+
+        <p class="authorname">
+          <strong>
+          {{ content.field_faculty_name }} {{ content.field_author_time_stamp }}</strong> 
+        </p> 
+
+		{{ content.body }}
+		</div>
+		</div>
+
+		</div>
+		<div class="col-md-3">
+		<div class="GetinTouch">
+			{{ drupal_entity('webform','news_subscription') }}
+		</div>
+		 	 
+		  {{ drupal_view('knowledge_center_blog_tag', 'block_1') }}  
+		 
+
+			</div>
+		</div>
+	</div>
+			
+</section>
+
+<section class="sliderinner-wrap sliderinnerbg cat-popular slidetrending job_courses">
+                <div class="container">
+                    <div class="headding text-center">
+                        <h2>{{ related_blog }}</h2>
+                        <span class="underline"></span>
+                    </div>
+        <div class="tab-content">
+			<div class="arrowslick slider4aply">
+				{% set type = node.field_blog_type.target_id %}
+
+				{{ drupal_view('related_blogs', 'block_1', type) }}	
+			</div>
+		</div>
+	</div>	
+</section>
+
+
+    <section class="sliderinner-wrap sliderinnerwhitebg cat-popular slidetrending job_courses">
+                    <div class="container">
+                        <div class="headding text-center">
+                            <h2> {{ suggested_program }}</h2>
+                            <span class="underline"></span>
+                        </div>
+            <div class="tab-content">
+    			<div class="arrowslick slider4aply">
+            	{{ drupal_view('suggested_program_for_kc', 'block_1') }} 
+            </div>
+    		</div>
+    	</div>	
+    </section> 

@@ -1,0 +1,72 @@
+<?php
+
+use Drupal\Core\Database\Database;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
+
+/**
+* Implementation of hook_schema().
+*/
+function niit_multistep_form_schema() {
+  $schema['custom_multistep_form_table'] = [
+    'description' => 'Form 1A and 1B Query Optimization.',
+    'fields' => [
+      'id' => [
+        'description' => 'Primary key.', 
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'campaign_code' => [
+        'description' => 'Campaign Code',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        // 'default' => '',
+      ],  
+      'event_name' => [
+        'description' => 'Event Name',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        // 'default' => '',
+      ], 
+      'screen_level' => [
+        'description' => 'Screen Level',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        // 'default' => '',
+      ],
+      'intent' => [
+        'description' => 'Intent',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        // 'default' => '',
+      ],  
+      'screen_id' => [
+        'description' => 'Screen ID',
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        // 'default' => '',
+      ], 
+      'fields_data' => [
+        'description' => 'Form fields Data - json format',
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+      ],     
+    ],
+    'primary key' => ['id'],
+  ];
+  return $schema;
+}
+
+/**
+* Implementation of hook_uninstall().
+*/
+function niit_multistep_form_uninstall() {
+  // Remove tables.
+  drupal_uninstall_schema('custom_multistep_form_table');
+}

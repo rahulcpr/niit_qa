@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.center_icon_text_view
+    - field.field.paragraph.recruitment_job_assured_icons.field_icon_image
+    - field.field.paragraph.recruitment_job_assured_icons.field_icon_title
+    - paragraphs.paragraphs_type.recruitment_job_assured_icons
+  module:
+    - image
+id: paragraph.recruitment_job_assured_icons.center_icon_text_view
+targetEntityType: paragraph
+bundle: recruitment_job_assured_icons
+mode: center_icon_text_view
+content:
+  field_icon_image:
+    weight: 2
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+  field_icon_title:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

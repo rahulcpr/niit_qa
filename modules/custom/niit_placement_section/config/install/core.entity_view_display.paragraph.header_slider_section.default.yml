@@ -1,0 +1,62 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.header_slider_section.field_image_description
+    - field.field.paragraph.header_slider_section.field_label
+    - field.field.paragraph.header_slider_section.field_mobile_image
+    - field.field.paragraph.header_slider_section.field_slider_cta
+    - field.field.paragraph.header_slider_section.field_slider_image
+    - paragraphs.paragraphs_type.header_slider_section
+  module:
+    - image
+    - link
+id: paragraph.header_slider_section.default
+targetEntityType: paragraph
+bundle: header_slider_section
+mode: default
+content:
+  field_image_description:
+    weight: 2
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_label:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_mobile_image:
+    weight: 4
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+  field_slider_cta:
+    weight: 3
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+    region: content
+  field_slider_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+hidden: {  }

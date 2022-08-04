@@ -1,0 +1,14 @@
+ms_ajax_form_popup.page:
+  path: 'multi-step-ajax-form-popup'
+  defaults:
+    _form: '\Drupal\ms_ajax_form_popup\Form\MultiStepExampleForm'
+    _title: 'Welmultistep form page'
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_popup.page2:
+  path: 'admin/multi-step-ajax-form-popup'
+  defaults:
+    _form: '\Drupal\ms_ajax_form_popup\Form\MultiStepExampleForm'
+    _title: 'Welmultistep form page'
+  requirements:
+    _permission: 'access content'

@@ -1,0 +1,1135 @@
+<script>
+    window.courseTopCategory = "{{ node.field_top_course_category[0].entity.uuid.value }}";
+    window.courseId = "{{ node.uuid.value }}";
+    window.searchCenter = true;
+    //Code implemented for SEO purspective-- GTM
+    window.dataLayer = window.dataLayer || []; 
+    window.dataLayer.push({ 
+        'event': 'courseDetails', 
+        'totalDuration': '{{ node.field_course_duration.value }}',   //dynamic value should be passed 
+        'courseFees': '{{ CenterBatchFee | number_format }}',  //dynamic value 
+        'pageCategory': '{{ pageCategory }}',   //dynamic category should be passed 
+        'previouspagePath': '{{ previous_url }}',  //dynamic value 
+        'nextpagePath': '',              //dynamically Full URL should be passed 
+        'courseType': '{{ node.field_course_type.value }}',              //dynamically value should be passed 
+        });
+</script>
+<section class="ProductBox">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumbs">
+                    <ul>
+                        <li>
+                            <a href="/">Home / </a>
+                        </li>
+                        <li>
+                            <a id="courseCategory"
+                                href="{{ request_path }}{{ breadcrub }}">{{ node.field_top_course_category[0].entity.title.value }}
+                                /</a> 
+                        </li>
+                        <li>{{ label }}</li> 
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="row CollegeBox">
+                    <div class="leftCollege col-sm-5">
+                        <div class="imgBox">
+                            {% if node.field_is_show_nshap_image.value == 1 %}
+                                {{ content.field_n_shap_image }}
+                            {% else %}
+                                {{ content.field_course_image }}
+                            {% endif %}
+                        </div>
+                        <div class="btnBox">
+                            {% if node.field_course_demo_video.value %}
+                                <div class="BrochureBox">
+                                    <a href="javascript:;" data-toggle="modal"
+                                        data-target="#courseDemoModal">Take
+                                        Course Demo
+                                    </a>
+                                </div>
+                            {% endif %} 
+                            <div class="EnrollNow disabled text-center">
+                                <p>Course offered at select NIIT Centres</p>                        
+                            </div>
+                            {# {% if node.field_enrollment_open.value == 1 %}
+                                <div {% if CenterBatchFee == 0 %} class="EnrollNow disabled" {% else %} class="EnrollNow" {% endif %}>
+                                    <a href="javascript:void(0);" {% if CenterBatchFee != 0 %} onclick="showEcomPoPup('{{ node.id }}');" {% endif %}>Enroll Now!</a>
+                                    {% if CenterBatchFee == 0 %}
+                                        <p>This course is not accepting online registrations at this time</p>
+                                    {% endif %}
+                            </div>  
+                            {% else %}
+                                <div {% if CenterBatchFee == 0 %} class="EnrollNow disabled" {% else %} class="EnrollNow" {% endif %}>
+                                <a {% if CenterBatchFee != 0 %} href="{{ node.field_enroll_now_link.0.value }}" {% endif %}>Enroll Now!</a>
+                                    {% if CenterBatchFee == 0 %}
+                                        <p>This course is not accepting online registrations at this time</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %} #} 
+                            
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="rightCollege col-sm-7">
+                        <h1>{{ label }}</h1>
+                        
+                    
+                        <div class="rating-wrap" >
+                            {#<div class="starGreen">&nbsp;</div>#}
+                            <div class="handBox">
+                                {% if node.field_course_rating.value  %}
+                                      {% set starRated = node.field_rating.value %}
+                                      {% set k = 5 - starRated %}
+
+                                    {# Match integer  #}
+                                    {% if starRated matches '/^\\d+$/' %}
+                                        <ul class="rating-review">
+                                          {% for i in 1..starRated %}
+                                            <li style="background-image: url('/india/themes/custom/nexus/assets/js/sth.gif');"></li> 
+                                          {% endfor %}
+                                            {% if starRated != 5 %}
+                                              {% for i in 1..k %}
+                                                <li style="background-image: url('/india/themes/custom/nexus/assets/js/nst.gif');"></li>
+                                                {% endfor %}
+                                            {% endif %}
+                                          </ul>
+                                      {% else %}
+                                          <ul class="rating-review">
+                                          {% set starRated = (starRated |round(0, 'floor')) %}
+                                          {% set k = 5 - starRated - 1 %}
+
+                                          {% for i in 1..starRated %}
+                                            <li style="background-image: url('/india/themes/custom/nexus/assets/js/sth.gif');"></li> 
+                                          {% endfor %}
+                                            <li style="background-image: url('/india/themes/custom/nexus/assets/js/sth-nst.gif');"></li>
+                                            {% if starRated != 5 %}
+                                              {% for i in 1..k %}
+                                                <li style="background-image: url('/india/themes/custom/nexus/assets/js/nst.gif');"></li>
+                                                {% endfor %}
+                                            {% endif %}
+                                          </ul>
+                                      {% endif %}
+                                    <a href="#" id="rating-and-review-head">
+                                        <ul>
+                                            <li>{{ node.field_course_rating.value }} Ratings  | </li>
+                                            <li>{{ node.field_total_reviews.value }} Student reviews | </li>
+                                            <li><span>Rated</span> {{ node.field_rated_text.value }} <img src="/india/themes/custom/nexus/assets/images/hand-img.png" class="handImg"></li>
+                                            <div class="clr"></div>
+                                        </ul></a>
+                                    {% endif %}
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+                    
+
+                        
+                        <div class="linkBox">
+                            <ul>
+                                <li>
+                                    <a href="tel:{{ node.field_click_to_call_phone_number.value }}">
+                                        <img
+                                            src="{{ request_path }}themes/custom/nexus/assets/images/call.png" alt="Connect with NIIT" 
+                                            width="18" height="18"> Click to
+                                        Call</a>
+                                </li>
+                                <li>
+                                    {% if brochur_flag==TRUE %}
+                                        <a href="{{ brochur_path }}"
+                                            target="_blank">
+                                            <img
+                                                src="{{ request_path }}themes/custom/nexus/assets/images/download.png"
+                                                width="19" height="19"> View
+                                            Brochure</a>
+                                    {% endif %}
+                                </li>
+                                <div class="clr"></div>
+                            </ul>
+                        </div>
+                        <div class="Overview">
+                            <h2>Overview</h2>
+                            <ul {% if CenterBatchFee == 0 %} class="overviewTbl" {% else %} class="" {% endif %}>
+                                {% if node.field_course_duration.value %}
+                                    <li>Total Duration
+                                        <span>{{ node.field_course_duration.value }}</span>
+                                    </li>
+                                {% endif %}
+                                <!--
+                                                -->
+                                {% if CenterBatchFee != 0 %}
+                                    <li>Course Fees
+                                            <span class="PriceWrapp">
+                                            <small class="FeeTooltip">
+                                                <i class="fa fa-info-circle"></i>
+                                                <small class="tip_popup">Actual Fees may vary, depending upon your centre selection. </small>
+                                            </small> 
+                                                ₹ <small id="price"> {{ CenterBatchFee | number_format }}</small>
+                                            <p class="excluding_gst">( Excluding GST @ 18% )</p>
+                                            </span>
+                                    </li>
+                                {% endif %}
+                                <!--
+                                                -->
+                                {% if node.field_course_type.value %}
+                                    <li>Course Type
+                                        <span>{{ node.field_course_type.value }}</span>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% if node.field_overview_detail_icons|length > 0 %}
+                            <div class="GlobalBox">
+                                <div class="row">
+                                    {% for i in 0..(node.field_overview_detail_icons|length -1) %}
+                                        <div class="feature col-xs-6">
+                                            <div class="circleBox">
+                                                <img
+                                                    src="{{ file_url(node.field_overview_detail_icons[i].entity.field_icon_image.entity.fileuri) }}" alt="{{ node.field_overview_detail_icons[i].entity.field_icon_image.alt }}">
+                                            </div>
+                                            <h2>{{ node.field_overview_detail_icons[i].entity.title.value }}</h2>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="btnBoxformobile">
+                            {% if node.field_course_demo_video.value %}
+                                <div class="BrochureBox">
+                                    <a href="javascript:;" data-toggle="modal"
+                                        data-target="#courseDemoModal">Take
+                                        Course
+                                        Demo
+                                    </a>
+                                </div>
+                            {% endif %}
+                            <div class="EnrollNow disabled text-center">
+                                <p>Course offered at select NIIT Centres</p>                        
+                            </div>
+                           {#  {% if node.field_enrollment_open.value == 1 %}
+                                <div {% if CenterBatchFee == 0 %} class="EnrollNow disabled" {% else %} class="EnrollNow" {% endif %}>
+                                    <a href="javascript:void(0);" {% if CenterBatchFee != 0 %} onclick="showEcomPoPup('{{ node.id }}');" {% endif %}>Enroll Now!</a>
+                                    {% if CenterBatchFee == 0 %}
+                                        <p>This course is not accepting online registrations at this time</p>
+                                    {% endif %}
+                            </div>  
+                            {% else %}
+                                <div {% if CenterBatchFee == 0 %} class="EnrollNow disabled" {% else %} class="EnrollNow" {% endif %}>
+                                <a {% if CenterBatchFee != 0 %} href="{{ node.field_enroll_now_link.0.value }}" {% endif %}>Enroll Now!</a>
+                                    {% if CenterBatchFee == 0 %}
+                                        <p>This course is not accepting online registrations at this time</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}  #}
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="Advance">
+                            <ul>
+                                <li>{{ node.field_course_short_description[0].value }}</li>
+                                <li>{{ node.field_course_short_description[1].value }}</li>
+                                <li>{{ node.field_course_short_description[2].value }}</li>
+                                <li>{{ node.field_course_short_description[3].value }}</li>
+                                <li>{{ node.field_course_short_description[4].value }}</li>
+                                {#<a href="#">Read More</a>#}
+                            </ul>
+                            {{ node.field_seat_availability_and_emi_.value | raw }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="shareBox">
+                    <h2>Share</h2>
+                    <ul>
+                        <!--<li>
+                            <a target="_blank" href="mailto: ">
+                                <img src="{{ request_path }}themes/custom/nexus/assets/images/outlook.jpg" border="0">
+                            </a>
+                        </li>-->
+                        <li>
+                            <a target="_blank"
+                                href="https://www.facebook.com/sharer/sharer.php?u={{ request_protocol_domain ~ request_path_uri }}">
+                                <img
+                                    src="{{ request_path }}themes/custom/nexus/assets/images/facebook.jpg" alt="Share on Facebook" 
+                                    border="0">
+                            </a>
+                        </li>
+                        <li>
+                            <a target="_blank"
+                                href="https://twitter.com/intent/tweet?url={{ request_protocol_domain ~ request_path_uri }}">
+                                <img
+                                    src="{{ request_path }}themes/custom/nexus/assets/images/twitter.jpg" alt="Share on Twitter"
+                                    border="0">
+                            </a>
+                        </li>
+                        <!-- <li>
+                            <a target="_blank"
+                                href="https://plus.google.com/share?hl=en&url={{ request_protocol_domain ~ request_path_uri }}">
+                                <img
+                                    src="{{ request_path }}themes/custom/nexus/assets/images/google.jpg"
+                                    border="0">
+                            </a>
+                        </li> -->
+                        <li>
+                            <a target="_blank"
+                                href="https://www.linkedin.com/cws/share?url={{ request_protocol_domain ~ request_path_uri }}&token=&isFramed=true">
+                                <img
+                                    src="{{ request_path }}themes/custom/nexus/assets/images/likdin.jpg" alt="Share on Share on LinkedIn" 
+                                    border="0">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="GetinTouch">
+                    {{ drupal_entity('webform','get_in_touch') }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="courseDemoModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Course Demo</h2>
+            </div>
+            <div class="modal-body iframemodal">
+                <button type="button" class="close" data-dismiss="modal"
+                    onclick="stopVideo()">&times;
+                </button>
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item" id="demoVideoIframe"
+                        width="100%" height="315" frameborder="0"
+                        allow="encrypted-media"
+                        allowfullscreen></iframe>
+                </div>
+                <script type="text/javascript">
+                    var url = "{{ node.field_course_demo_video.value }}";
+                    var id = url.split("?v=")[1];
+
+                    var embedlink = "https://www.youtube.com/embed/" + id;
+
+                    var demoYoutube = document.getElementById("demoVideoIframe");
+
+                    demoYoutube.src = embedlink;
+
+                    function stopVideo() {
+                        demoYoutube.src = embedlink;
+                    }
+                </script>
+            </div>
+            <div class="modal-footer text-center">
+                <button type="button" class="btn btn-default"
+                    data-dismiss="modal" onclick="stopVideo()">Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="ProductBox ProductBoxbottom">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <div id="horizontalTab2">
+                    <ul class="resp-tabs-list">
+                        <li>
+                            <a class="active" href="#course">Course Details</a>
+                        </li>
+                        <li>
+                            <a href="#modules">Modules</a>
+                        </li>
+                        <li>
+                            <a href="#eligibility">Eligibility</a>
+                        </li>
+                    </ul>
+                    <div class="resp-tab">
+                        <div id="course">
+                            {{ node.field_course_details.value | raw }}
+                        </div>
+                        <div id="modules">
+                            {{ node.field_course_module.value | raw }}
+                        </div>
+                        <div id="eligibility">
+                            {{ node.field_course_eligibility.value | raw }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="row sli-rit-product">
+                    <div class="box col-xs-12 col-sm-6 col-md-12 alumni_faculty_new arrowslick"
+                        id="starAlumniSectionWholeContainerOnCategoryPage">
+                         {# <div class="StarAlumni">
+                            <h2>Star Alumni</h2>
+                            <section class="Alumni" id="starAlumniSectionOnCategoryPage"> #}
+                        {#{% for i in 0..(node.field_staralumni|length -1) %}#} {#
+                                <div>#} {#
+                                    <div class="photogallery">#} {#
+                                        <div class="imgStarAlumni">#} {#
+                                            <img src="{{ request_path }}themes/custom/nexus/assets/images/star-alumni-img1.jpg">#} {#
+                                            <img src="{{ file_url(node.field_staralumni[i].entity.field_thumbnail_image.entity.fileuri) }}">#} {#
+                                        </div>#} {#
+                                        <h3>{{ node.field_staralumni[0].title[0].value }}</h3>#} {#
+                                        <p>{{ node.field_staralumni[i].entity.field_alumnis_designation.value }}#} {#
+                                            <br/>{{ node.field_staralumni[i].entity.field_alumnis_company_name.value }}#} {#
+                                        </p>#} {#
+                                    </div>#} {#
+                                </div>#} {#{% endfor %}#}
+                        {# </section>
+                    </div> #}
+                    </div>
+                    <div class="box col-xs-12 col-sm-6 col-md-12 start_faculty_new arrowslick "
+                        id="starFacultySectionWholeContainerOnCategoryPage">
+                        {# <div class="StarAlumni">
+                            <h2>Star faculty</h2>
+                            <section class="Faculty" id="starFacultySectionOnCategoryPage"> #}
+                        {#{% for i in 0..(node.field_faculties|length -1) %}#} {#
+                                <div>#} {#
+                                    <div class="photogallery">#} {#
+                                        <div class="imgStarAlumni2">#} {#
+                                            <img src="{{ request_path }}themes/custom/nexus/assets/images/Star-faculty.png">#} {#
+                                        </div>#} {#
+                                        <h3>{{ node.field_faculties[i].entity.title.value }}</h3>#} {#
+                                        <p>{{ node.field_faculties[i].entity.field_faculty_qualification.value }}</p>#} {#
+                                    </div>#} {#
+                                </div>#} {#{% endfor %}#}
+                        {# </section> #}
+                        {# </div> #}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{#</div>#}
+{#</div>#}
+{#</div>#}
+
+{#</div>#}
+{#</div>#}
+{#</div>#}
+{#</section>#}
+<div id="placement-assistance"></div>
+<section class="sliderinner-wrap sliderinnerbg"
+    id="course-placement-company-container" style="display: none;">
+    <div class="container">
+        <div class="headding text-center">
+            <h2>Placements</h2>
+            <div class="recruit">
+                <span>{{ drupal_view('counter_value', 'block_1') }}</span>
+                NIITians making waves in the industry.
+            </div>
+            <span class="underline"></span>
+        </div>
+        <div class="placement-container">
+            <div class="placementcom-course" id="course-placement-company">
+                {# {{ drupal_view('niit_company', 'block_1') }} #}
+                <!-- <div>
+                                          <div class="cus-sayingtxt"><img src="themes/custom/nexus/assets/images/com-logo06.png" width="" height=""></div>
+                                      </div>-->
+            </div>
+            <p style="text-align: center; font-size: 0.9em; margin-top: 3em;">
+                Disclaimer: The aforementioned companies
+                have no obligation to recruit NIIT students each year.</p>
+        </div>
+    </div>
+</section>
+{# {% endif %} #}
+<!--Placements-->
+<!--Testimonials-->
+<section class="module module-testimonials" id="alumni">
+    <div id="alumni-speak-course" class="alumniowl">
+    </div>
+</section>
+<!--Testimonials-->
+{#{{ drupal_view('alumni_speak', 'block_1') }}#}
+
+{% if node.field_course_rating.value %}
+<div id="rating-and-review">
+    <!-- Rating -->
+    
+  {{ content.field_course_rating_and_review }}  
+    <section class="sliderinner-wrap sliderinnerbg">
+        <div class="container" >
+            <div class="headding text-center">
+                <h2>Rating & Reviews</h2>
+                <span class="underline"></span>
+            </div>
+            <div class="product-rating-container row" >
+                {% if (node.field_rating.value or node.field_total_reviews.value) %} 
+                <div class="col-sm-6 srating-box">
+                    <div class="detailbox">
+                        <h2>
+                            <font>{{ node.field_rating.value }}</font>/5</h2>
+                                    {% set starRated = node.field_rating.value %}
+                                    {% set k = 5 - starRated %}
+
+                                    {# Match integer  #}
+                                    {% if starRated matches '/^\\d+$/' %}
+                                        <ul class="webwidget_rating_simple">
+                                          {% for i in 1..starRated %}
+                                            <li style="background-image: url('/india/themes/custom/nexus/assets/js/sth.gif');"></li> 
+                                          {% endfor %}
+                                            {% if starRated != 5 %}
+                                              {% for i in 1..k %}
+                                                <li style="background-image: url('/india/themes/custom/nexus/assets/js/nst.gif');"></li>
+                                                {% endfor %}
+                                            {% endif %}
+                                          </ul>
+                                      {% else %}
+                                          <ul class="webwidget_rating_simple">
+                                          {% set starRated = (starRated |round(0, 'floor')) %}
+                                          {% set k = 5 - starRated - 1 %}
+
+                                          {% for i in 1..starRated %}
+                                            <li style="background-image: url('/india/themes/custom/nexus/assets/js/sth.gif');"></li> 
+                                          {% endfor %}
+                                            <li style="background-image: url('/india/themes/custom/nexus/assets/js/sth-nst.gif');"></li>
+                                            {% if starRated != 5 %}
+                                              {% for i in 1..k %}
+                                                <li style="background-image: url('/india/themes/custom/nexus/assets/js/nst.gif');"></li>
+                                                {% endfor %}
+                                            {% endif %}
+                                          </ul>
+                                      {% endif %}
+                        
+                        <h2>{{ node.field_course_rating.value }} Ratings
+                            & {{ node.field_total_reviews.value }} Reviews</h2>
+                    </div>
+                </div>
+              {% endif %} 
+
+                {% if (node.field_course_review_user_image[0].value or node.field_course_feedback[0].value) %}
+                    <div class="col-sm-6 srating-box user-review-box" >
+                        {% if node.field_course_review_user_image[0].value %}
+                            <div class="ratingimg">
+                                <img
+                                    src="{{ file_url(node.field_course_review_user_image[0].entity.fileuri) }} "
+                                    class="scale" alt="img">
+                            </div>
+                        {% endif %}
+                        {% if node.field_course_feedback[0].value %}
+                            <div class="detailbox">
+                                <h2>
+                                    <em>
+                                        {{ node.field_course_feedback[0].value }}
+                                    </em>
+                                </h2>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                 {% if (node.field_course_review_user_image[1].value or node.field_course_feedback[1].value) %}
+                    <div class="col-sm-6 srating-box user-review-box">
+                        {% if node.field_course_review_user_image[1].value %}
+                            <div class="ratingimg">
+                                <img
+                                    src="{{ file_url(node.field_course_review_user_image[1].entity.fileuri) }} "
+                                    class="scale" alt="img">
+                            </div>
+                        {% endif %}
+                        {% if node.field_course_feedback[1].value %}
+                            <div class="detailbox">
+                                <h2>
+                                    <em>
+                                        {{ node.field_course_feedback[1].value }}
+                                    </em>
+                                </h2>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if (node.field_course_review_user_image[2].value or node.field_course_feedback[2].value) %}
+                    <div class="col-sm-6 srating-box user-review-box">
+                        {% if node.field_course_review_user_image[2].value %}
+                            <div class="ratingimg">
+                                <img
+                                    src="{{ file_url(node.field_course_review_user_image[2].entity.fileuri) }} "
+                                    class="scale" alt="img">
+                            </div>
+                        {% endif %}
+                        {% if node.field_course_feedback[2].value %}
+                            <div class="detailbox">
+                                <h2>
+                                    <em>
+                                        {{ node.field_course_feedback[2].value }}
+                                    </em>
+                                </h2>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if (node.field_course_review_user_image[3].value or node.field_course_feedback[3].value) %}
+                    <div class="col-sm-6 srating-box user-review-box"
+                        >
+                        {% if node.field_course_review_user_image[3].value %}
+                            <div class="ratingimg">
+                                <img
+                                    src="{{ file_url(node.field_course_review_user_image[3].entity.fileuri) }} "
+                                    class="scale" alt="img">
+                            </div>
+                        {% endif %}
+                        {% if node.field_course_feedback[3].value %}
+                            <div class="detailbox">
+                                <h2>
+                                    <em>
+                                        {{ node.field_course_feedback[3].value }}
+                                    </em>
+                                </h2>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {% if (node.field_course_review_user_image[4].value or node.field_course_feedback[4].value) %}
+                    <div class="col-sm-6 srating-box user-review-box">
+                        {% if node.field_course_review_user_image[4].value %}
+                            <div class="ratingimg">
+                                <img
+                                    src="{{ file_url(node.field_course_review_user_image[4].entity.fileuri) }} "
+                                    class="scale" alt="img">
+                            </div>
+                        {% endif %}
+                        {% if node.field_course_feedback[4].value %}
+                            <div class="detailbox">
+                                <h2>
+                                    <em>
+                                        {{ node.field_course_feedback[4].value }}
+                                    </em>
+                                </h2>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %} 
+
+                
+                {#
+                <div class="col-sm-4 srating-box">
+                <div class="detailbox">
+                <h2>
+                <em>You want to rate this course.</em>
+                </h2>
+                <input name="my_input" value="" id="rating_simple3" type="hidden" />
+                <a class="reviewbtn" href="#">Review</a>
+                </div>
+                </div>#}
+            </div>
+        </div>
+    </section>
+    <!-- Rating -->
+</div>
+{% endif %}
+<!--Map-->
+{% if related_centers %}
+    <section class="sliderinner-wrap">
+        <div class="container">
+            <div class="headding text-center">
+                <h2>Centres</h2>
+                <span></span>
+            </div>
+            <div class="map-container">
+                <div class="row arrowslick knowledge-centers">
+                    {{ related_centers }}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+<!--Map-->
+<!--Most popular-->
+<section
+    class="sliderinner-wrap cat-popular networkinnerbg bgnoise slidetrending">
+    <div class="container">
+        <div class="headding text-center">
+            <h2>Related courses</h2>
+            <span></span>
+        </div>
+        <div class="Ajob-container">
+            <div class="row arrowslick slider4aply">
+                {{ related_courses }}
+            </div>
+        </div>
+    </div>
+</section>
+<!--Most popular-->
+<!--FAQ-->
+{% if (node.field_faq|length > 0) %}
+    <section class="sliderinner-wrap">
+        <div class="container" id="knowledge-center">
+            <div class="headding text-center">
+                <h2 class="faqheadding">FAQ's</h2>
+                <span class="underline"></span>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="faq-wrap">
+                        {% for i in 0..(node.field_faq|length -1) %}
+                            <div
+                                class="accordionButton">{{ node.field_faq[i].question }}</div>
+                            <div class="accordionContent">
+                                <div class="faq-contant">
+                                    {{ node.field_faq[i].answer|raw }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
+<!--FAQ-->
+<!--Appointment for counselor-->
+<section class="sliderinner-wrap sliderinnerbg">
+    <div class="container">
+        <div id="book-appointment" class="headding text-center">
+            <h2>Appointment with counsellor</h2>
+            <span class="underline"></span>
+        </div>
+        <div class="ftop-appoinment">
+            <div class="fieldwrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <div class="info-form">
+                                <form
+                                    class="gdprForm form-inline justify-content-center">
+                                    <div class="form-group formgroup">
+                                        <input class="form-control txtbx"
+                                            name="name" type="text"
+                                            placeholder="Name"
+                                            pattern="^[a-zA-Z\s]*$"
+                                            oninvalid="setCustomValidity('Please enter your name. Numbers and special characters are not allowed in this field')"
+                                            onchange="try{setCustomValidity('')}catch(e){}"
+                                            required>
+                                    </div>
+                                    <div class="form-group formgroup">
+                                        <input type="text" pattern="^\d{10}$"
+                                            class="form-control txtbx"
+                                            name="phone"
+                                            required
+                                            oninvalid="setCustomValidity('Please enter a valid 10 digit mobile number')"
+                                            onchange="try{setCustomValidity('')}catch(e){}"
+                                            placeholder="Mobile Number">
+                                    </div>
+                                    <div class="form-group formgroup">
+                                        <input class="form-control txtbx"
+                                            name="email" type="email"
+                                            placeholder="Email"
+                                            required>
+                                    </div>
+                                    <div class="publish_checkboxall">
+                                        <div
+                                            class="js-form-item form-item js-form-type-checkbox form-item-checkbox js-form-item-checkbox">
+                                            <input type="checkbox"
+                                                id="gdpr-checkbox"
+                                                name="checkbox" value="1"
+                                                class="form-checkbox required gdpr-required"
+                                                aria-required="true">
+                                            <label for="gdpr-checkbox">Please tick this
+                                                box to indicate
+                                                that you understand that your
+                                                personal data
+                                                will be used in accordance with
+                                                the
+                                                <a target="_blank"
+                                                    href="https://ppm.niit.com/consent-form/prospective_customer.html">Privacy
+                                                    Policy</a> here
+                                                *</label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="bttn" id="appointmentCounselor">Submit
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- advance search bar close -->
+<!-- course popup -->
+  
+
+  <div id="course_modal" class="modal course_modal centre_modal modal_full fade" role="dialog">
+
+ 
+      <div class="modal-header">
+          <div class="container">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+
+<div class="course_head">
+
+<div class="row">
+  <div class="col-md-3">
+   <figure>
+   {{ content.field_course_image }}
+  <!-- <img src="/niit-ecom/drupal-in-qa-repo/files/sites/default/files/2018-09/APSE.jpg" alt="img">--></figure>
+  </div>
+
+  <div class="col-md-9">
+    <div class="right_section">
+    <h2 class="text-center">
+        {{ label }}
+    </h2>
+    <!--<div class="subhead">
+      <span>
+        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> 3000
+      </span>
+      <span>2000 Student reviews</span>
+      <span>  Rated Excellent <i class="fa fa-thumbs-up"></i></span>
+    </div> -->  
+<div class="course_detail"> 
+ 
+{% if node.field_course_duration.value %}
+<div class="box">
+<h3>Total Duration </h3>
+<p>{{ node.field_course_duration.value }}</p>
+</div>
+
+{% endif %}
+                                
+{% if node.field_course_fee.value %}                                
+<div class="box">
+<span class="FeeTooltip">
+    <i class="fa fa-info-circle"></i>
+    <span class="tip_popup">Actual Fees may vary, depending upon your centre selection.</span>
+</span> 
+
+    <h3>
+      Course Fee
+    </h3>
+    {% if CenterBatchFee != 0 %}
+        <p><i class="fas fa-rupee-sign"></i>
+        <span id="price-batch">{{ CenterBatchFee | number_format }}</span>
+        <span id="price-batch-center"></span>
+        <br>
+        <span class="small_font">( Excluding GST @ 18% )</span></p>
+    {% endif %}
+  </div>
+ {% endif %} 
+ {% if node.field_course_type.value %}
+  <div class="box">
+      <h3> 
+        Course Type
+      </h3>
+      <p>{{ node.field_course_type.value }}</p>
+    </div>
+{% endif %}
+    </div>
+  </div>  
+  </div>
+
+</div>
+
+</div>
+
+</div>
+
+        </div>
+        
+
+    <div class="modal-dialog modal-lg">
+  
+      <!-- Modal content-->
+     
+      <div class="modal-content">
+       
+      <div class="modal-body">
+
+        <div class="container">
+
+            <div class="search_section">
+
+              <div class="row searchrow">
+                <div class="col-sm-offset-1 col-sm-5 text-right">
+                 <label> Choose Your Centre In</label>
+                </div>
+                <div class="col-sm-5">
+                
+                  <div class="form-group">
+                    <form id="myform" method="post">
+                    <input type="text" class="form-control" placeholder="Enter City" value="{{ userCityName }}" id="searchCity"> 
+                    <!--<i class="rightarrow"><img src="{{ request_path }}/sites/default/files/2018-11/input-right-arrow.png" alt=""></i>-->
+                    <input type = "hidden" name="courseBatchDetailRes" id="courseBatchDetailRes" value="{{ courseBatchDetailRes }}">
+                    <input type = "hidden" name ="city_lat" id = "city_lat" value = "{{ userLatitude }}" >
+                    <input type = "hidden" name ="city_long" id = "city_long" value = "{{ userLongitude }}" >
+                    <input type = "hidden" name ="location_lat" id = "location_lat" value = "{{ userLatitude }}" >
+                    <input type = "hidden" name ="location_long" id = "location_long" value = "{{ userLongitude }}" >
+                    <input type = "hidden" name ="checkedLocation" id = "checkedLocation" value = "0" >
+                    <input type = "hidden" name = "enrollNow" id= "enrollNow" value="{{ node.field_enroll_now_link.0.value }}" >
+                    <input type = "hidden" name = "basePath" id = "basePath" value="{{ request_path }}">
+                    <input type = "hidden" name = "proceedButtonLink" id = "proceedButtonLink" value="{{ node.field_proceed_button_link.value }}">
+                     </form>
+                    <a href="javascript:void(0);" class="btn-primary gobtn" id="searchSubmit">
+                    <i><img src="{{ request_path }}/sites/default/files/2018-11/icon-search.png"></i>
+                    </a>
+                    </div>
+                  
+                 <!-- <div class="text-right">
+                  <a href="javascript:void(0);" onClick="geoFindMe();"><img src="{{ request_path }}/sites/default/files/2018-11/map-icon-blue11x15px.png" alt=""> Use my current Location</a></div>-->
+                <span id="out"></span>  
+                
+                
+                
+                </div>
+              </div>
+
+              <div class="row">
+
+                <div class="col-md-12">
+
+                  <ul class="citylist" id="cityList">
+                    <li id="1">
+                      <img src="{{ request_path }}/sites/default/files/2018-11/icon-mumbai.png" alt="Mumbai">
+                      <span id="city-mumbai">Mumbai</span>
+                    </li>
+                    <li id="2">
+                      <img src="{{ request_path }}/sites/default/files/2018-11/icon-bengaluru.png" alt="Bengaluru">
+                      <span id="city-bengaluru">Bengaluru</span>
+                    </li>
+                    <li id="3" class="active">
+                      <img src="{{ request_path }}/sites/default/files/2018-11/icon-delhi.png" alt="DelhiNCR">
+                      <span id="city-delhi-ncr">Delhi-NCR</span>
+                    </li>
+                    <li id="4">
+                        <img src="{{ request_path }}/sites/default/files/2018-11/icon-kolkata.png" alt="Kolkata">
+                        <span id="city-kolkata" value="Kolkata">Kolkata</span>
+                      </li>
+                      <li id="5">
+                          <img src="{{ request_path }}/sites/default/files/2018-11/icon-chennai.png" alt="Chennai">
+                          <span id="city-chennai">Chennai</span>
+                        </li>
+                        <li id="6">
+                            <img src="{{ request_path }}/sites/default/files/2018-11/icon-ahemdabad.png" alt="Ahmedabad">
+                            <span id="city-ahmedabad">Ahmedabad</span>
+                          </li>
+                          <li id="7">
+                              <img src="{{ request_path }}/sites/default/files/2018-11/icon-hyderabad.png" alt="Hyderabad">
+                              <span id="city-hyderabad">Hyderabad</span>
+                            </li>
+                            <li id="8">
+                                <img src="{{ request_path }}/sites/default/files/2018-11/icon-pune.png" alt="Pune">
+                                <span id="city-pune">Pune</span>
+                              </li>
+                            
+                          
+                  </ul>
+                  
+
+                </div>
+
+              </div>
+
+<div class="searching-centre" style="display:none" id="searching-centre"><img src="{{ request_path }}/sites/default/files/2018-11/loader-center.gif"></div>
+
+            </div>
+
+            <div class="niit_centres">
+             {% if cityCenterList is empty  %}
+
+              <div class="heading_section text-center">
+                 <h2 id="messageifno">No Centre available</h2>
+              </div>
+                <div class="centres_section" id="ParentCenterDiv" style="display:none">
+                    <div class="scrolllist arrowslick" id="CenterDiv">
+                    </div>
+                </div>
+
+              {% else %}
+               <div class="heading_section text-center">
+                <h2 id="messageifno">NIIT Centre for You</h2>
+              </div>
+              
+                <div class="centres_section">
+                <div class="scrolllist arrowslick" id="CenterDiv">
+
+                
+                {% for centerList in cityCenterList %}
+                
+                    {% if centerList.centerCode in centerCode %}
+
+                    <div class="col-md-12">
+                    <div class="centre_box">
+
+                      <div class="row">
+                        <div class="enrollMsg">This centre accepts online enrolment for this course</div>
+                        <div class="col-sm-7">
+                          <h3 id="centerName-{{ centerList.centerCode }}">{{ centerList.centerName }}</h3>
+                           <p class="locate_centre">
+                         <!-- <a class="toltip_link" href="#" data-toggle="tooltip" title="{{ centerList.centerLocation }}" data-placement="top" data-content="{{ centerList.centerLocation }}"><i><img src="{{ request_path }}/sites/default/files/2018-11/icon-locate.png" alt=""></i>  Locate the Centre</a> -->
+<a class="toltip_link" href="javascript:void(0);"><i><img src="{{ request_path }}/sites/default/files/2018-11/icon-locate.png" alt=""></i>  Locate the Centre</a> 
+<span class="tip_popup">{{ centerList.centerLocation }}</span>                       
+                         </p>  
+                        </div>
+                        <div class="col-sm-5">
+                          <div class="mapbox">
+                        <iframe 
+                        src="https://maps.google.com/maps?q={{ centerList.centerName }}&hl=es;z=14&amp;output=embed"
+                        width="600" 
+                        height="450" 
+                        frameborder="0" 
+                        style="border:0" 
+                        allowfullscreen>
+                        </iframe>
+                          </div>
+                        </div>
+
+                      </div>
+                      
+                      {% if centerList.centerCode in centerCode %}
+                      
+                      <div class="row batch_start_on">
+
+                        <div class="col-sm-6">
+                          <label>Batch starts on</label>
+                         
+                          <div class="catfilter sortby_filter">
+                            <select id="date-{{centerList.centerCode}}" name="batchid_no[]" onChange="showBatchTime(this.value, '{{centerList.centerCode}}', '{{batchId}}' );">
+                            <option value="0">Select Date</option>
+                            {% for key,value in batchIdWithDate %}
+                             {% if centerList.centerCode == key %}
+                             {% set batchDate = value %}
+                             {% for key,value in batchDate %}
+                             {% set batchIds =  value | join(', ') %}
+                             <option value="{{batchIds}}">{{ key }}</option>
+                             {% endfor %}
+                             {% endif %} 
+                             {% endfor %}   
+                          
+                    
+                            </select>
+                           </div>
+                        
+                        </div>
+                        <div class="col-md-6">
+                            <div class="FeeFlotElement" style="display:none" id="feesId-block-{{centerList.centerCode}}">
+                                <label>Course Fees</label>
+                                <p id="batchfee-id" > <i class="fas fa-rupee-sign"> </i> <span id="feesId-{{centerList.centerCode}}"></span>/-  </p>
+                            </div>
+                        </div>
+
+
+                      
+
+                      </div>
+                      
+                     <div class="row course_starting_from">
+                        <div class="col-md-12">
+                          <label>Course Starting From (Select Batch Timings)</label>
+                          <div class="clearfix"></div>
+                          <ul class="timelist">
+
+                        {% for courseBatch in courseBatchDetail %}
+                        
+                        {% if centerList.centerCode == courseBatch.SRC_ICD %}
+                        
+                            <li id="batchStart-{{courseBatch.SRC_ICD}}-{{ courseBatch.batchID }}"  onClick="getFormId('{{ courseBatch.batchID }}','{{ courseBatch.SRC_ICD }}', '{{ courseBatch.batchFees }}')" style="display:none">
+                             <div class="start_time">
+                            {{courseBatch.batchTimings}}
+                              </div>   
+                            </li>
+                        {% endif %} 
+                        {% endfor %}
+                                                
+                          </ul>
+                          {% for courseBatch in courseBatchDetail %}
+                          {% if centerList.centerCode == courseBatch.SRC_ICD %}
+                          <div {% if courseBatch.batchID == "164" %} style="display:block" {% else %} style="display:none" {% endif %} id="batchid-{{ courseBatch.batchID }}"> 
+                         <p>
+                         
+                         <form id="enroll-{{ centerList.centerCode }}-{{ courseBatch.batchID }}" action="{{ node.field_proceed_button_link.value }}" method="post">
+                         
+                         <input type="hidden" name="pCourseCode" value="{{courseBatch.courseCode}}">
+                         <input type="hidden" name="pModalId" value="{{courseBatch.batchType}}">
+                         <input type="hidden" name="pcollectionPlanId" value="{{courseBatch.patternCode}}">
+                         <input type="hidden" name="pbatchId" value="{{courseBatch.batchID}}">
+                         <input type="hidden" name="pSrcId" value="{{courseBatch.SRC_ICD}}">
+                         <input type="hidden" name="pDstId" value="{{courseBatch.DST_ICD}}">
+                         <input type="hidden" name="pisUserLoggedIn" value="N">
+                         <input type="hidden" name="pBatchTimings" value="{{courseBatch.batchTimings}}">
+                         <input type="hidden" name="pBatchStartDate" value="{{courseBatch.batchStartDate}}">
+                         <input type="hidden" name="pBatchEndDate" value="{{courseBatch.batchEndDate}}">
+                         <input type="hidden" name="pFee" value="{{courseBatch.batchFees}}">
+                         <input type="hidden" name="CourseId" value="{{courseBatch.courseID}}">
+                         <input type="hidden" name="CourseVersion" value="1">
+                         <input type="hidden" name="CategoryName" value="Digital Marketing">
+                         <input type="hidden" name="SeoUrl" value="web-apps-development-courses-online/web-apps-development-using-node-js">
+                         <input type="hidden" name="pcheckEnroll" value="ENROLL">
+                         <input type="hidden" name="bthcurrencyCode" value="{{courseBatch.currencyCode}}">
+                         <input type="hidden" name="bthSymbolType" value="{{courseBatch.SymbolType}}">
+                         <input type="hidden" name="bthSymbolValue" value="{{courseBatch.SymbolValue}}">
+                         <input type="hidden" name="Minimum_Denomination" value="{{courseBatch.Minimum_Denomination}}">
+                         <input type="hidden" name="Minimum_Denomination_Value" value="{{courseBatch.Minimum_Denomination_Value}}">
+                         <input type="hidden" name="IsTax_IncludeIN_Collection" value="{{courseBatch.IsTax_IncludeIN_Collection}}">
+                         <input type="hidden" name="SourcePlatformName" value="NIITCOM">
+                         <input type="hidden" name="RequestName" value="Enrollment">
+                         <input type="hidden" name="NIITCourseURL" value="{{ site_current_url }}">
+                         </form>
+                         </div>
+                         {% endif %}
+                         {% endfor %}
+                    <input type="hidden" id="{{ centerList.centerCode }}" value="" />
+                      <a href="javascript:void(0)" id="submit-{{ centerList.centerCode }}" onclick="submitForm('{{ centerList.centerCode }}')" class="morebtn">Proceed</a>
+                    </p>
+                    <div class="clearfix"></div>
+                    <!--<p class="btmtext">You will be redirected to NIITs learning portal (www.training.com) for completing the registration and payment process.</p>-->
+                        </div>
+                      </div>
+                    {% else %}
+                      <div class="row course_starting_from">
+                        <div class="col-md-12">
+                            <div class="nobatch_avail">
+                                <div class="nobatch_content">
+                                <label>No Batch available.</label> 
+                          </div>
+                            <p>
+                                <a href="{{ node.field_enroll_now_link.0.value }}&centerId={{ centerList.centerId }}&cityName={{ centerList.centerCity}}&centerName={{centerList.centerName}}" target="_blank" class="morebtnpro">Enquire Now</a>
+                              </p> 
+                           
+                            </div>
+                          </div>
+  
+                        </div>
+                    
+                    
+                    {% endif %}
+
+                    </div>
+                  </div>
+                        
+                    {% endif%}
+
+                {% endfor %}
+                <div class="col-md-12" id="exploreMoreCustomLoad" >
+                              <div class="centre_box explore_more" >
+                                <div class="row">
+                                <div class="alert-mgs-explore"><label class="text-center"><i>View Other Centres: Not Accepting Online Enrolment</i></label></div>
+                                  <a href="#" id="exploreMore" class="morebtnpro" onclick="exploremorecheck()">Explore More</a>
+                                </div>
+                            </div>
+                </div>
+
+                </div>
+
+              </div>
+{% endif %}
+            </div>
+
+        </div>
+
+      </div>
+    
+    </div>
+    </div>
+  </div>
+<!-- end course popup -->

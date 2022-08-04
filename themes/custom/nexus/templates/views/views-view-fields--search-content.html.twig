@@ -1,0 +1,115 @@
+<div class="card text-center">
+	<div class="selfPaced_courseBox">
+		<div class="col-md-4 sp_courseThumbnail">
+			{{ fields.field_course_image.content }}
+			<div class="sp_buttons sp_cta_desktop mt-2">
+
+				<a href="{{ path('entity.node.canonical', {'node': fields.nid.content}) }}" class="sp_enrollNow">
+					Program Details</a>
+
+				{% if fields.field_course_brochure.content is not empty %}
+					{% if user.id == 0 %}
+						<a class="btn brochureDwnloadBtn mt-3 category-brochCTA" data-toggle="modal" data-target="#user_account_modal_form" download><i class="fa fa-download"></i> Brochure</a>
+					{% else %}
+						<a class="btn brochureDwnloadBtn mt-3 category-brochCTA" target="_blank" href="{{ fields.field_course_brochure.content }}" download><i class="fa fa-download"></i> Brochure</a>
+					{% endif %}
+				{% endif %}
+
+			</div>
+		</div>
+
+		<div class="col-md-8 sp_borderLeft">
+			<div class="selfPaced_courser_detail">
+				<input type="button" style="visibility: hidden;" class="user-course-eligibility-check" course-code="{{ fields.field_course_code.content }}">
+
+				<div class="courseSec{{ fields.field_course_code.content }}"></div>
+
+				<h3>{{ fields.title.content }}</h3>
+				{# <span>{{ fields.field_course_code.content }}</span> #}
+				<p>{{ fields.field_course_search_description.content }}</p>
+				<div class="sp_usps categories-usps">
+					{% if fields.field_course_duration.content is not empty %}
+						<div class="course_duration col-md-6 col-xs-12">
+							<span>
+								<i class="fa fa-clock"></i> 
+								{{ fields.field_course_duration.content }}</span>
+						</div>
+					{% endif %}
+					{% if fields.field_course_batch_date.content is not empty %}
+						<div class="minimal_ctc col-md-6 col-xs-12 pl-0 mt-3 mb-4">
+							<span>
+								<i class="fa fa-calendar"></i> 
+								{{ fields.field_course_batch_date.content }}</span>
+						</div>
+					{% endif %}
+
+				</div>
+				{% if fields.field_course_details_tools.content is not empty %}
+					<div class="course_tools_sec search_listing_page_tools">
+						<h5 class="text-left">TOOLS COVERED</h5>
+					
+				
+				{{ fields.field_course_details_tools.content }}
+				
+					
+					</div>
+				{% endif %}
+				{# <div class="offer">
+												<p class="green">% No offer available</p>
+												<p>There is no applicable offer at this moment</p>
+												</div> #}
+				{% if fields.field_saving_text.content is not empty %}
+					<div class="offerBox mb-5">
+						<p><img src="/india/themes/custom/nexus/assets/images/new-offer.jpg" class="img-responsive">
+							<span>{{ fields.field_saving_text.content }}</span>
+						</p>
+						<p class="pl-5">
+							<small>{{ fields.field_saving_sub_text.content }}</small>
+						</p>
+					</div>
+					{# {% else %} #}
+					{# <div class="offer">
+																<p class="green">% No offer available</p>
+																<p>There is no applicable offer at this moment</p>
+															</div> #}
+				{% endif %}
+				{# <div class="price sp_fees">
+												<h5><span class="less-rate">Rs. {{ fields.field_course_fee.content }}/- </span><span class="high-rate"><del> Rs. {{ fields.field_course_fee.content }}/-</del></span></h5>
+												</div> #}
+				<div class="sp_fees">
+					{% if fields.field_saving_amount.content is not empty %}
+						<h4>Rs.
+							{{ fields.field_saving_amount.content }}/-
+							<span>
+								<del>Rs.
+									{{ fields.field_course_fee.content }}/-</del>
+							</span>
+						</h4>
+					{% else %}
+						{% if fields.field_course_fee.content is not empty %}
+							<h4>
+								Rs.
+								{{ fields.field_course_fee.content }}
+							</h4>
+						{% endif %}
+					{% endif %}
+				</div>
+				<div class="sp_buttons sp_cta_mobile">
+
+					<a href="{{ path('entity.node.canonical', {'node': fields.nid.content}) }}" class="sp_enrollNow col-xs-6">
+						Program Details</a>
+
+					{% if fields.field_course_brochure.content is not empty %}
+						{% if user.id == 0 %}
+							<a class="btn brochureDwnloadBtn col-xs-6 categ-brochCTA-mobile" data-toggle="modal" data-target="#user_account_modal_form" download><i class="fa fa-download"></i> Brochure</a>
+						{% else %}
+							<a class="btn brochureDwnloadBtn col-xs-6 categ-brochCTA-mobile" target="_blank" href="{{ fields.field_course_brochure.content }}" download><i class="fa fa-download"></i> Brochure</a>
+						{% endif %}
+					{% endif %}
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

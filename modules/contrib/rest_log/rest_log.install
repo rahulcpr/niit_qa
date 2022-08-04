@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Contains rest_log.install.
+ */
+
+/**
+ * Re-import views and import new action.
+ */
+function rest_log_update_9001(&$sandbox) {
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'rest_log');
+}

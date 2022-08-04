@@ -1,0 +1,62 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.star_faculty
+    - field.field.node.faculty.body
+    - field.field.node.faculty.field_faculty_image
+    - field.field.node.faculty.field_faculty_name
+    - field.field.node.faculty.field_faculty_qualification
+    - field.field.node.faculty.field_facutly_course_category
+    - node.type.faculty
+  module:
+    - image
+    - text
+    - user
+id: node.faculty.star_faculty
+targetEntityType: node
+bundle: faculty
+mode: star_faculty
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_faculty_image:
+    weight: 1
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+  field_faculty_name:
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_faculty_qualification:
+    weight: 2
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_facutly_course_category:
+    type: entity_reference_label
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+hidden:
+  links: true
+  share_everywhere: true

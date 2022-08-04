@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_no_of_students
+    - paragraphs.paragraphs_type.placement_section
+id: paragraph.placement_section.field_no_of_students
+field_name: field_no_of_students
+entity_type: paragraph
+bundle: placement_section
+label: 'No of students'
+description: 'No of students'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

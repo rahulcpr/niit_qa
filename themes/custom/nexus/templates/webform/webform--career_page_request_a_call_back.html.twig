@@ -1,0 +1,50 @@
+<div class="career-page-course-webform">
+
+    {{ element.elements.form_token }}
+    {{ element.elements.form_build_id }}
+    {{ element.elements.form_id }}
+    {{ element.elements.form_description }}
+<form class="getproduct " {{ attributes }}
+    onsubmit="jQuery('#careerformResponse').fadeIn();">
+    {{ element.elements.name }} 
+    {{ element.elements.mobile }} 
+    {{ element.elements.email }} 
+    {{ element.elements.state }} 
+    {{ element.elements.theme }}
+    {{ element.form_token }}
+    {{ element.form_build_id }}
+    {{ element.form_id }}    
+   {{ element.elements.actions }}
+
+
+</form>
+</div>
+<script type="text/javascript">
+    
+  jQuery(document).ready(function($) {  
+    jQuery(".popup__close").click(function() {  
+         jQuery(".ui-widget-overlay").hide();  
+         jQuery(".ui-widget").hide();
+    });  
+    jQuery(".career-btnrequest").click(function() {  
+         jQuery(".ui-widget-overlay").show();  
+         jQuery(".ui-widget").show();
+    }); 
+})(jQuery, Drupal);
+</script>
+
+<div id="careerformResponse" class="overlay5" style="display:none;">
+    <div class="errorbox" id="errorb">
+        <a href="javascript:void(0)" class="closepop">&times;</a>
+        <div class="popbox">
+            <h3 class="sucess"><i class="far fa-check-circle"></i>
+            </h3>
+            {#<img src="{{ base_url }}themes/custom/nexus/assets/images/error-icon.png">#}
+            <h2 class="success">Thank you for writing to us.</h2>
+            <p>Thank you for your interest in our Programme!<br />Please
+                expect a call from our expert shortly.
+            </p>
+            <div class="clr"></div>
+        </div>
+    </div>
+</div>

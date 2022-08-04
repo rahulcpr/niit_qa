@@ -1,0 +1,57 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_placement_slider
+    - paragraphs.paragraphs_type.header_slider_section
+    - paragraphs.paragraphs_type.placement_slider
+  module:
+    - entity_reference_revisions
+id: paragraph.placement_slider.field_placement_slider
+field_name: field_placement_slider
+entity_type: paragraph
+bundle: placement_slider
+label: 'Placement Slider container'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      header_slider_section: header_slider_section
+    target_bundles_drag_drop:
+      from_library:
+        weight: 4
+        enabled: false
+      header_slider_section:
+        enabled: true
+        weight: 5
+      placement_slider:
+        weight: 6
+        enabled: false
+      assured_job_section:
+        weight: 12
+        enabled: false
+      assured_job_slider_placement:
+        weight: 13
+        enabled: false
+      companies_slider:
+        weight: 14
+        enabled: false
+      faq:
+        weight: 15
+        enabled: false
+      placement_section:
+        weight: 17
+        enabled: false
+      placement_student_recruiter:
+        weight: 19
+        enabled: false
+      tips_of_the_day:
+        weight: 20
+        enabled: false
+field_type: entity_reference_revisions

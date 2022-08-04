@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: center_address_detail
+label: 'Center Address Detail'
+icon_uuid: null
+description: 'Center Address Detail'
+behavior_plugins: {  }

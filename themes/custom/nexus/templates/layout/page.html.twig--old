@@ -1,0 +1,498 @@
+{% set base_url_final = path('<front>') %}
+<div id="main-wrap">
+    {% if page.strip_on_banner %}    
+    {% set strip_on_banner = page.strip_on_banner|render|striptags|trim is not empty %}
+
+    {% if strip_on_banner %}
+    <div class="offer_top_bar">
+        <div class="container">
+            {{ page.strip_on_banner }}
+            <span class="close_offer">X</span>
+        </div>
+    </div>
+    {% endif %}
+
+    {% endif %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <header role="banner">
+                {% include directory ~ '/templates/layout/header.html.twig' %}
+            </header>
+            {{ page.primary_menu }}
+            {{ page.secondary_menu }}
+            {% if is_front %}
+            <div class="container-fluid">
+                <div class="row">
+                    <!--Slider-->
+                    {% if page.highlighted %}
+                    <div class="container ">
+                        <div class="row">
+                            <div class=""> {{ page.highlighted }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <!--Slider-->
+                    <section class="slider-container afterfixheddiv">
+                        <div class="slidermain">
+                            {% for slide in home_page.slides %}
+                            <div>
+                                <div class="slidewrap">
+                                    <img src="{{ slide.img_src }}"
+                                        alt="{{ slide.caption }}" class="hide600"
+                                        width=""
+                                        height="">
+                                    <img src="{{ slide.img_src_mob }}"
+                                        alt="{{ slide.caption1 }}" class="show600"
+                                        width=""
+                                        height="">
+                                    <div class="contantbox">
+                                        <h3>{{ slide.caption[0]['value'] | raw }}</h3>
+                                        {% if slide.link %}
+                                        <a href="{{ slide.link }}" class="bannerbtn" attr="{{ slide.coursename|striptags }}"> Register Now  </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="sliderinnerbg">
+                            <img alt="niit"
+                                src="{{ request_path }}themes/custom/nexus/assets/images/banner-inner.jpg"
+                                width="1366" height="11">
+                        </div>
+                        <div class="chatandconslr">
+                            <ul class="mobilechatcon">
+                                <li>
+                                    <a href="javascript://" id="getc"><span>Get Counseled</span></a>
+                                </li>
+                                <!-- <li>
+                                <a href="">Chat</a>
+                            </li> -->
+                                <div class="clearfix"></div>
+                            </ul>
+                        </div>
+
+                    {{ drupal_entity('webform','talk_to_expert') }}
+
+
+                    </section>
+                    <!--Slider-->
+                    {#
+                        <section class="slider-container afterfixheddiv">
+
+                            <div class="slidermain">
+
+                                {% for slide in home_page.slides %}
+
+
+                                <div>
+                                    <div class="slidewrap">
+
+
+                                        <img src="{{ slide.img_src }}" width="" height="">
+                                        <div class="contantbox">
+                                            <h2>{{ slide.caption | raw}}</h2>
+                                            {% if slide.link %}
+                                            <a href="{{ slide.link }}" class="bannerbtn">Know More
+                                                <span>&#8594;</span>
+                                            </a>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+                                </div>
+                                {% endfor %}
+
+
+                            </div>
+
+                            <div class="sliderinnerbg">
+                                <img src="themes/custom/nexus/assets/images/banner-inner.jpg" width="1366" height="11">
+                            </div>
+
+                            {% if home_page.slides %}
+
+                            <div class="container fieldwraprel">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="fieldwrap">
+                                            <h2>Appointment for
+                                                <span>counselor</span>
+                                            </h2>
+                                            {{ my_api_form }}
+                                            <!-- <input class="txtbx" name="" type="text" placeholder="Name">
+                            <input class="txtbx" name="" type="text" placeholder="Mobile Number">
+                            <input class="txtbx" name="" type="text" placeholder="Email">
+                            <input class="btn" name="" type="button" value="Submit">
+                            -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </section>
+                        <!--Slider-->
+                        #}
+                    <!--Most popular-->
+                    <section
+                        class="sliderinner-wrap sliderinnerbg slidetrending">
+                        <div class="container">
+                            <div class="">
+                                <div class="headding text-center">
+                                    <h2>Popular Programs</h2>
+                                    <h3>Elevate your skills with our most
+                                        in-demand programmes</h3>
+                                    <span class="underline"></span>
+                                </div>
+                                <div class="tabnav-container hometoptab">
+                                    <div class="row">
+										<div class="col-md-12"> 
+											<!-- Nav tabs -->
+											<div class="text-center">
+											  <ul class="nav nav-tabs" role="tablist">
+                                                <li role="presentation" class="active"><a href="#tab-1" aria-controls="Software_Engineering" role="tab" data-toggle="tab">Software Engineering</a></li>
+
+												<li role="presentation"><a href="#tab-2" aria-controls="data_science" role="tab" data-toggle="tab">Data Science</a></li>
+												
+                                                <!--
+                                                <li role="presentation" ><a href="#tab-3" aria-controls="work_professional" role="tab" data-toggle="tab">Working&nbsp;Professionals</a></li>
+                                                  -->  
+
+												<li role="presentation" ><a href="#tab-3" aria-controls="banking_and_finance" role="tab" data-toggle="tab">Banking and Finance</a></li>
+											 </ul>
+											</div>
+										</div>
+									 </div>
+                                    <div class="tab-content">
+                                        <div role="tabpanel" class="tab-pane fade in active" id="tab-1">
+                                            <div class="arrowslick slider4aply">
+                                                {{ drupal_view('course', 'block_4', 'Software Engineering') }}
+                                            </div>
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane fade" id="tab-2">
+                                            <div class="arrowslick slider4aply">
+                                                {{ drupal_view('course', 'block_1', 'Data Science') }}
+                                            </div>
+                                        </div>
+                                        <div role="tabpanel" class="tab-pane fade" id="tab-3">
+                                            <div class="arrowslick slider4aply">
+                                                {{ drupal_view('course', 'block_5', 'Banking and Finance') }}
+                                            </div>
+                                        </div>
+										<div role="tabpanel" class="tab-pane fade" id="tab-4">
+                                            <div class="arrowslick slider4aply">
+                                               
+											   {{ drupal_view('short_term_courses', 'short_term_courses', 'Short Term Courses') }}
+
+											</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <a class="morebtn"
+                                            id="explore-more-courses"
+                                            href="{{ request_path }}search/content">explore
+                                            more</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!--Most popular-->
+                    <!--Most popular-->
+                    {% if page.advantages_with_niit_section %}
+                    <section class="advantage-wrap">
+                        <div class="container fullwidth">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="leftwrap">
+                                        <div class="headding text-left"
+                                            style="text-align: center;">
+                                            <h2 style="text-align:center">
+                                                The NIIT Advantage</h2>
+                                            <h3 style="text-align:center">
+                                                Just a few reasons why
+                                                we are your
+                                                go-to
+                                                career
+                                                partner.
+                                            </h3>
+                                            <span
+                                                class="underline"></span>
+                                        </div>
+                                        <div class="talentbox-wrap">
+                                            <div class="row">
+                                                {{ page.advantages_with_niit_section }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="col-md-6 rightimgwidth niit-advantage-media">
+                                    {{ drupal_view('niit_advantage_media', 'block_1') }}
+                                </div>
+                                <div class="clr"></div>
+                            </div>
+                        </div>
+                    </section>
+                    <!--29-08-2018 S-->
+                    <div class="modal fade" id="advantage-youtube-modal"
+                        tabindex="-1" role="dialog"
+                        aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-body iframemodal">
+                                    <button type="button" class="close"
+                                        data-dismiss="modal"
+                                        aria-label="Close"><span
+                                        aria-hidden="true">&times;</span>
+                                    </button>
+                                    <iframe
+                                        class="embed-responsive-item"
+                                        id="advantageYoutubeIframe"
+                                        width="100%"
+                                        height="350" frameborder="0"
+                                        allow="autoplay; encrypted-media"
+                                        allowfullscreen></iframe>
+                                </div>
+                                {# <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary">Save changes</button>
+                                        </div> #}
+                            </div>
+                        </div>
+                    </div>
+                    <!--29-08-2018 E-->
+                    {% endif %}
+                    <!--Most popular-->
+                    <!--Assured Job-->
+                    {# {% if page.assured_job_section %}
+                    <section class="sliderinner-wrap">
+                        <div class="container"
+                            id="placement-assistance">
+                            <div class="headding text-center">
+                                <h2>Job Assured Programmes</h2>
+                                <h3>Programmes designed with 100% placement assurance with top companies</h3>
+                                <span class="underline"></span>
+                            </div>
+                            <div class="Ajob-container">
+                                <div class="assuredJobContainer-parent">
+                                    <div class="row arrowslick slider5aply" id="assuredJobContainer">
+                                    </div>
+                                </div>
+                                <p style="text-align: center; font-size: 0.9em; margin-top: 3em;">
+                                    Disclaimer: The Placement assurance is subject to successful completion of the programme and other criteria of the recruiting company. T&C apply. </p>
+                            </div>
+                        </div>
+                    </section>
+                    {% endif %} #}
+                    <!--Assured Job-->
+                    <!--Placements-->
+                    {% if page.placement_section %}
+                    <section class="sliderinner-wrap sliderinnerbg">
+                        <div class="container">
+                            <div class="headding text-center">
+                                <h2>Placements</h2>
+                                <div class="recruit">
+                                    <span>{{ drupal_view('counter_value', 'block_1') }}</span>
+                                    NIITians making
+                                    waves in
+                                    the
+                                    industry.
+                                </div>
+                                <span class="underline"></span>
+                            </div>
+                            <div class="placement-container">
+                                <div class="placementcom">
+                                    {{ drupal_view('niit_company', 'block_1') }}
+                                    <!-- <div>
+                                                  <div class="cus-sayingtxt"><img src="themes/custom/nexus/assets/images/com-logo06.png" width="" height=""></div>
+                                              </div>-->
+                                </div>
+                                <p style="text-align: center; font-size: 0.9em; margin-top: 3em;">
+                                    Disclaimer:
+                                    The aforementioned companies have no
+                                    obligation to recruit NIIT students
+                                    each year</p>
+                            </div>
+                        </div>
+                    </section>
+                    {% endif %}
+                    <!--Placements-->
+                    <!--Network-->
+                    <!--Network-->
+				   {{ drupal_block('niit_community_gallery') }}
+                    <!--Network-->
+                    <!--Network-->
+                    <!--Popular Articles-->
+                    {% if page.knowledge_section %}
+                    <section class="sliderinner-wrap sliderinnerbg">
+                        <div class="container">
+                            <div class="headding text-center">
+                                <h2 id="knowledge-center">Knowledge
+                                    Center</h2>
+                                <h3>Catch up on industry trends</h3>
+                                <span class="underline"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-8">
+                                    <div
+                                        class="knowledge-container knowledge-container2">
+                                        <div class="row knowledge-2">
+                                            <!--<div class="col-lg-12">
+                                                                <div class="knowledge-box">
+                                                                    <div class="knowimg"><img src="themes/custom/nexus/assets/images/knowledge_img01.jpg" class="scale" alt="img"></div>
+                                                                    <div class="detailbox">
+                                                                        <h2>Learning to Learn</h2>
+                                                                        <p>Schools in Delhi will now teach "happiness" as a subject, and an upcoming private school built around that concept believes that the traditional </p>
+                                                                        <a class="morebtn" href="#">See More</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>-->
+                                            {# {{ drupal_view('knowledge_bites_view', 'block_1') }} #}
+											{{ drupal_view('home_page_knowledge_center', 'block_1') }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="col-xs-12 col-md-4 know-iframe">
+                                    <ul class="nav nav-tabs"
+                                        role="tablist">
+                                        <li role="presentation"
+                                            class="active"><a
+                                            href="#facebook"
+                                            aria-controls="facebook"
+                                            role="tab"
+                                            data-toggle="tab">Facebook</a>
+                                        </li>
+                                        <li role="presentation"><a
+                                            href="#twitter"
+                                            aria-controls="twitter"
+                                            role="tab"
+                                            data-toggle="tab">Twitter</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div id="fb_twitter_widget"></div> 
+                                    </div>
+                                </div>
+                            </div>
+                    </section>
+                    {% endif %}
+                    <!--Popular Articles-->
+                    <section class="sliderinner-wrap homeblue_wrap">
+                        <div class="container">
+                            <div class="row">
+                                <div class="threebox-wrap">
+                                    <div
+                                        class="col-xs-12 col-sm-4 three-box">
+                                        <div class="detailbox">
+                                            {% if page.management_first %} {{ page.management_first }} {% endif %}
+                                            <!--<h2>School Management <span></span></h2>
+                                                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.</p>
+                                                  <a class="morebtn" href="#">Know More</a>-->
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="col-xs-12 col-sm-4 three-box">
+                                        <div class="detailbox">
+                                            {% if page.management_second %} {{ page.management_second }} {% endif %}
+                                            <!--<h2>enterprise <span></span></h2>
+                                                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.</p>
+                                                  <a class="morebtn" href="#">Know More</a>-->
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="col-xs-12 col-sm-4 three-box">
+                                        <div class="detailbox">
+                                            {% if page.management_third %} {{ page.management_third }} {% endif %}
+                                            <!-- <h2>career <span></span></h2>
+                                                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et.</p>
+                                                  <a class="morebtn" href="#">Know More</a>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    {# {% if not is_front %}
+
+                        <section class="sliderinner-wrap">
+                            <div class="container fullwidth">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {{ page.help }} {{ page.content }}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        {% endif %} #}
+                </div>
+            </div>
+            {% endif %}
+            {% if page.sidebar_first %}
+            <div id="sidebar-first" class="filter-list sidebar"
+                role="complementary">
+                {% block sidebar %} {{ page.sidebar_first }} {% endblock %}
+            </div>
+            {% endif %}
+            <div>
+                <section id="content" role="main" class="clearfix">
+                    <div id="content-wrap">
+                        {{ page.help }}
+                        {{ page.content }}
+                    </div>
+                </section>
+            </div>
+            <div id="main-content">
+                <div class="container">
+                    <div class="row">
+                        {# {% if page.sidebar_first %}
+                        <aside id="sidebar" class="col-sm-4" role="complementary">
+                            {{ page.sidebar_first }}
+                        </aside>
+                        {% endif %}
+                        <div class="{{ 'col-sm-12' }}">
+                            {% if page.sidebar_first %}
+                            <aside id="sidebar" class="col-sm-4" role="complementary">
+                                {{ page.sidebar_first }}
+                            </aside>
+                            {% endif %}
+                        </div>
+                        <div id="primary" class="{{ 'content-area col-sm-12' }}">
+                            <section id="content" role="main" class="clearfix">
+                                <div id="content-wrap">
+                                    {{ page.help }}
+                                    {{ page.content }}
+                                </div>
+                            </section>
+                        </div> #}
+                    </div>
+                </div>
+            </div>
+            
+            {# 
+            <div class="modal fade" id="youtube-modal" tabindex="-1"
+                role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body iframemodal">
+                            <button type="button" class="close"
+                                data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                            <iframe class="embed-responsive-item" width="100%"
+                                height="315" frameborder="0"
+                                allow="autoplay; encrypted-media"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+#}            
+{% include directory ~ '/templates/layout/footer.html.twig' %}

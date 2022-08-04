@@ -1,0 +1,7 @@
+sso_user.library:
+  version: 1.x
+  css:
+    theme:
+      css/ssouser.css: {}
+  js:
+    js/ssouser.js: {}

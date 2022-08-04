@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.faqs.field_question
+    - paragraphs.paragraphs_type.faqs
+  module:
+    - faqfield
+id: paragraph.faqs.default
+targetEntityType: paragraph
+bundle: faqs
+mode: default
+content:
+  field_question:
+    weight: 0
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: faqfield_simple_text
+    region: content
+hidden: {  }

@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.star_faculty
+label: 'star faculty'
+targetEntityType: node
+cache: true

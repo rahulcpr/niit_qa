@@ -1,0 +1,911 @@
+<?php
+
+use Drupal\node\Entity\Node; 
+use Drupal\user\Entity\User;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\taxonomy\Entity\Term;
+
+function ms_ajax_form_popup_page_attachments(array &$attachments) {
+  // Unconditionally attach an asset to the page.
+  $attachments['#attached']['library'][] = 'ms_ajax_form_popup/ms_ajax_form_popup.library';
+}
+
+function ms_ajax_form_popup_preprocess_page(&$variables) {
+
+  // $node = \Drupal::routeMatch()->getParameter('node');
+  // if ($node instanceof \Drupal\node\NodeInterface) {
+  //   $node = \Drupal\node\Entity\Node::load($node->id());
+  //   $nid = $node->id();
+  //   $ContentTypeName = $node->bundle();
+  //   $template_type = '';
+  //   if($ContentTypeName == 'course'){
+  //     $template_type = $node->field_select_template->value; 
+  //   }
+  //   elseif($ContentTypeName == 'course_landing_page'){
+  //     $template_type = $node->field_select_course_landing_type->value; 
+  //   }
+
+  //   $create_application = '';
+  //   if($node->hasField('field_is_application_process')){
+  //     if(!empty($node->get('field_is_application_process')->getValue()[0]['value'])){
+  //       $create_application=$node->get('field_is_application_process')->getValue()[0]['value'];
+  //     }
+  //   }
+
+  //   $ga_cookie = '';
+  //   if(!empty($_COOKIE['_ga'])){
+  //     $cookie_all = explode('.', $_COOKIE['_ga']);
+  //     $ga_cookie = $cookie_all[2].'.'.$cookie_all[3];
+  //   }
+
+  //   if($template_type == 'course_axis'){
+
+  //     $check_time = time();
+  //     $close_time = 1600021799;
+
+  //     if(!empty(\Drupal::currentUser()->id())){
+
+  //       $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+  //       $currentUserid = $user->id();
+  //       $userMail = $user->get('mail')->value;
+  //       $userName = $user->get('field_user_name')->value;
+  //       $userCustomerId = $user->get('field_customer_id')->value;
+  //       $userMobileNo = $user->get('field_mobile_number')->value;
+
+  //       $campaignCode = $node->get('field_campaign_code')->getValue()[0]['value']; 
+  //       $courseCode = $node->get('field_course_code')->getValue()[0]['value'];
+  //       $CourseType = $node->get('field_delivery_mode_code')->getValue()[0]['value'];
+
+  //       $finalResult = application_form_status($campaignCode, $courseCode, $currentUserid, 'current_user');
+  //       if($finalResult['check_eligibility'] == 'Y'){
+
+  //         if(!empty($create_application) && $create_application == 1){
+          
+  //           if($finalResult['applctn_opn'] == 'Y'){
+  //             $course_id= '';
+  //             $course_batch_id = '';
+  //             $mainCoursedetails = \Drupal::service('niit_common.niit_related_courses')->get_course_fee_and_details($CourseType , $courseCode);
+  //             if(!empty($mainCoursedetails['courseBatchDetail'][0])){
+  //               $course_id = $mainCoursedetails['courseBatchDetail'][0]['courseID'];
+  //               $course_batch_id = $mainCoursedetails['courseBatchDetail'][0]['batchID'];
+  //             }
+
+  //             $final_json = (array) $finalResult['json_data'];
+  //             $userName = $final_json['enqry_f_nm'];
+
+  //             $url = '';
+  //             if($node->hasField('field_proceed_button_link')){
+  //               if(!empty($node->get('field_proceed_button_link')->getValue()[0]['value'])){
+  //                 $url=$node->get('field_proceed_button_link')->getValue()[0]['value'];
+  //               }
+  //             }
+
+  //             $update_data = array(
+  //               'source' => 'NIITCOM',
+  //               'CustomerId' => $userCustomerId,
+  //               'RequestedURL'=> '',
+  //               'NewSignup' => 'true',
+  //               'TYPE' => 'U',
+  //               'orgid' => 1,
+  //               'CourseId' => $course_id,
+  //               'BatchId' => $course_batch_id,
+  //               'enroll_link' => $url,
+  //               'enqry_crsspndnc_eml' => $userMail,
+  //             );
+  //             $new_json = array_merge($final_json, $update_data);
+  //             $final_json_send = create_application($new_json);
+
+             
+  //             $continue_btn = '<form id="" name="form" method="post" action="'.$url.'" class="ContinueYourApplicationForm">
+  //             <input type="hidden" name="eventdata" value="">
+  //             <input type="hidden" name="token" value="'.$final_json_send.'" tabindex="0">
+  //             <input type="submit" value="Continue Your Application" class="btn btn-primary continue-btn">
+  //             </form><div class="hideScript"><script>countiuneYourApplicationEventData();</script></div>';
+
+
+  //             $variables['mutlistep_apply_btn'] = '<div class="page-embed-form last-signup">'.$continue_btn.'</div>';
+
+  //             $variables['mutlistep_request_call_btn'] = '<div class="page-embed-form req-last-signup">'.$continue_btn.'</div>';
+
+  //             $variables['mutlistep_check_eligibility_btn'] = '<div class="page-embed-form last-signup">'.$continue_btn.'</div>';
+
+  //             $variables['mutlistep_connectus_btn'] = '<div class="page-embed-form connect-last-signup">'.$continue_btn.'</div>';
+
+  //           }
+  //           else{
+
+  //             $variables['mutlistep_apply_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Apply Now</span>';
+
+  //             $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall grey-btn disabled" title="Our career advisor will connect"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //             $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Check Eligibility</span>';
+
+  //             $variables['mutlistep_connectus_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Connect with us</span>';
+
+  //           }
+  //         }
+  //         else{
+
+  //           $variables['mutlistep_apply_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Apply Now</span>';
+
+  //           $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall grey-btn disabled" title="Our career advisor will connect"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //           $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Check Eligibility</span>';
+
+  //           $variables['mutlistep_connectus_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Connect with us</span>';
+
+  //         }
+
+  //       }
+  //       elseif($finalResult['check_eligibility'] == 'N'){
+
+  //         $variables['mutlistep_apply_btn'] = '<span class="btn btnApply grey-btn disabled" title="You are not eligible for this program">Apply Now</span>';
+
+  //         $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall grey-btn disabled"  title="You are not eligible for this program"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //         $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btnApply grey-btn disabled" title="You are not eligible for this program">Check Eligibility</span>';
+
+  //         $variables['mutlistep_connectus_btn'] = '<span class="btn btnApply grey-btn disabled" title="You are not eligible for this program">Connect with us</span>';
+
+  //       }
+  //       else{
+
+  //         if($close_time > $check_time){
+
+  //           unset($_SESSION['options']);
+  //           $status_data = array();
+  //           if(!empty($finalResult['leadformstg']) && $finalResult['leadformstg'] == '1a'){
+  //             $_SESSION['form_step'] = 2;
+  //             $status_data = [
+  //               'current_step' => 2,
+  //               'finalResult' => $finalResult,
+  //             ];
+  //           }
+  //         /**enguire now */
+  //           $enquire_now_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\MultiStepExampleForm', $status_data);
+  //           $enquire_now_html='
+  //           <div id="ms_ajax_popup_page_enquire_Modal" class="modal fade leadLightBox" role="dialog">
+  //             <div class="modal-dialog">
+  //               <!-- Modal content-->
+  //               <div class="modal-content">
+  //                 <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //                 <div class="modal-body">
+  //                     '.render($enquire_now_form).'
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>';
+          
+  //           $variables['multistep_popup_page_enquire_form']=$enquire_now_html;
+
+  //           $variables['mutlistep_apply_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Apply Now</span>';
+
+  //           $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall" onclick="popupicici_popup()"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //           $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Check Eligibility</span>';
+
+  //           $variables['mutlistep_connectus_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Connect with us</span>';
+
+  //         }
+  //         else{
+
+  //           $variables['multistep_popup_page_enquire_form']= '';
+
+  //           $variables['mutlistep_apply_btn'] = '<span class="btn btnApply grey-btn disabled" >Apply Now</span>';
+
+  //           $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall grey-btn disabled"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //           $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btnApply grey-btn disabled" >Check Eligibility</span>';
+
+  //           $variables['mutlistep_connectus_btn'] = '<span class="btn btnApply grey-btn disabled" >Connect with us</span>';
+
+
+  //         }
+
+  //       }
+
+  //     }
+  //     else{
+
+  //       if($close_time > $check_time){
+
+  //         unset($_SESSION['options']);
+  //         $status_data = array();
+  //         if(!empty($finalResult['leadformstg']) && $finalResult['leadformstg'] == '1a'){
+  //           $_SESSION['form_step'] = 2;
+  //           $status_data = [
+  //             'current_step' => 2,
+  //             'finalResult' => $finalResult,
+  //           ];
+  //         }
+  //       /**enguire now */
+  //         $enquire_now_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\MultiStepExampleForm', $status_data);
+  //         $enquire_now_html='
+  //         <div id="ms_ajax_popup_page_enquire_Modal" class="modal fade leadLightBox" role="dialog">
+  //           <div class="modal-dialog">
+  //             <!-- Modal content-->
+  //             <div class="modal-content">
+  //               <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //               <div class="modal-body">
+  //                   '.render($enquire_now_form).'
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>';
+        
+  //         $variables['multistep_popup_page_enquire_form']=$enquire_now_html;
+
+  //         $variables['mutlistep_apply_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Apply Now</span>';
+
+  //         $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall" onclick="popupicici_popup()"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //         $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Check Eligibility</span>';
+
+  //         $variables['mutlistep_connectus_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Connect with us</span>';
+
+  //       }
+  //       else{
+
+  //         $variables['multistep_popup_page_enquire_form']= '';
+
+  //         $variables['mutlistep_apply_btn'] = '<span class="btn btnApply grey-btn disabled" >Apply Now</span>';
+
+  //         $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall grey-btn disabled"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //         $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btnApply grey-btn disabled" >Check Eligibility</span>';
+
+  //         $variables['mutlistep_connectus_btn'] = '<span class="btn btnApply grey-btn disabled" >Connect with us</span>';
+
+
+  //       }
+
+  //     }
+
+  //   }
+  
+  //   if($template_type == 'course_icici' || $template_type == 'course_stack_route_ilt'  || $template_type == 'course_career'){
+
+  //     if(!empty($create_application) && $create_application == 1){
+
+  //   //     unset($_SESSION['form_step']);
+  //   //     $campaignCode = $node->get('field_campaign_code')->getValue()[0]['value']; 
+  //   //     $courseCode = $node->get('field_course_code')->getValue()[0]['value'];
+
+  //   //      $enquire_now_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\MultiStepExampleForm');
+  //   //         $enquire_now_html='
+  //   //         <div id="ms_ajax_popup_page_enquire_Modal" class="modal fade leadLightBox" role="dialog">
+  //   //           <div class="modal-dialog">
+  //   //             <!-- Modal content-->
+  //   //             <div class="modal-content">
+  //   //               <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //   //               <div class="modal-body">
+  //   //                   '.render($enquire_now_form).'
+  //   //               </div>
+  //   //             </div>
+  //   //           </div>
+  //   //         </div>';
+          
+  //   //       $variables['multistep_popup_page_enquire_form']=$enquire_now_html;
+
+  //   //       /**request a call back */
+  //   //       $request_callback_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\RequestCallBackForm');
+  //   //         $request_call_html='
+  //   //         <div id="ms_ajax_popup_page_request_callback_Modal" class="modal fade leadLightBox" role="dialog">
+  //   //           <div class="modal-dialog">
+  //   //             <!-- Modal content-->
+  //   //             <div class="modal-content">
+  //   //               <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //   //               <div class="modal-body">
+  //   //                   '.render($request_callback_form).'
+  //   //               </div>
+  //   //             </div>
+  //   //           </div>
+  //   //         </div>';
+            
+  //   //         $variables['multistep_popup_page_callback_form']=$request_call_html;
+
+  //   //         $variables['mutlistep_apply_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Apply Now</span>';
+
+  //   //         $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall" onclick="popupicici_popup()"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //   //         $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Check Eligibility</span>';
+
+  //   //         $variables['mutlistep_connectus_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Connect with us</span>';
+
+  //   //       }
+
+  //        // Login user start
+  //       if(!empty(\Drupal::currentUser()->id())){
+
+  //         $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+  //         $currentUserid = $user->id();
+  //         $userMail = $user->get('mail')->value;
+  //         $userName = $user->get('field_user_name')->value;
+  //         $userCustomerId = $user->get('field_customer_id')->value;
+  //         $userMobileNo = $user->get('field_mobile_number')->value;
+
+  //         $campaignCode = $node->get('field_campaign_code')->getValue()[0]['value']; 
+  //         $courseCode = $node->get('field_course_code')->getValue()[0]['value'];
+  //         $CourseType = $node->get('field_delivery_mode_code')->getValue()[0]['value'];
+
+  //         $finalResult = application_form_status($campaignCode, $courseCode, $currentUserid, 'current_user');
+  //         if($finalResult['check_eligibility'] == 'Y'){
+            
+  //           if($finalResult['applctn_opn'] == 'Y'){
+  //             $course_id= '';
+  //             $course_batch_id = '';
+  //             $mainCoursedetails = \Drupal::service('niit_common.niit_related_courses')->get_course_fee_and_details($CourseType , $courseCode);
+  //             if(!empty($mainCoursedetails['courseBatchDetail'][0])){
+  //               $course_id = $mainCoursedetails['courseBatchDetail'][0]['courseID'];
+  //               $course_batch_id = $mainCoursedetails['courseBatchDetail'][0]['batchID'];
+  //             }
+
+  //             $final_json = (array) $finalResult['json_data'];
+  //             $userName = $final_json['enqry_f_nm'];
+
+  //             $url = '';
+  //             if($node->hasField('field_proceed_button_link')){
+  //               if(!empty($node->get('field_proceed_button_link')->getValue()[0]['value'])){
+  //                 $url=$node->get('field_proceed_button_link')->getValue()[0]['value'];
+  //               }
+  //             }
+
+  //             $update_data = array(
+  //               'source' => 'NIITCOM',
+  //               'CustomerId' => $userCustomerId,
+  //               'RequestedURL'=> '',
+  //               'NewSignup' => 'true',
+  //               'TYPE' => 'U',
+  //               'orgid' => 1,
+  //               'CourseId' => $course_id,
+  //               'BatchId' => $course_batch_id,
+  //               'enroll_link' => $url,
+  //               'enqry_crsspndnc_eml' => $userMail,
+  //             );
+  //             $new_json = array_merge($final_json, $update_data);
+  //             $final_json_send = create_application($new_json);
+
+             
+  //           $continue_btn = '<form id="" name="form" method="post" action="'.$url.'" class="ContinueYourApplicationForm">
+  //           <input type="hidden" name="eventdata" value="">
+  //           <input type="hidden" name="token" value="'.$final_json_send.'" tabindex="0">
+  //           <input type="submit" value="Continue Your Application" class="btn btn-primary continue-btn">
+  //           </form><div class="hideScript"><script>countiuneYourApplicationEventData();</script></div>';
+
+
+  //           $variables['mutlistep_apply_btn'] = '<div class="page-embed-form last-signup">'.$continue_btn.'</div>';
+
+  //           $variables['mutlistep_request_call_btn'] = '<div class="page-embed-form req-last-signup">'.$continue_btn.'</div>';
+
+  //           $variables['mutlistep_check_eligibility_btn'] = '<div class="page-embed-form last-signup">'.$continue_btn.'</div>';
+
+  //           $variables['mutlistep_connectus_btn'] = '<div class="page-embed-form connect-last-signup">'.$continue_btn.'</div>';
+
+  //         }
+  //         else{
+
+  //           $variables['mutlistep_apply_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Apply Now</span>';
+
+  //           $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall grey-btn disabled" title="Our career advisor will connect"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //           $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Check Eligibility</span>';
+
+  //           $variables['mutlistep_connectus_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Connect with us</span>';
+
+  //         }
+
+  //           // Handle Yes condition
+
+
+  //         }
+  //         elseif($finalResult['check_eligibility'] == 'N'){
+
+  //           $variables['mutlistep_apply_btn'] = '<span class="btn btnApply grey-btn disabled" title="You are not eligible for this program">Apply Now</span>';
+
+  //           $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall grey-btn disabled"  title="You are not eligible for this program"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //           $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btnApply grey-btn disabled" title="You are not eligible for this program">Check Eligibility</span>';
+
+  //           $variables['mutlistep_connectus_btn'] = '<span class="btn btnApply grey-btn disabled" title="You are not eligible for this program">Connect with us</span>';
+
+  //         }
+  //         else{
+
+  //             unset($_SESSION['options']);
+  //             $status_data = array();
+  //             if(!empty($finalResult['leadformstg']) && $finalResult['leadformstg'] == '1a'){
+  //               $_SESSION['form_step'] = 2;
+  //               $status_data = [
+  //                 'current_step' => 2,
+  //                 'finalResult' => $finalResult,
+  //               ];
+  //             }
+  //           /**enguire now */
+  //             $enquire_now_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\MultiStepExampleForm', $status_data);
+  //             $enquire_now_html='
+  //             <div id="ms_ajax_popup_page_enquire_Modal" class="modal fade leadLightBox" role="dialog">
+  //               <div class="modal-dialog">
+  //                 <!-- Modal content-->
+  //                 <div class="modal-content">
+  //                   <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //                   <div class="modal-body">
+  //                       '.render($enquire_now_form).'
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             </div>';
+            
+  //           $variables['multistep_popup_page_enquire_form']=$enquire_now_html;
+
+  //           /**request a call back */
+  //           $request_callback_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\RequestCallBackForm', $status_data);
+  //             $request_call_html='
+  //             <div id="ms_ajax_popup_page_request_callback_Modal" class="modal fade leadLightBox" role="dialog">
+  //               <div class="modal-dialog">
+  //                 <!-- Modal content-->
+  //                 <div class="modal-content">
+  //                   <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //                   <div class="modal-body">
+  //                       '.render($request_callback_form).'
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             </div>';
+              
+  //             $variables['multistep_popup_page_callback_form']=$request_call_html;
+
+  //             $variables['mutlistep_apply_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Apply Now</span>';
+
+  //             $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall" onclick="popupicici_popup()"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //             $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Check Eligibility</span>';
+
+  //             $variables['mutlistep_connectus_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Connect with us</span>';
+  //         }
+  //       }
+  //       // Login user end
+  //     //   // cookie start
+  //     //   elseif(!empty($ga_cookie)){
+
+  //     //     $finalResult = application_form_status($campaignCode, $courseCode, $ga_cookie, 'cookieid');
+  //     //     if($finalResult['check_eligibility'] == 'Y'){
+
+  //     //        if($finalResult['applctn_opn'] == 'Y'){
+  //     //           $course_id= '';
+  //     //           $course_batch_id = '';
+  //     //           $mainCoursedetails = \Drupal::service('niit_common.niit_related_courses')->niit_related_courses_info([$nid]);
+  //     //           if(!empty($mainCoursedetails[0])  && $campaignCode == 'NIITSTCK'){
+  //     //             $course_id = $mainCoursedetails[0]['courseId'];
+  //     //             $course_batch_id = $mainCoursedetails[0]['course_batch_id'];
+  //     //           }
+
+  //     //           $final_json = (array) $finalResult['json_data'];
+  //     //           $userName = $final_json['enqry_f_nm'];
+  //     //           if (\Drupal::currentUser()->isAnonymous()) {
+  //     //             $create_account = automatic_registration($final_json);
+  //     //             if(!empty($create_account)){
+  //     //                $CUSTOMER_ID = $create_account['CUSTOMER_ID'];
+  //     //                $newaccount = $create_account['newaccount'];
+  //     //             }
+  //     //           }
+  //     //           else{
+  //     //               $user = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
+  //     //               $CUSTOMER_ID = $user->get('field_customer_id')->value;
+  //     //               $newaccount = 'true';
+  //     //           }
+
+  //     //           //$url = $_ENV['Admission_loginurl'];
+  //     //           $url = 'https://admissionqa.niit.com/login.aspx';
+
+  //     //           $update_data = array(
+  //     //               'source' => 'NIITCOM',
+  //     //               'CustomerId' => $CUSTOMER_ID,
+  //     //               'RequestedURL'=> '',
+  //     //               'NewSignup' => $newaccount,
+  //     //               'TYPE' => 'U',
+  //     //               'orgid' => 1,
+  //     //               'CourseId' => $course_id,
+  //     //               'BatchId' => $course_batch_id,
+  //     //               'enroll_link' => $url,
+  //     //           );
+  //     //           $new_json = array_merge($final_json, $update_data);
+  //     //           $final_json_send = create_application($new_json);
+
+  //     //         $continue_btn = '<form id="" name="form" method="post" action="'.$url.'" >
+  //     //         <input type="hidden" name="token" value="'.$final_json_send.'" tabindex="0">
+  //     //         <input type="submit" value="Continue Your Application" class="btn btn-primary continue-btn">
+  //     //         </form>';
+
+
+  //     //         $variables['mutlistep_apply_btn'] = '<div class="page-embed-form last-signup">'.$continue_btn.'</div>';
+
+  //     //         $variables['mutlistep_request_call_btn'] = '<div class="page-embed-form req-last-signup">'.$continue_btn.'</div>';
+
+  //     //         $variables['mutlistep_check_eligibility_btn'] = '<div class="page-embed-form last-signup">'.$continue_btn.'</div>';
+
+  //     //         $variables['mutlistep_connectus_btn'] = '<div class="page-embed-form connect-last-signup">'.$continue_btn.'</div>';
+
+  //     //       }
+  //     //       else{
+
+  //     //         $variables['mutlistep_apply_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Apply Now</span>';
+
+  //     //         $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall grey-btn disabled" title="Our career advisor will connect"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //     //         $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Check Eligibility</span>';
+
+  //     //         $variables['mutlistep_connectus_btn'] = '<span class="btn btnApply grey-btn disabled" title="Our career advisor will connect">Connect with us</span>';
+
+  //     //       }
+
+  //     //     }
+  //     //     elseif($finalResult['check_eligibility'] == 'N'){
+  //     //       $variables['mutlistep_apply_btn'] = '<span class="btn btnApply grey-btn disabled" title="You are not eligible for this program">Apply Now</span>';
+
+  //     //       $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall grey-btn disabled"  title="You are not eligible for this program"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //     //       $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btnApply grey-btn disabled" title="You are not eligible for this program">Check Eligibility</span>';
+
+  //     //       $variables['mutlistep_connectus_btn'] = '<span class="btn btnApply grey-btn disabled" title="You are not eligible for this program">Connect with us</span>';
+
+  //     //     }
+  //     //     else{
+  //     //        unset($_SESSION['options']);
+  //     //         $status_data = array();
+  //     //         if(!empty($finalResult['leadformstg']) && $finalResult['leadformstg'] == '1a'){
+  //     //           $_SESSION['form_step'] = 2;
+  //     //           $status_data = [
+  //     //             'current_step' => 2,
+  //     //             'finalResult' => $finalResult,
+  //     //           ];
+  //     //         }
+  //     //       /**enguire now */
+  //     //         $enquire_now_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\MultiStepExampleForm', $status_data);
+  //     //         $enquire_now_html='
+  //     //         <div id="ms_ajax_popup_page_enquire_Modal" class="modal fade leadLightBox" role="dialog">
+  //     //           <div class="modal-dialog">
+  //     //             <!-- Modal content-->
+  //     //             <div class="modal-content">
+  //     //               <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //     //               <div class="modal-body">
+  //     //                   '.render($enquire_now_form).'
+  //     //               </div>
+  //     //             </div>
+  //     //           </div>
+  //     //         </div>';
+            
+  //     //       $variables['multistep_popup_page_enquire_form']=$enquire_now_html;
+
+  //     //       /**request a call back */
+  //     //       $request_callback_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\RequestCallBackForm', $status_data);
+  //     //         $request_call_html='
+  //     //         <div id="ms_ajax_popup_page_request_callback_Modal" class="modal fade leadLightBox" role="dialog">
+  //     //           <div class="modal-dialog">
+  //     //             <!-- Modal content-->
+  //     //             <div class="modal-content">
+  //     //               <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //     //               <div class="modal-body">
+  //     //                   '.render($request_callback_form).'
+  //     //               </div>
+  //     //             </div>
+  //     //           </div>
+  //     //         </div>';
+              
+  //     //         $variables['multistep_popup_page_callback_form']=$request_call_html;
+
+  //     //         $variables['mutlistep_apply_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Apply Now</span>';
+
+  //     //         $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall" onclick="popupicici_popup()"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //     //         $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Check Eligibility</span>';
+
+  //     //         $variables['mutlistep_connectus_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Connect with us</span>';
+
+  //     //     }
+
+  //     //   }
+  //     //   // cookie end
+  //       else{
+  //         /**enguire now */
+  //           $enquire_now_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\MultiStepExampleForm');
+  //           $enquire_now_html='
+  //           <div id="ms_ajax_popup_page_enquire_Modal" class="modal fade leadLightBox" role="dialog">
+  //             <div class="modal-dialog">
+  //               <!-- Modal content-->
+  //               <div class="modal-content">
+  //                 <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //                 <div class="modal-body">
+  //                     '.render($enquire_now_form).'
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>';
+          
+  //         $variables['multistep_popup_page_enquire_form']=$enquire_now_html;
+
+  //         /**request a call back */
+  //         $request_callback_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\RequestCallBackForm');
+  //           $request_call_html='
+  //           <div id="ms_ajax_popup_page_request_callback_Modal" class="modal fade leadLightBox" role="dialog">
+  //             <div class="modal-dialog">
+  //               <!-- Modal content-->
+  //               <div class="modal-content">
+  //                 <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //                 <div class="modal-body">
+  //                     '.render($request_callback_form).'
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>';
+            
+  //           $variables['multistep_popup_page_callback_form']=$request_call_html;
+
+  //           $variables['mutlistep_apply_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Apply Now</span>';
+
+  //           $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall" onclick="popupicici_popup()"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //           $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Check Eligibility</span>';
+
+  //           $variables['mutlistep_connectus_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Connect with us</span>';
+  //       }
+  //     }else{
+  //       /**enguire now */
+  //           $enquire_now_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\MultiStepExampleForm');
+  //           $enquire_now_html='
+  //           <div id="ms_ajax_popup_page_enquire_Modal" class="modal fade leadLightBox" role="dialog">
+  //             <div class="modal-dialog">
+  //               <!-- Modal content-->
+  //               <div class="modal-content">
+  //                 <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //                 <div class="modal-body">
+  //                     '.render($enquire_now_form).'
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>';
+          
+  //         $variables['multistep_popup_page_enquire_form']=$enquire_now_html;
+
+  //         /**request a call back */
+  //         $request_callback_form = \Drupal::formBuilder()->getForm('Drupal\ms_ajax_form_popup\Form\RequestCallBackForm');
+  //           $request_call_html='
+  //           <div id="ms_ajax_popup_page_request_callback_Modal" class="modal fade leadLightBox" role="dialog">
+  //             <div class="modal-dialog">
+  //               <!-- Modal content-->
+  //               <div class="modal-content">
+  //                 <button type="button" class="close leadCusCloseBtn" data-dismiss="modal">&times;</button>  
+  //                 <div class="modal-body">
+  //                     '.render($request_callback_form).'
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>';
+            
+  //           $variables['multistep_popup_page_callback_form']=$request_call_html;
+
+  //           $variables['mutlistep_apply_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Apply Now</span>';
+
+  //           $variables['mutlistep_request_call_btn'] = '<button class="btn btnReqCall" onclick="popupicici_popup()"><i class="fa fa-phone"></i> Request a call back</button>';
+
+  //           $variables['mutlistep_check_eligibility_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Check Eligibility</span>';
+
+  //           $variables['mutlistep_connectus_btn'] = '<span class="btn btn-primary btnApply" onclick="popupicici_popup()">Connect with us</span>';
+  //     }
+    
+  //   }
+  // }
+
+}
+function ms_ajax_form_popup_entity_update(EntityInterface $entity) {	
+        
+        $timestamp = $entity->changed = time();
+	 if($entity->bundle() == 'course'){
+	$appid = $entity->get('field_course_')->target_id;
+// $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/categorynode/data/id&api_id=$appid";
+   $urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/categorynode&api_id=$appid";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			"api_id"=> $appid,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+         // curl_setopt($ch, CURLOPT_URL, $url);
+		  curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully update')); 
+   //drupal_set_message(print_r($entity->bundle() == 'course', true));
+  // drupal_set_message(print_r($entity->changed = time(), true));
+  // drupal_set_message(print_r($entity->get('field_course_')->target_id, true));
+         return $response;
+	 }if($entity->bundle() == 'blog_post'){
+		// $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/popular_articles";
+		 $urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/popular_articles";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+          //curl_setopt($ch, CURLOPT_URL, $url);
+		  curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully update')); 
+    // drupal_set_message(print_r($entity->bundle() == 'blog_post', true));
+   //  drupal_set_message(print_r($entity->changed = time(), true));
+         return $response;
+		 // print_r($response);
+		}
+}
+function ms_ajax_form_popup_entity_delete(EntityInterface $entity) {
+
+$timestamp = $entity->changed = time();
+	  if($entity->bundle() == 'course'){ 
+	 $appid = $entity->get('field_course_')->target_id;
+    //$url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/categorynode/data/id&api_id=$appid";
+    $urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/categorynode&api_id=$appid";	  
+	  $data_array = array(
+			"timestamp"=> $timestamp,
+			"api_id"=> $appid,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+         // curl_setopt($ch, CURLOPT_URL, $url);
+		  curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+    //  echo '<pre>'; print_r($response); print_r($data_json); die();
+	  	 drupal_set_message(t('Node is successfully deleted')); 
+        //drupal_set_message(print_r($entity->bundle() == 'course', true));
+     //    drupal_set_message(print_r($entity->changed = time(), true));
+		// drupal_set_message(print_r($entity->get('field_course_')->target_id, true));
+         return $response;
+		 // print_r($response);
+
+ } if($entity->bundle() == 'blog_post'){
+		// $url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/popular_articles";
+		 $urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/popular_articles";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+         // curl_setopt($ch, CURLOPT_URL, $url);
+		  curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully deleted')); 
+     //drupal_set_message(print_r($entity->bundle() == 'blog_post', true));
+    // drupal_set_message(print_r($entity->changed = time(), true));
+         return $response;
+		 // print_r($response);
+		 
+		 
+	 }
+}
+function ms_ajax_form_popup_entity_insert(Drupal\Core\Entity\EntityInterface $entity) {
+	    $timestamp = $entity->changed = time();
+	 if($entity->bundle() == 'course'){
+	$appid = $entity->get('field_course_')->target_id;
+    //$url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/categorynode/data/id&api_id=$appid";
+	$urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/categorynode&api_id=$appid";
+	   $data_array = array(
+			"timestamp"=> $timestamp,
+			"api_id"=> $appid,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+         // curl_setopt($ch, CURLOPT_URL, $url);
+          curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		  
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+     // echo '<pre>'; print_r($response); print_r($data_json); die();
+	
+	 drupal_set_message(t('Node is successfully created')); 
+  /// drupal_set_message(print_r($entity->bundle() == 'page', true));
+  // drupal_set_message(print_r($entity->changed = time(), true));
+   //drupal_set_message(print_r($entity->get('field_course_')->target_id, true));
+  // drupal_set_message(print_r($url, true));
+  // drupal_set_message(print_r($entity->id(), true));
+  
+         return $response;
+		
+	 }if($entity->bundle() == 'blog_post'){
+	   //$url = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/viewall/popular_articles";
+	   $urlone = "https://learner-engagementsystem-stg.training.com/learnerengagementsystem/api/update/Timestamp?deviceid=Annonymous&apiname=/popular_articles";
+	  $data_array = array(
+			"timestamp"=> $timestamp,
+			);
+			
+			$data_json = json_encode($data_array);
+       //$data = json_encode($data);
+        $headers = array(
+            "timestamp: 1000",
+			"Authorization:Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2OTIiLCJpc3QiOjE2NDA5NTE1NTk1NzV9.D9vt5c78eBhKlyrZl_LWdQ9-niceyGI-qYsg3OshFNM",
+			"Content-Type: application/json",
+        );
+        $ch = curl_init();
+         // curl_setopt($ch, CURLOPT_URL, $url);
+		  curl_setopt($ch, CURLOPT_URL, $urlone);
+          curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json );
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+          $response = curl_exec($ch);
+		 // $data_response = json_decode($response);
+          curl_close($ch);
+   // echo '<pre>'; print_r($response); print_r($data_json); die();
+	 drupal_set_message(t('Node is successfully created')); 
+  // drupal_set_message(print_r($entity->bundle() == 'blog_post', true));
+   drupal_set_message(print_r($entity->changed = time(), true));
+         return $response;
+		 // print_r($response);
+		 
+		 
+	 }
+}
+

@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: recruitment_job_assured_section
+label: 'Recruitment Job Assured Section'
+icon_uuid: null
+description: 'Recruitment Job Assured Section'
+behavior_plugins: {  }

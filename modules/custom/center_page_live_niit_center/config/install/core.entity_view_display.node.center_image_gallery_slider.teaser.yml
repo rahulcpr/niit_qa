@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.center_image_gallery_slider.field_ga
+    - node.type.center_image_gallery_slider
+  module:
+    - image
+    - user
+id: node.center_image_gallery_slider.teaser
+targetEntityType: node
+bundle: center_image_gallery_slider
+mode: teaser
+content:
+  field_ga:
+    type: image_url
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+hidden:
+  links: true
+  share_everywhere: true

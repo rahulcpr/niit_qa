@@ -1,0 +1,380 @@
+<section class="program-directory">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+
+				<div class="accordion" id="program_directly">
+					<div class="card">
+						<div class="card-header" id="headingTwo">
+							<h2 class="mb-0">
+								<button class="btn btn-link prog-heading collapsed" type="button" data-toggle="collapse" data-target="#program_directly1" aria-expanded="false" aria-controls="program_directly1">
+									Program Directory (A-Z)
+									<img width="34" height="32" class="mt-2 js-lazyload-image" data-src="/india/themes/custom/nexus/assets/images/arr-last.png" src="/india/sites/default/files/transparentimg.jpg" alt="PD arrow">
+								</button>
+							</h2>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="program-directory bg-footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12">
+
+				<div class="accordion" id="program_directly">
+					<div class="card">
+						<div id="program_directly1" class="collapse" aria-labelledby="headingTwo" data-parent="#program_directly" aria-expanded="false" style="height: 0px;">
+							<div class="card-body">
+								<div class="row">
+									<div class="row-flex link-section footer_topBorder">
+										{{ drupal_menu('footer-main-menu') }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</section>	
+
+<section class="contact_sticky">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-4 pr-0">
+				<div class="contactdetails">
+					<ul class="list-unstyled">
+						<li><img data-src="/india/themes/custom/nexus/assets/images/y.png" src="/india/sites/default/files/transparentimg.jpg" alt="FF image" class="img-responsive js-lazyload-image pattern-yt"></li>
+						<li>
+							<span class="call_btn"><a href="tel:180030006448">Call 1800 3000 6448</a></span>
+						</li>
+						{% if node.bundle  == 'home_page' %}
+						<li class="req_callb"><a href="#focus_req_cback">Request Callback</a>
+						</li>
+						{% elseif node.bundle == 'course' %}
+						<li class="req_callb"><a onclick="popupicici_popup()" href="javascript:void(0);">Request Callback</a>
+						</li>
+						{% else %}
+
+						
+						{% endif %}
+						<li class="whats_us"><a href="https://wa.me/message/JVXI3DMFGFV4H1" target="_blank">Whatsapp Us</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section>
+	<footer class="footer-part">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+				<img width="100" height="40" class="js-lazyload-image" data-src="/india/themes/custom/nexus/assets/images/white_logo.PNG" src="/india/sites/default/files/transparentimg.jpg" alt="Footer logo">
+				</div>
+
+					<div class="col-sm-4"><p class="footer-text">{{ node.field_footer_text.value }}</p>
+					<a href="https://twitter.com/NIITLtd" class="twi" target="_blank" rel="nofollow"><i class="fa fa-twitter"></i></a>
+					<a href="https://www.facebook.com/NIITDigital/" class="f_book" target="_blank" rel="nofollow"><i class="fa fa-facebook"></i></a>
+					<a href="https://www.instagram.com/niitdigital/?hl=en" class="in_gram" target="_blank" rel="nofollow"><i class="fa fa-instagram"></i></a>
+					</div>
+
+					<div class="col-sm-2 bdr-right col-one">
+						{{ drupal_menu('franchisee-s-corner') }}
+					</div>
+					<div class="col-sm-3 bdr-right col-two">
+						{{ drupal_menu('news-coverage') }}
+					</div>
+					<div class="col-sm-3 bdr-right col-three">
+						{{ drupal_menu('investors') }}
+					</div>
+			</div>
+		</div>
+		
+		<div class="container privacy mobPrivcy">
+			<div class="row">
+			<div class="col-md-6">
+			{{ drupal_menu('footer') }}
+			</div>
+			<div class="col-md-6">
+			<h6>COPYRIGHT © NIIT
+				{{ 'now'|date('Y') }}. All Rights Reserved.</h6>
+		</div>
+		</div>
+		</div>
+		<section class="last-sec">
+		<div class="container">
+		<div class="row">
+		<div class="copyrights">
+		<div class="col-md-6">
+			<div class="privacy">
+				{{ drupal_menu('footer') }}
+				{# <h6>Privacy Policy | Terms of Use</h6> #}
+			</div>
+			</div>
+			<div class="col-md-6">
+			<h6>COPYRIGHT © NIIT
+				{{ 'now'|date('Y') }}. All Rights Reserved.</h6>
+		</div>
+		</div>
+		</div>
+		</div>
+		</section>
+	</div>
+</footer>
+</section>
+
+
+
+<div class="overlay4"></div>
+<div class="tcbox" id="review" style="display:none;">
+	<span class="closetcpop">x</span>
+	<div class="home-searchbar">
+		<div class="searchbar-top">
+			<form action="/india/search/content" method="get" class="search-content-form">
+				<!-- <div class="regular-growth"> <div class="select1"> <select id="select-box1" class="select-styled1" onChange="DisplayDiv(this.value);" name="f[0]"> <option value="course_category:6"> College Students </option> <option value="course_category:7"> Graduates </option> <option value="course_category:8"> Working Professionals </option> <option value="course_period:241"> Short Term Courses </option> <option value="">All</option> </select> </div> </div> --> <input name="keys" id="textfield" class="searchbar-top-style" placeholder="Search for Courses" type="text"> <button id="button" class="homesearch" type="submit" style="text-align: center; display: inline-block; line-height: 70px;"> Search </button>
+			</form>
+		</div>
+		<div class="clr"></div>
+	</div>
+</div>
+<div id="formResponse" class="overlay5" style="display:none;">
+	<div class="errorbox" id="errorb">
+		<span class="closepop">&times;</span>
+		<div class="popbox">
+			<h3 class="sucess"><i class="far fa-check-circle"></i> </h3>
+			<!--<img src="assets/images/error-icon.png"> <h2 class="success">Thank you for writing to us.</h2>-->
+			<p>Thank you for your interest in our Programme!<br />Please expect a call from our expert shortly. </p>
+			<div class="clr"></div>
+		</div>
+	</div>
+</div>
+<!-- <js-bottom-placeholder token="{{ placeholder_token|raw }}">
+ -->
+
+
+
+<div class="modal fade" id="counteryFlag" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closeModal()">&times;</button>
+				<h4 class="modal-title" id="H1"> Choose Your Country </h4>
+			</div>
+			<div class="modal-body">
+				<div class="all-country" id="countries">
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="afgahanistan"></span>Afghanistan</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="austria"></span>Austria</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/bangladesh/" target="_parent"> <span class="bangladesh"></span>Bangladesh</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="belgium"></span>Belgium</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/Bhutan/" target="_parent"> <span class="bhutan"></span>Bhutan</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/botswana/" target="_parent"> <span class="botswana"></span>Botswana</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="brunei"></span>Brunei</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="bulgaria"></span>Bulgaria</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="canada"></span>Canada</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="http://www.niit.com.cn/" target="_blank" rel="nofollow"> <span class="china"></span>China</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="china"></span>China English</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="cyprus"></span>Cyprus</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="czech"></span>Czech Republic</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="denmark"></span>Denmark</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/d-r-congo/" target="_parent"> <span class="dr-Congo"></span>D R Congo</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="egypt"></span>Egypt</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="elsalvador"></span>El Salvador</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="estonia"></span>Estonia</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="fiji"></span>Fiji</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="finland"></span>Finland</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="france"></span>France</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="germany"></span>Germany</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/ghana/" target="_parent"> <span class="ghana"></span>Ghana</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="greece"></span>Greece</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="honduras"></span>Honduras</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="hungary"></span>Hungary</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/india/" target="_parent"> <span class="india"></span>India</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/Indonesia/" target="_parent"> <span class="indonesia"></span>Indonesia</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="ireland"></span>Ireland</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="italy"></span>Italy</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="kazakhstan"></span>Kazakhstan</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/kenya/" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="Kenya"></span>Kenya</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="latvia"></span>Latvia</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="libya"></span>Libya</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="lithuania"></span>Lithuania</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="luxembourg"></span>Luxembourg</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/malaysia/" target="_parent"> <span class="malaysia"></span>Malaysia</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="maldives"></span>Maldives</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="mali"></span>Mali</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/mauritius/" target="_parent"> <span class="mauritius"></span>Mauritius</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="mexico"></span>Mexico</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="nepal"></span>Nepal</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="netherlands"></span>Netherlands</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="nicaragua"></span>Nicaragua</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/nigeria/" target="_parent"> <span class="nigeria"></span>Nigeria</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="norway"></span>Norway</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="oman"></span>Oman</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="peru"></span>Peru</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="poland"></span>Poland</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="portugal"></span>Portugal</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="qatar"></span>Qatar</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="romania"></span>Romania</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/senegal/" target="_parent"> <span class="senegal"></span>Senegal</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="serbia"></span>Serbia</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="singapore"></span>Singapore</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="slovakia"></span>Slovakia</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="slovenia"></span>Slovenia</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/south-africa/" target="_parent"> <span class="southafrica"></span>South Africa</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="spain"></span>Spain</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="srilanka"></span>Sri Lanka</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="sweden"></span>Sweden</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="thailand"></span>Thailand</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="turkey"></span>Turkey</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="uk"></span>UK</a> </div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="col-space">
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/en/learning-outsourcing/" target="_parent"> <span class="usa"></span>USA</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/vietnam/" target="_parent"> <span class="vietnam"></span>Vietnam</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="zimbabwe"></span>Zimbabwe</a> </div>
+								<div class="col-xs-6 col-sm-3 col-md-3"> <a href="/pages/default.aspx" onclick="writeCookie('country', 'global', null);" target="_parent"> <span class="global"></span>Global</a> </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer"> <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeModal()"> Close </button> </div>
+		</div>
+	</div>
+</div>
+<script>
+	function closeModal() {
+		$("#counteryFlag").hide();
+	}
+</script>
+<script>
+	function showModal() {
+		$("#counteryFlag").show();
+	}
+</script>
+<div class="back-top">
+	<a href="javascript://" title="Top">
+		<img src="/india/themes/custom/nexus/assets/images/top-icon.png" class="scale" alt="Top">
+	</a>
+</div>
+<div class="loading-modal"></div>
+
+<div class="modal fade check_eligibility_display_popup" id="check_eligibility_display" role="dialog">
+    <div class="modal-dialog">
+
+      <div class="modal-content">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <div class="modal-body full_data">
+        </div>
+      </div>
+      
+    </div>
+  </div>
+{# {{ StackathonLeadForm|raw }} #}
+<div class="Self-stackathon-div"></div>
+{{ multistep_popup_page_enquire_form|raw }}

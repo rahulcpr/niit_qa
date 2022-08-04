@@ -1,0 +1,5 @@
+bundle: niit
+excluded:
+  - user.role.anonymous
+  - user.role.authenticated
+required: true

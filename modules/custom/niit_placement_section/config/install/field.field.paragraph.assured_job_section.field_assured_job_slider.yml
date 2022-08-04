@@ -1,0 +1,45 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_assured_job_slider
+    - paragraphs.paragraphs_type.assured_job_section
+    - paragraphs.paragraphs_type.assured_job_slider_placement
+  module:
+    - entity_reference_revisions
+id: paragraph.assured_job_section.field_assured_job_slider
+field_name: field_assured_job_slider
+entity_type: paragraph
+bundle: assured_job_section
+label: 'Assured Job Slider'
+description: 'Assured Job Slider'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      assured_job_slider_placement: assured_job_slider_placement
+    target_bundles_drag_drop:
+      assured_job_section:
+        weight: 7
+        enabled: false
+      assured_job_slider_placement:
+        enabled: true
+        weight: 8
+      faq:
+        weight: 9
+        enabled: false
+      from_library:
+        weight: 10
+        enabled: false
+      header_slider_section:
+        weight: 11
+        enabled: false
+      placement_slider:
+        weight: 12
+        enabled: false
+field_type: entity_reference_revisions

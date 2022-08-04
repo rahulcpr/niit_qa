@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_center_cta
+    - paragraphs.paragraphs_type.center_page_gallery_tabs
+  module:
+    - link
+id: paragraph.center_page_gallery_tabs.field_center_cta
+field_name: field_center_cta
+entity_type: paragraph
+bundle: center_page_gallery_tabs
+label: 'Center CTA'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 1
+field_type: link

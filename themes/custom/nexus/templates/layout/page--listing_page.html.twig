@@ -1,0 +1,34 @@
+<!-- Header1 Section start -->
+{{ page.fest_event_menu }}
+
+{% if node.field_banner_fest.entity.fileuri is not empty %}
+<section class="ListingBanner" style= "background:url({{ file_url(node.field_banner_fest.entity.fileuri) }});">
+   <h3>{{ node.title.value }}</h3>
+</section> 
+{% endif %}
+
+
+<section>
+    <div class="container">
+        <div class="row">
+        {% if node.field_select_listing_page.value == 'Webinar' %}
+          {{ drupal_view('listing_pages' , 'block_2') }}
+        {% elseif node.field_select_listing_page.value == 'Micro-Programme' %}
+          {{ drupal_view('listing_pages' , 'block_3') }}
+        {% elseif node.field_select_listing_page.value == 'Programme' %}
+          {{ drupal_view('listing_pages' , 'block_1') }}
+
+        {% else %}
+          
+        {% endif %} 
+        </div>
+    </div>
+</section>
+
+
+
+<!--   Footer Inclusde  ** Start -->
+{% include directory ~ '/templates/layout/footer.html.twig' %}
+<!--   Footer Inclusde  ** End -->
+
+           

@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.in_your_city
+label: 'In Your City'
+targetEntityType: node
+cache: true

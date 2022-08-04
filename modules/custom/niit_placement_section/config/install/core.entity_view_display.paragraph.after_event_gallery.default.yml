@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.after_event_gallery.field_gallery_images
+    - paragraphs.paragraphs_type.after_event_gallery
+  module:
+    - image
+id: paragraph.after_event_gallery.default
+targetEntityType: paragraph
+bundle: after_event_gallery
+mode: default
+content:
+  field_gallery_images:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+hidden: {  }

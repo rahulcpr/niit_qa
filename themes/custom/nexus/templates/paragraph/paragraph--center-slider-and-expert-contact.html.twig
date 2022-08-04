@@ -1,0 +1,27 @@
+<!--Slider-->
+<section class="slider-container afterfixheddiv placement-slider centerpg">
+    {{ content.field_hero_center_slider }}
+    <div class="chatandconslr">
+        <ul class="mobilechatcon">
+            <li><a href="javascript://" id="getc"><span>Get Counseled</span></a>
+            </li>
+            <!--<li><a href="">Chat</a></li>-->
+            <div class="clearfix"></div>
+        </ul>
+    </div>
+    
+{% block paragraph %}
+{% block content %}
+    {% if '1' in content.field_show_expert_contact_form[0] %}
+    <div class="container fieldwraprel">
+        <div class="row">
+            <div class="col-lg-12">
+                {{ drupal_entity('webform','talk_to_expert') }}
+            </div>
+        </div>
+    </div>
+   {% endif %} 
+   {% endblock %}
+{% endblock paragraph %}
+</section>
+<!--Slider-->

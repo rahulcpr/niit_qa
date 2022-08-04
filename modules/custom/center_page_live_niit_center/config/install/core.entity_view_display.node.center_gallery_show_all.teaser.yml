@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.center_gallery_show_all.field_show_all_gallery_image
+    - node.type.center_gallery_show_all
+  module:
+    - user
+id: node.center_gallery_show_all.teaser
+targetEntityType: node
+bundle: center_gallery_show_all
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    region: content
+hidden:
+  field_show_all_gallery_image: true

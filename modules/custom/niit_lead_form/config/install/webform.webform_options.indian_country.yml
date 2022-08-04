@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: indian_country
+label: 'Indian Country'
+category: ''
+likert: false
+options: "india: India\n"

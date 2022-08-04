@@ -1,0 +1,99 @@
+niit_common.name:
+    path: '/city/{name}'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\CityController::content'
+        _title: 'Get City'
+        name: 'world'
+    requirements:
+        _permission: 'access content'
+    options:
+        no_cache: TRUE
+
+niit_common.settings:
+  path: '/admin/structure/niit_common/settings'
+  defaults:
+    _form: '\Drupal\niit_common\Form\ConfigurationHeadingSettingsForm'
+    _title: 'configuration Form'
+  requirements:
+    _permission: 'administer site configuration'
+
+niit_common.reated_courses:
+    path: '/RelatedCourses/{course_id}'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\RelatedCoursesData::RelatedCoursesInfo'
+        _title: 'Related Course Data'
+    requirements:
+        _permission: 'access content'
+niit_common.google_tag_event_datalayer_url:
+    path: '/google_tag_event_datalayer_url'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\GoogleTagEventController::googleTagEventDatalayerFunction'
+        _title: 'Google Tag Event Datalayer Function'
+    method: [POST]
+    requirements:
+        _permission: 'access content'
+niit_common.get_center_data_for_city_change_url:
+    path: '/get_center_data_for_city_change_url'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\GoogleTagEventController::courseCenterDataOnCitySelectFunction'
+        _title: 'Google Tag Event Datalayer Function'
+    method: [POST]
+    requirements:
+        _permission: 'access content'
+niit_common.career_job_vacancy:
+    path: '/career-job-vacancy/{CountryKey}/{Categoryid}/{Keyword}/{jobtype}'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\CareerJobVacancy::CareerJobVacancyInfo'
+    requirements:
+        _permission: 'access content'
+
+niit_common.dataLayer_Event_Session_destroy:
+    path: '/dataLayer_Event_Session_destroy'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\GoogleTagEventController::dataLayer_Event_Session_destroy'
+    requirements:
+        _permission: 'access content'
+
+
+niit_common.misc_content_api:
+    path: '/miscContentApi'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\GoogleTagEventController::misc_content_api'
+    requirements:
+        _permission: 'access content'
+
+niit_common.ga_course_content_api:
+    path: '/gaCourseContentApi'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\GoogleTagEventController::ga_course_content_api'
+    requirements:
+        _permission: 'access content'
+
+niit_common.get_ga_client_id:
+    path: '/get_ga_client_id'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\GoogleTagEventController::get_ga_client_id'
+    requirements:
+        _permission: 'access content'
+
+niit_common.center_information_details_api:
+    path: '/centerInformationDetailsApi'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\CareerJobVacancy::CenterInfodetails'
+    requirements:
+        _permission: 'access content'
+
+niit_common.stackathon_for_selfpaced:
+  path: '/stackathon_for_selfpaced'
+  defaults:
+    _controller: '\Drupal\niit_common\Controller\StackathonForSelfpaced::ControllerFormBase'
+    _title: 'Stackathon Form'
+  requirements:
+    _permission: 'access content'
+
+niit_common.category_filter_course:
+    path: '/top-category-filter/{Iama}/{Looking}/{Studying}/{Nid}'
+    defaults:
+        _controller: 'Drupal\niit_common\Controller\CategoryFilterCourse::CourseFilterData'
+    requirements:
+        _permission: 'access content'

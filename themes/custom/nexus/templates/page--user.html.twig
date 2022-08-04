@@ -1,0 +1,14 @@
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+
+<div class="container custom-user-login-form-template">
+    <div class="row vertical-offset-100">
+    	<div class="col-md-12 mt-5 mb-5">
+    		{{ page.user_profile_block }} 
+			{{ page.content }}
+		</div>
+	</div>
+</div>
+{% include directory ~ '/templates/layout/footer.html.twig' %}
+

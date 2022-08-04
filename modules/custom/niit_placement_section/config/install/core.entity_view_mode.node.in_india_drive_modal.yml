@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.in_india_drive_modal
+label: 'In india drive modal'
+targetEntityType: node
+cache: true

@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_mentor_advice_label
+    - paragraphs.paragraphs_type.placement_mentors_advice
+id: paragraph.placement_mentors_advice.field_mentor_advice_label
+field_name: field_mentor_advice_label
+entity_type: paragraph
+bundle: placement_mentors_advice
+label: 'Mentor Advice Label'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

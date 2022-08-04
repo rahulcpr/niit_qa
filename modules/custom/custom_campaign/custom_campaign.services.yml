@@ -1,0 +1,3 @@
+services:
+    custom_campaign.niit_kc_services:
+        class: Drupal\custom_campaign\Services\NiitKCService

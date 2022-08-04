@@ -1,0 +1,122 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_components
+    - node.type.placement
+    - paragraphs.paragraphs_type.assured_job_section
+    - paragraphs.paragraphs_type.enrollment_contact_form
+    - paragraphs.paragraphs_type.faqs
+    - paragraphs.paragraphs_type.niit_job_profile_paragraph
+    - paragraphs.paragraphs_type.placement_mega_drive
+    - paragraphs.paragraphs_type.placement_mentors_advice
+    - paragraphs.paragraphs_type.placement_slider
+    - paragraphs.paragraphs_type.placement_student_recruiter
+    - paragraphs.paragraphs_type.placement_testimonial
+    - paragraphs.paragraphs_type.recruitment_job_assured_section
+    - paragraphs.paragraphs_type.student_project_showcase
+    - paragraphs.paragraphs_type.tips_of_the_day_embed
+    - paragraphs.paragraphs_type.top_salaried_students
+    - paragraphs.paragraphs_type.upcoming_drive
+  module:
+    - entity_reference_revisions
+id: node.placement.field_components
+field_name: field_components
+entity_type: node
+bundle: placement
+label: Components
+description: Components
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      placement_slider: placement_slider
+      placement_student_recruiter: placement_student_recruiter
+      upcoming_drive: upcoming_drive
+      assured_job_section: assured_job_section
+      enrollment_contact_form: enrollment_contact_form
+      student_project_showcase: student_project_showcase
+      tips_of_the_day_embed: tips_of_the_day_embed
+      placement_testimonial: placement_testimonial
+      faqs: faqs
+      placement_mentors_advice: placement_mentors_advice
+      top_salaried_students: top_salaried_students
+      placement_mega_drive: placement_mega_drive
+      recruitment_job_assured_section: recruitment_job_assured_section
+      niit_job_profile_paragraph: niit_job_profile_paragraph
+    target_bundles_drag_drop:
+      placement_slider:
+        enabled: true
+        weight: -47
+      placement_student_recruiter:
+        enabled: true
+        weight: -46
+      upcoming_drive:
+        enabled: true
+        weight: -45
+      assured_job_section:
+        enabled: true
+        weight: -44
+      enrollment_contact_form:
+        enabled: true
+        weight: -43
+      student_project_showcase:
+        enabled: true
+        weight: -42
+      tips_of_the_day_embed:
+        enabled: true
+        weight: -41
+      placement_testimonial:
+        enabled: true
+        weight: -40
+      faqs:
+        enabled: true
+        weight: -39
+      placement_mentors_advice:
+        enabled: true
+        weight: -38
+      top_salaried_students:
+        enabled: true
+        weight: -37
+      placement_mega_drive:
+        enabled: true
+        weight: -36
+      recruitment_job_assured_section:
+        enabled: true
+        weight: -35
+      niit_job_profile_paragraph:
+        enabled: true
+        weight: -34
+      from_library:
+        weight: -33
+        enabled: false
+      header_slider_section:
+        weight: -32
+        enabled: false
+      companies_slider:
+        weight: -31
+        enabled: false
+      placement_section:
+        weight: -30
+        enabled: false
+      assured_job_slider_placement:
+        weight: -29
+        enabled: false
+      tips_of_the_day:
+        weight: -28
+        enabled: false
+      faq:
+        weight: -27
+        enabled: false
+      mega_drive_image_video_gallery:
+        weight: -26
+        enabled: false
+      recruitment_job_assured_icons:
+        weight: -25
+        enabled: false
+field_type: entity_reference_revisions

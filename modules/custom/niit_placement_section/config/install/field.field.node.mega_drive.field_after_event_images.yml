@@ -1,0 +1,99 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_after_event_images
+    - node.type.mega_drive
+    - paragraphs.paragraphs_type.after_event_gallery
+  module:
+    - entity_reference_revisions
+id: node.mega_drive.field_after_event_images
+field_name: field_after_event_images
+entity_type: node
+bundle: mega_drive
+label: 'After Event Images'
+description: 'After Event Images'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      after_event_gallery: after_event_gallery
+    target_bundles_drag_drop:
+      after_event_gallery:
+        enabled: true
+        weight: 25
+      assured_job_section:
+        weight: 26
+        enabled: false
+      assured_job_slider_placement:
+        weight: 27
+        enabled: false
+      companies_slider:
+        weight: 28
+        enabled: false
+      enrollment_contact_form:
+        weight: 29
+        enabled: false
+      faq:
+        weight: 30
+        enabled: false
+      faqs:
+        weight: 31
+        enabled: false
+      from_library:
+        weight: 32
+        enabled: false
+      header_slider_section:
+        weight: 33
+        enabled: false
+      mega_drive_image_video_gallery:
+        weight: 34
+        enabled: false
+      niit_job_profile_paragraph:
+        weight: 35
+        enabled: false
+      placement_mega_drive:
+        weight: 36
+        enabled: false
+      placement_mentors_advice:
+        weight: 37
+        enabled: false
+      placement_section:
+        weight: 38
+        enabled: false
+      placement_slider:
+        weight: 39
+        enabled: false
+      placement_student_recruiter:
+        weight: 40
+        enabled: false
+      placement_testimonial:
+        weight: 41
+        enabled: false
+      recruitment_job_assured_icons:
+        weight: 42
+        enabled: false
+      recruitment_job_assured_section:
+        weight: 43
+        enabled: false
+      student_project_showcase:
+        weight: 44
+        enabled: false
+      tips_of_the_day:
+        weight: 45
+        enabled: false
+      tips_of_the_day_embed:
+        weight: 46
+        enabled: false
+      top_salaried_students:
+        weight: 47
+        enabled: false
+      upcoming_drive:
+        weight: 48
+        enabled: false
+field_type: entity_reference_revisions

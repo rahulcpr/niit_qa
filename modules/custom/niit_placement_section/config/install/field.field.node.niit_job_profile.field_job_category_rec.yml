@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_job_category_rec
+    - node.type.niit_job_profile
+    - taxonomy.vocabulary.top_course_category
+id: node.niit_job_profile.field_job_category_rec
+field_name: field_job_category_rec
+entity_type: node
+bundle: niit_job_profile
+label: 'Job Category'
+description: 'Job Category'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      top_course_category: top_course_category
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

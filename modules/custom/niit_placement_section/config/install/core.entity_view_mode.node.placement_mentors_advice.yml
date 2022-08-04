@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.placement_mentors_advice
+label: 'Placement Mentors Advice'
+targetEntityType: node
+cache: true

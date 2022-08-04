@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_faculty_reference
+    - node.type.faculty
+    - paragraphs.paragraphs_type.star_faculty
+id: paragraph.star_faculty.field_faculty_reference
+field_name: field_faculty_reference
+entity_type: paragraph
+bundle: star_faculty
+label: 'Faculty reference'
+description: 'Faculty reference'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      faculty: faculty
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

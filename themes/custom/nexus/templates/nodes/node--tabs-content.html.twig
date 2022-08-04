@@ -1,0 +1,87 @@
+<section class="ProductBox blog-details-wrp">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumbs">
+                    <ul>
+                        <li>
+
+                            <a href="/">Home / </a>
+                        </li>
+                        <li>{{ label }}</li> 
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="blog-details">
+                        <div class="imgmain">
+                            {{ content.field_banner_image }} 
+                        </div> 
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="GetinTouch">
+                        {{ drupal_entity('webform','get_in_touch') }}
+                    </div>       
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9">
+                 
+
+                <div id="horizontalTab2">
+                    <ul class="resp-tabs-list">
+
+                        {% for item in node.field_tab_data %}
+                        <li>
+                            <a class="active" href="#{{ item.entity.field_tab_title.value|join }}">{{ item.entity.field_tab_title.value }}</a>
+                        </li>
+                        {% endfor %}
+                        
+                    </ul>
+                    <div class="resp-tab">
+                        {% for item in node.field_tab_data %}
+                        <div id="{{ item.entity.field_tab_title.value|join }}">
+                            {{ item.entity.field_tab_content.value | raw }}
+                            </div>
+                        {% endfor %}
+                        
+                    
+                </div>
+         
+        </div>
+                </div> 
+                <div class="col-md-3"> 
+                {{ drupal_view('star_faculty_for_schools', 'block_1') }} 
+                </div>
+            </div>
+
+
+ 
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row CollegeBox">
+                    <p style="text-align:center;"><b>You can also view related links</b></p> 
+                    
+                   
+                   {% for key, item in content.field_related_links %}
+                   
+                   {% if content.field_related_links[key]['#title'] is not empty %}
+
+                   <a class="scl_related" href="{{ content.field_related_links[key]['#url'] }}">{{ content.field_related_links[key]['#title'] }}</a>
+                   
+                   {% endif %}
+                   
+                   {% endfor %}
+                   
+                </div>
+            </div>            
+        </div>
+    </div>
+</section>

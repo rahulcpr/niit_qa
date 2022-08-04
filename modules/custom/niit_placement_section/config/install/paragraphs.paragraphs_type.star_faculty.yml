@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: star_faculty
+label: 'Star Faculty'
+icon_uuid: null
+description: 'STAR FACULTY'
+behavior_plugins: {  }

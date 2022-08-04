@@ -1,0 +1,43 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.testimonial_modal
+    - field.field.node.testimonial.field_about_testimonial
+    - field.field.node.testimonial.field_testimonial_image
+    - field.field.node.testimonial.field_testimonial_video
+    - node.type.testimonial
+  module:
+    - image
+    - user
+id: node.testimonial.testimonial_modal
+targetEntityType: node
+bundle: testimonial
+mode: testimonial_modal
+content:
+  field_about_testimonial:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_testimonial_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+  field_testimonial_video:
+    weight: 2
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  links: true
+  share_everywhere: true

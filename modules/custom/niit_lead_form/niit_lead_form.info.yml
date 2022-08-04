@@ -1,0 +1,22 @@
+name: 'NIIT lead form'
+type: module
+core: 8.x
+dependencies:
+  - block
+  - block_content
+  - entity_reference_revisions
+  - field
+  - niit_placement_section
+  - node
+  - paragraphs
+  - path
+  - rest
+  - serialization
+  - taxonomy
+  - tb_megamenu
+  - text
+  - user
+  - views
+  - webform
+version: 8.x-1.0
+package: NIIT

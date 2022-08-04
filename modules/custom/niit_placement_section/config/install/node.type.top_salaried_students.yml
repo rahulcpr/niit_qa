@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+name: 'Top Salaried Students'
+type: top_salaried_students
+description: 'This section is for top salary student. It contain student name, image and designation with company name.'
+help: ''
+new_revision: true
+preview_mode: 1
+display_submitted: true

@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.placement_testimonial
+label: 'Placement Testimonial'
+targetEntityType: node
+cache: true

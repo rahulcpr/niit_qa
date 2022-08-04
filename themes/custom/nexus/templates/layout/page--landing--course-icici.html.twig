@@ -1,0 +1,138 @@
+<section class="landing-page-course">
+<section class="header-container" style="padding: 10px 0px;">
+  <div class="container">
+    <div class="row">
+      <div class="headerSection col-md-12">
+        <div class="logo">
+          <a href="/">
+            <img data-src="/india/themes/custom/nexus/assets/images/NIIT_logomobile.png" alt="NIIT" title="NIIT" class="scale hide600 js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+            <img data-src="/india/themes/custom/nexus/assets/images/NIIT_logomobile.png" alt="NIIT" title="NIIT" class="scale show600 js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div id="mynodeid">{{nodeidfortemplate}}</div>
+<!-- Img Section Start -->
+<section class="img-section-data landing-course">
+  {% if node.field_banner.entity.fileuri is not empty %}
+    <img data-src="{{ file_url(node.field_banner.entity.fileuri) }}" alt="webnier"  class="img-responsive course_img js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg">
+  {% endif %}
+</section>
+<section class="landing-embed-form">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-offset-9 col-md-3 iciciCheckEligiblityForm landing-page-icici-form">
+ {# {{ multistep_page_block_form|raw }} #}
+        <div id="multi-div" class="iciciCheckEligiblityForm"></div>
+  
+    </div>
+    </div>
+  </div>
+</section>
+<!-- Img Section End -->
+
+<!-- Course Deatils Start -->
+<section class="course-program-key landing-course">
+ <div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>{{ node.field_program_overview_title.value }}</h2>
+      {{ node.body.value|raw }}
+    </div>
+    <div class="col-md-6">
+      <h2>{{ node.field_course_details_title.value }}</h2>
+      {{ node.field_course_details.value|raw }}
+    </div>
+  </div>
+ </div>
+</section>
+<!-- Course Deatils End -->
+
+<!-- Eligibility Section Start -->
+<section id="iciciEligibility" class="pt-3 iciciEligibility-landing-course">
+  <div class="container">
+    <h2 class="iciciMainTitle mb-5">{{ node.field_course_eligibility_title.value }}</h2>
+    <div class="row">
+      {{ node.field_course_eligibility.value|raw }}          
+    </div>
+    <div class="row mt-4">
+      {# <p class="text-center mt-5">
+      {{ mutlistep_check_eligibility_btn|raw }}
+      </p> #}
+    </div>
+  </div>
+</section> 
+<!-- Eligibility Section end -->
+
+<!--Career Opportunity Start -->
+<section id="iciciCareerOpporty" class="iciciCareerOpporty-landing-course">
+    <div class="container">
+        <div class="row">
+            <h2 class="iciciMainTitle">{{ node.field_career_opportunity_title.value }}</h2>            
+        </div>
+    </div>
+    {% if node.field_career_opportunity_image.entity.fileuri is not empty %}
+      <img class="img-responsive js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg" data-src = "{{ file_url(node.field_career_opportunity_image.entity.fileuri) }}" alt="{{ node.field_career_opportunity_image.alt  }}" />
+    {% endif %}
+</section>  
+<!--Career Opportunity End -->
+
+<!-- Testimonial Section Start -->
+{% if iciciTestimonialTabOutput is not empty %}
+<section id="icicitestimonoal" class="pt-3 mb-4 icicitestimonoal-landing-course">
+  <div class="container">
+    <h2 class="iciciMainTitle mb-5">{{ node.field_testimonials_title.value }}</h2>
+    <div class="row">
+      <div class="row iciciTestimonoalTabBtn">
+        <ul class="nav nav-tabs">
+          {{ iciciTestimonialTabOutput|raw }}
+        </ul>
+      </div>
+      <div class="tab-content">
+        {{ iciciTestimonialTabDataOutput|raw }}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+<!-- Testimonial Section end -->
+
+<!--FAQ start here -->
+<section id="Icicifaq-sec" class="icici-faq mb-4 Icicifaq-sec-landing-course">
+   <div class="container">
+      <h2 class="iciciMainTitle">{{ node.field_faq_title.value }}</h2>
+      <p class="iciciDis mb-5 col-md-12">{{ node.field_faq_summary.value }}</p>
+      {% if node.field_faq is not empty %}
+      <div class="col-md-12 mt-3 iciciAccordianDetail">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          {% for key, data in node.field_faq %}
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ key }}" aria-expanded="false" aria-controls="collapseOne">
+                    {{ data.question }}
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-{{ key }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  {{ data.answer|raw }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}  
+        </div>
+      </div>
+      {% endif %}
+   </div>
+</section>
+<!--FAQ end here -->
+</section>
+
+
+
+
+
+{% include directory ~ '/templates/layout/footer_new.html.twig' %}

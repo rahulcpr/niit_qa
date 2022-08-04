@@ -1,0 +1,53 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.mentors_advice.field_mentor_image
+    - field.field.node.mentors_advice.field_mentor_name
+    - field.field.node.mentors_advice.field_mentor_text
+    - field.field.node.mentors_advice.field_mentor_tile
+    - field.field.node.mentors_advice.field_video_link
+    - node.type.mentors_advice
+  module:
+    - image
+    - user
+id: node.mentors_advice.default
+targetEntityType: node
+bundle: mentors_advice
+mode: default
+content:
+  field_mentor_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+  field_mentor_name:
+    weight: 3
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_mentor_text:
+    weight: 2
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_mentor_tile:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  field_video_link: true
+  links: true
+  share_everywhere: true

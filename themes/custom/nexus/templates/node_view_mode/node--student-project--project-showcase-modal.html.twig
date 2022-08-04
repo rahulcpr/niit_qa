@@ -1,0 +1,30 @@
+<div class="modal fade showcase" id="nid-project-showcase-{{ node.id }}" role="dialog">
+    <div class="modal-dialog modal-big">
+        <button type="button" class="close closepop" data-dismiss="modal">
+            &times;
+        </button>
+        <div class="row">
+            <!-- Modal content-->
+            <div class="container showcase-wrap text-left">
+                <div class="col-md-4">
+                    <div class="headdingpop hide-desktop">
+                        <h3>{{ label }}</h3>
+                        <p>{{ content.field_project_publish_date }} {{ content.field_project_tag_info }}</p>
+                    </div>
+                    <figure><img src="{{ content.field_project_image[0] }}"
+                            class="img-responsive" /></figure>
+                    <h5>Overview</h5>
+                    {{ content.field_overview }}
+                </div>
+                <div class="col-md-8">
+                    <div class="headdingpop hide-mobile">
+                        <h3>{{ label }}</h3>
+                        <p>{{ content.field_project_publish_date }} {{ content.field_project_tag_info }}</p>
+                    </div>
+                    <h5>What we needed:</h5>
+                    <p>{{ content.body }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

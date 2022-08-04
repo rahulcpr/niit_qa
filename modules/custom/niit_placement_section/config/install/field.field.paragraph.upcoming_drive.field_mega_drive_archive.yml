@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_mega_drive_archive
+    - paragraphs.paragraphs_type.upcoming_drive
+id: paragraph.upcoming_drive.field_mega_drive_archive
+field_name: field_mega_drive_archive
+entity_type: paragraph
+bundle: upcoming_drive
+label: 'Mega Drive Archive'
+description: 'Mega Drive Archive'
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

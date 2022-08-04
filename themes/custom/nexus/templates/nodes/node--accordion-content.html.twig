@@ -1,0 +1,44 @@
+<section class="ProductBox blog-details-wrp">
+        <div class="container">
+            <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumbs">
+                    <ul>
+                        <li>
+                            <a href="/">Home / </a>
+                        </li>
+                        <li>{{ label }}</li> 
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+                <div class="col-md-9">
+                    <div class="blog-details">
+                        <div class="imgmain">
+                            {{ content.field_banner_image }} 
+                        </div> 
+                    </div>
+                </div>
+            </div>
+            <div class="headding text-center">
+                <h2 class="faqheadding">{{ node.title.value }}</h2>
+                <span class="underline"></span>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="faq-wrap">
+                        {% for item in node.field_accordion %}
+                            <div
+                                class="accordionButton">{{ item.entity.field_tab_title.value }}</div>
+                            <div class="accordionContent">
+                                <div class="faq-contant">
+                                    {{ item.entity.field_tab_content.value | raw }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

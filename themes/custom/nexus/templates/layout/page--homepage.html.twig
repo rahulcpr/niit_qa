@@ -1,0 +1,469 @@
+<!-- Header Start-->
+{# <header role="banner"> #}
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+{# </header> #}
+
+<!-- Header End -->
+<section class="new-hp-page-wrapper">
+
+		<section class="niit_40yrs_message">
+		  <div class="alert alert-info alert-dismissible container" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  <div class="niit_40yrsContent">
+				<img width="41" height="40" data-src="{{ base_url }}themes/custom/nexus/assets/images/40logo.png" src="/india/sites/default/files/transparentimg.jpg" alt="niit-logo"  class="img-responsive js-lazyload-image"> <span>{{ node.field_venue.value }}</span>
+			  </div>
+			  </div>
+		</section>
+
+
+	{# <!-- Banner section start  ---> #}
+	<section class="home_banner">
+	  <div class="container">
+	    <div class="row">
+
+	      <div class="col-md-6 col-md-push-6">
+	        <div class="home_banner_righ_block">
+	          <div class="col-md-6 col-xs-6 col-sm-6 banner-left">
+	            <img width="57" height="68" data-src="{{ base_url }}themes/custom/nexus/assets/images/y.png" src="/india/sites/default/files/transparentimg.jpg" class="img-responsive pattrn-y js-lazyload-image" alt="Y">
+	            {# <img src="{{ file_url(node.field_banner_image_1.entity.fileuri) }}" class="banr_img1" alt="{{ node.title.value }}"> #}
+				<picture>
+				<source class="js-lazyload-image banr_img1" data-srcset="{{ webp_image_get(node.field_banner_image_1.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ node.title.value }}"/>
+				<img class="js-lazyload-image banr_img1" data-src="{{node.field_banner_image_1.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ node.title.value }}"/>
+				</picture>
+	            {# <img src="{{ file_url(node.field_banner_image_2.entity.fileuri) }}" class="banr_img2" alt="{{ node.title.value }}"> #}
+				<picture>
+				<source class="js-lazyload-image banr_img2" data-srcset="{{ webp_image_get(node.field_banner_image_2.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ node.title.value }}"/>
+				<img class="js-lazyload-image banr_img2" data-src="{{node.field_banner_image_2.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ node.title.value }}"/>
+				</picture>
+	          </div>
+	          <div class="col-md-6 col-xs-6 col-sm-6 banner-right">
+	            {# <img src="{{ file_url(node.field_banner_image_3.entity.fileuri) }}" class="banr_img3" alt="{{ node.title.value }}"> #}
+				<picture>
+				<source class="js-lazyload-image banr_img3" data-srcset="{{ webp_image_get(node.field_banner_image_3.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ node.title.value }}"/>
+				<img class="js-lazyload-image banr_img3" data-src="{{node.field_banner_image_3.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ node.title.value }}"/>
+				</picture>
+	            <img width="57" height="68" data-src="{{ base_url }}themes/custom/nexus/assets/images/b.png" src="/india/sites/default/files/transparentimg.jpg" class="img-responsive pattrn-b js-lazyload-image" alt="b">
+	          </div>
+	        </div>
+	      </div>
+
+	      <div class="col-md-6 col-md-pull-6">
+	        <div class="home_banner_left_block">
+	          <h2>{{ node.field_banner_text.value }}</h2>
+	          <p id="focus_req_cback" class="banner_discrptn">{{ node.field_banner_description.value }}</p>
+	          {# <p class="explr_cta"><a href="search/content?keys=">{{ node.field_banner_button_text.value }}</a></p> #}
+	          
+	              {% include directory ~ '/templates/layout/homepage_leadform.html.twig' %}
+					 <!-- {{ homepageform|raw }} -->
+					 <!-- <div class="homepagelead-ldform"></div> -->
+					      
+	        </div>
+	      </div>
+
+	      
+
+	    </div>
+	  </div>
+	</section>
+
+	{# <!-- Banner section End ---> #}
+
+
+	<section class="learning_industry only_desktop">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-5">
+					<div class="learning_industry_leftBlock">
+						{% if node.field_about_us.value is not empty %}
+							{{ node.field_about_us.value|raw }}
+						{% endif %}
+					</div>
+				</div>
+
+				<div class="col-md-7">
+					<div class="learning_industry_rightBlock">
+						{% if node.field_overview.value is not empty %}
+							{{ node.field_overview.value|raw }}
+						{% endif %}
+						<div class="col-md-6 pr-0">
+							<div class="learn_contnt_right">
+								<picture>
+                                <source class="js-lazyload-image img-responsive niit_build" data-srcset="{{ webp_image_get(node.field_gallery_image.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ node.title.value }}"/>
+								<img class="js-lazyload-image img-responsive niit_build" data-src="{{node.field_gallery_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ node.title.value }}"/>
+                                </picture>
+								{% if node.field_content_misc.value is not empty %}
+									{{ node.field_content_misc.value|raw }}
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="learning_industry only_mobile">
+		<div class="container">
+		<div class="row">
+		<div class="col-xs-12">
+		<div class="learning_industry_leftBlock">
+				{% if node.field_about_us.value is not empty %}
+											{{ node.field_about_us.value|raw }}
+										{% endif %}
+				</div>
+		</div>
+		<div class="col-xs-12 pl-4">
+		<div class="row">
+			  <div class="col-xs-7 learn_contnt_right">	  
+			  <img class="js-lazyload-image img-responsive pattrn-y" data-src="/india/themes/custom/nexus/assets/images/y.png" src="/india/sites/default/files/transparentimg.jpg" alt="pattern">
+			  <picture>
+              <source class="js-lazyload-image img-responsive niit_build" data-srcset="{{ webp_image_get(node.field_gallery_image.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ node.title.value }}"/>
+			  <img class="js-lazyload-image img-responsive niit_build" data-src="{{node.field_gallery_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ node.title.value }}"/>
+              </picture>
+	  		  <img class="js-lazyload-image img-responsive pattrn-bfr" data-src="/india/themes/custom/nexus/assets/images/b.png" src="/india/sites/default/files/transparentimg.jpg" alt="pattern-bfr">
+	  
+			  </div>
+			  <div class="col-xs-5">
+				<div class="learn_contnt">
+				<img src="/india/themes/custom/nexus/assets/images/learningbox.png" alt="learningbox">
+					<small>Present in</small>
+					<h2 class="learn_data">30+</h2>
+					<h3 class="learn_para">Countries</h3>
+				</div>
+				</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6">
+					<div class="learn_contnt">
+				<img src="/india/themes/custom/nexus/assets/images/learningbox.png" alt="learningbox">
+				<h2 class="learn_data">3.8 CR+</h2>
+				<h3 class="learn_para">Learners</h3>
+				<small>Around the World</small>
+				</div>
+
+					</div>
+					
+				<div class="col-xs-6">
+				<div class="learn_contnt">
+				<img src="/india/themes/custom/nexus/assets/images/learningbox.png" alt="learningbox">
+				<h2 class="learn_data">800</h2>
+				<h3 class="learn_para">CORPORATES</h3>
+				<small>Hire from us</small>
+				</div>
+				</div>
+				</div>
+		   </div>
+		</div>
+		</div>
+	</section>
+	<section class="partners">
+		<div class="container">
+			<!-- {% if node.field_course_details_tools_title.value is not empty %} -->
+				<!-- <h3>{{ node.field_course_details_tools_title.value }}</h3> -->
+			<!-- {% endif %} -->
+			<div class="only-desk">
+				<div class="slick-wrapper">
+					<div id="slick1_partners">
+						{{ drupal_view('home_page', 'block_2') }}
+					</div>
+				</div>
+			</div>
+			{# <div class="row-flex only-desk">
+						                <div class="mob-slidercss">
+						                    {{ drupal_view('home_page', 'block_2') }}
+						                </div>
+									</div> #}
+			<div class="col-md-12 only-mob hp-partners-mob-slider">
+				<div id="exampleSlider-tools">
+					<div class="MS-content">
+						{{ drupal_view('home_page', 'block_4') }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	{% if node.field_age_group.value is not empty %}
+		<section class="whtDoyouLearn">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						<h4 class="hp_title">{{ node.field_age_group.value }}</h4>
+						{% for key, value in node.field_want_to_learn_sections %}
+							<div class="col-md-6">
+								<div class="learing_card">
+									<picture>
+                                    <source class="js-lazyload-image img-responsive" data-srcset="{{ webp_image_get(value.entity.field_image.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.title.value }}"/>
+									<img class="js-lazyload-image img-responsive" data-src="{{ value.entity.field_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.title.value }}"/>
+                                	</picture>
+									<h6>{{ value.entity.field_icon_title.value }}</h6>
+									<h3>{{ value.entity.field_content_title.value }}</h3>
+									<p>{{ value.entity.field_description.value }}</p>
+								</div>
+								<div class="learn_cardCTA">
+									<a href="{{ file_url(value.entity.field_see_more.uri) }}">{{ value.entity.field_see_more.title }}</a>
+									<i class="fa fa-angle-right"></i>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</section>
+	{% endif %}
+	<section class="assured_place">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="assured_place_content learning_industry_leftBlock">
+						<img width="57" height="68" class="js-lazyload-image img-responsive" data-src="/india/themes/custom/nexus/assets/images/y.png" src="/india/sites/default/files/transparentimg.jpg" alt="pattern">
+						{{ node.field_alumni_summary_0.value|raw}}
+					</div>
+				</div>
+
+				<div class="col-md-6">
+					<div class="assured_place_video">
+						<iframe src="{{ node.field_alumni_featured_video_url.value }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	{% if node.field_aj_name.value is not empty %}
+		<section class="top-companies">
+			<div class="container bg-blue">
+				<div class="row">
+					<div class="companies">
+						<div class="col-sm-6">
+							<p class="hire-heading">{{ node.field_aj_name.value }}</p>
+						</div>
+						<div class="col-sm-6">
+							{% if node.field_message.value is not empty %}
+								<p class="hire-text">{{ node.field_message.value }}</p>
+							{% endif %}
+							<button class="hire-btn">
+								<a href="{{ file_url(node.field_contentlink.uri) }}">{{ node.field_contentlink.title }}
+								</a>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="hireing-partners">
+						{% if node.field_main_text.value is not empty %}
+							{{ node.field_main_text.value|raw }}
+						{% endif %}
+
+				        <div class="col-sm-9 p-l90">
+						  <p class="hire-head">A FEW OF OUR KEY HIRING PARTNERS</p>
+						  <div class="row hire-icon">
+						  {% for key, value in node.field_author_pic %}
+						  
+							<div class="col-sm-3 col-xs-3">
+								<picture>
+                                  <source class="js-lazyload-image" data-srcset="{{ webp_image_get(value.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.title.value }}"/>
+								  <img class="js-lazyload-image" data-src="{{ value.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.title.value }}"/>
+                                </picture></div>
+						  {% endfor %}
+						  </div>					  
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	{% endif %}
+
+	{# Get started for free section start #}
+
+	<section class="slider-section">
+		<div class="container-fluid">
+			<div class="row slider-section-inner">
+				<div class="bg-blue-slide">
+					<div class="col-sm-5 slide-left-section">
+						<img width="57" height="68" class="js-lazyload-image" data-src="/india/themes/custom/nexus/assets/images/y.png" src="/india/sites/default/files/transparentimg.jpg" alt="y">
+						<p class="slide-heading">{{ node.field_get_started_title.value }}</p>
+						<p class="slide-text">{{ node.field_get_started_text.value }}</p>
+						<button class="slide-btn"><a href="{{ node.field_get_started_free_button.uri }}">{{ node.field_get_started_free_button.title }}  &gt; </a></button>
+				</div>
+				<div class="col-sm-7 p-r0">
+					<div class="get-started-slider">
+						
+						{% for key, value in node.field_get_started_course_referen %}
+							<div class="slick-bg">
+								<div class="slide-content">
+									<picture>
+									<source class="img-responsive js-lazyload-image" data-srcset="{{ webp_image_get(value.entity.field_course_image.entity.fileuri |image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.field_course_image.alt }}">
+									<img class="img-responsive js-lazyload-image" data-src="{{ value.entity.field_course_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.field_course_image.alt }}">
+									</picture>
+									<p class="slide-head">{{ value.entity.title.value }}</p>
+									<ul>
+										<li>
+											<i class="fa fa-clock-o"></i>
+											<span>{{ value.entity.field_course_duration.value }}</span>
+										</li>
+										<li>
+											<i class="fa fa-calendar"></i>
+											<span>{{ value.entity.field_mode_of_delivery.value }}</span>
+										</li>
+									</ul>
+								</div>
+								<button class="cour_link">
+									<a class="get_startfree" href="{{ path('entity.node.canonical', {'node': value.entity.id }) }}" course_d="{{ value.entity.field_course_duration.value }}" course_nam="{{ value.entity.title.value }}">View Course</a></button>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+		{# Get started for free section start #}
+
+		{% if node.field_offer_text.value is not empty %}
+			<section class="knowledge-section">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-5 col-sm-6 k-left-img">
+							{# <img src="{{ file_url(node.field_faculty_image.entity.fileuri) }}" class="k-img"> #}
+							<picture>
+								<source class="js-lazyload-image" data-srcset="{{ webp_image_get(node.field_faculty_image.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ getKCArray.6.title }}"/>
+								<img class="js-lazyload-image" data-src="{{ node.field_faculty_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ value.title.value }}"/>
+							</picture>
+							<div class="k-left">
+								{{ node.field_instruction_summary.value | raw }}
+								<button>
+									<a href="{{ file_url(node.field_related_links.uri) }}">{{ node.field_related_links.title }}
+									</a>
+								</button>
+							</div>
+						</div>
+						<div class="col-md-7 col-sm-6 k-right">
+							<p class="k-right-top">{{ node.field_alumni_title.value }}</p>
+							<p class="k-head">{{ node.field_offer_text.value }}</p>
+							{% for key, value in node.field_knowledge_centres_section %}
+
+								<div class="k-right-section">
+									<picture>
+										<source class="js-lazyload-image" data-srcset="{{ webp_image_get(value.entity.field_testimonial_large_image.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ getKCArray.6.title }}"/>
+										<img class="js-lazyload-image" data-src="{{value.entity.field_testimonial_large_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.title.value }}"/>
+									</picture>
+									<!-- {% set kc_title = value.entity.title.value %} -->
+									<!-- <p class="k-head-whitebox">{{ kc_title|length > 30 ? kc_title|slice(0, 30) ~ '...' : kc_title }}</p> -->
+									<p class="k-head-whitebox {{ value.entity.id }}">{{ value.entity.title.value }}</p>
+									{% set kc_description = value.entity.body.summary %}
+									<p class="k-undertext">{{ kc_description|length > 70 ? kc_description|slice(0, 70) ~ '...' : kc_description }}</p>
+
+									<a class="kcreadmore {{ value.entity.id }}" articlename="{{ value.entity.title.value }}" href="{{ path('entity.node.canonical', {'node': value.entity.id }) }}">Read More</a>
+								</div>
+
+							{% endfor %}
+							<a href="/india/knowledge-center" class="k-lastright">Explore NIIT Knowledge Center</a>
+						</div>
+					</div>
+				</div>
+			</section>
+		{% endif %}
+		{% if node.field_testimonial is not empty %}
+			<section class="success-stories">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-6">
+							<img width="57" height="68" class="js-lazyload-image" data-src="/india/themes/custom/nexus/assets/images/y.png" src="/india/sites/default/files/transparentimg.jpg" alt="pattern">
+							<p class="success-head">{{ node.field_faculty_designation.value }}</p>
+						</div>
+						<div class="col-sm-6"></div>
+					</div>
+
+					<div class="row gallery gallery-responsive portfolio_slider">
+						{% for key, value in node.field_testimonial %}
+							<div class="inner col-sm-6 p-r0">
+								<div class="success-white">
+									<picture>
+										<source class="js-lazyload-image" data-srcset="{{ webp_image_get(value.entity.field_testimonial_large_image.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.title.value }}"/>
+										<img class="js-lazyload-image" data-src="{{ value.entity.field_testimonial_large_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.title.value }}"/>
+									</picture>
+									<p class="heading">{{ value.entity.field_about_testimonial.value }}</p>
+									<p class="batch">{{ value.entity.field_assignment_text.value }}</p>
+									<p class="success-cource"><a href="{{ path('entity.node.canonical', {'node':  value.entity.field_all_courses_link.entity.id}) }}" target="_blank">{{ value.entity.field_all_courses_link[0].entity.title.value }} <i class="fa fa-angle-right"></i></a></p>
+									{% set testimonial_about = value.entity.field_testimonial_description.value %}
+										<p class="success-text">{{ testimonial_about|length > 240 ? testimonial_about|slice(0, 240) ~ '...' : testimonial_about }}</p>
+									<div class="img-success">
+										<picture>
+											<source class="js-lazyload-image" data-srcset="{{ webp_image_get(value.entity.field_testimonial_image.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.title.value }}"/>
+											<img class="js-lazyload-image" data-src="{{ value.entity.field_testimonial_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ value.entity.title.value }}"/>
+										</picture>
+										
+										<p class="success-name">{{ value.entity.title.value }}
+										<br>
+											{{ value.entity.field_placement_company.value }}</p>
+										<p class="linkedinprof">
+										{% if value.entity.field_linkedin_url.0.value is not empty %}
+                                        <a href="{{ value.entity.field_linkedin_url.0.value }}" target="_blank"><img src="/india/themes/custom/nexus/assets/images/link-small.png" alt="small"></a>
+                                        {% endif %}
+										</p>	
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</section>
+			{% endif %}
+
+			{% if node.field_credentials is not empty %}
+				<section class="credentials">
+					<div class="container">
+						<div class="row-flex">
+							<div class="col-sm-3 credentials-head">
+								<div class="credentials-align">
+									<h3>{{ node.field_credentials_title.value }}</h3>
+									<p>{{ node.field_credentials_summary.value }}</p>
+								</div>
+							</div>
+							<div class="col-sm-9">
+								<div class="row-flex mob-slider">
+									<div class="col-sm-4">
+										<div class="cards-bg green-bg wow fadeIn" data-wow-delay=".3s">
+											{{ node.field_credentials.0.value|raw }}
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="cards-bg yellow-bg black-txt wow fadeIn" data-wow-delay=".3s">
+											{{ node.field_credentials.1.value|raw }}
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="cards-bg red-bg wow fadeIn" data-wow-delay=".3s">
+											{{ node.field_credentials.2.value|raw }}
+										</div>
+									</div>
+									<div class="col-sm-4 fix-align">
+										<div class="cards-bg lightblue-bg wow fadeIn" data-wow-delay=".3s">
+											{{ node.field_credentials.3.value|raw }}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			{% endif %}
+
+		</section>
+
+
+		<div class="modal fade" id="myModal-videos" role="dialog">
+			<div
+				class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<div class="modal-body">
+						<div id="iframe_data"></div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		{% include directory ~ '/templates/layout/footer.html.twig' %}

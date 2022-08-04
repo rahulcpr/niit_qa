@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.top_salaried
+label: 'Top Salaried'
+targetEntityType: node
+cache: true

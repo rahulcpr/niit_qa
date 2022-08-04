@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_show_enrollment_contact
+    - paragraphs.paragraphs_type.enrollment_contact_form
+id: paragraph.enrollment_contact_form.field_show_enrollment_contact
+field_name: field_show_enrollment_contact
+entity_type: paragraph
+bundle: enrollment_contact_form
+label: 'Show Enrollment Contact Form'
+description: 'Show Enrollment Contact Form'
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

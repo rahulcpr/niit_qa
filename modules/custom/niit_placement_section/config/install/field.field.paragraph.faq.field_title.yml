@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_title
+    - paragraphs.paragraphs_type.faq
+  module:
+    - faqfield
+id: paragraph.faq.field_title
+field_name: field_title
+entity_type: paragraph
+bundle: faq
+label: Title
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    answer: 'type url in your browser.'
+    question: 'How to use website ?'
+    answer_format: plain_text
+default_value_callback: ''
+settings:
+  default_format: plain_text
+field_type: faqfield

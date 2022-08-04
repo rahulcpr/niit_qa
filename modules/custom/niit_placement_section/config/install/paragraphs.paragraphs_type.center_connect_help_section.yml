@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+id: center_connect_help_section
+label: 'Center connect & Help Section'
+icon_uuid: null
+description: 'Center connect & Help Section'
+behavior_plugins: {  }

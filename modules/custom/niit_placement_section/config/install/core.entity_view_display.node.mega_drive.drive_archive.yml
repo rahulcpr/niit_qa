@@ -1,0 +1,53 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.drive_archive
+    - field.field.node.mega_drive.body
+    - field.field.node.mega_drive.field_after_event_images
+    - field.field.node.mega_drive.field_drive_city
+    - field.field.node.mega_drive.field_drive_date
+    - field.field.node.mega_drive.field_drive_video_url
+    - field.field.node.mega_drive.field_event_drive_gallery
+    - field.field.node.mega_drive.field_live_streaming_url
+    - field.field.node.mega_drive.field_month
+    - field.field.node.mega_drive.field_recruiter
+    - field.field.node.mega_drive.field_venue
+    - field.field.node.mega_drive.field_venue_latitude
+    - field.field.node.mega_drive.field_venue_longitude
+    - field.field.node.mega_drive.field_video_thumbnail
+    - field.field.node.mega_drive.field_year
+    - node.type.mega_drive
+  module:
+    - entity_reference_revisions
+    - user
+id: node.mega_drive.drive_archive
+targetEntityType: node
+bundle: mega_drive
+mode: drive_archive
+content:
+  field_after_event_images:
+    type: entity_reference_revisions_entity_view
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+hidden:
+  body: true
+  field_drive_city: true
+  field_drive_date: true
+  field_drive_video_url: true
+  field_event_drive_gallery: true
+  field_live_streaming_url: true
+  field_month: true
+  field_recruiter: true
+  field_venue: true
+  field_venue_latitude: true
+  field_venue_longitude: true
+  field_video_thumbnail: true
+  field_year: true
+  links: true
+  share_everywhere: true

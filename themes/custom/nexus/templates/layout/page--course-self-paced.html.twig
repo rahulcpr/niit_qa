@@ -1,0 +1,962 @@
+  <!-- Header Start-->
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+<!-- Header End -->
+<section id="stackroute-pageMainSection" class="stackroute-pageMainSection">
+<!-- Breadcrub Start -->
+<section class="course-page-breadcrub mobile-hide icici-breadcrumb">
+  <div class="container">
+    <div class="row">
+            <div class="col-lg-12">
+                <div class="page-breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="/">Home</a>
+                        </li>
+                        <li>
+                            <a id="courseCategory"
+                                href="{{ path('entity.node.canonical', {'node':  node.field_top_course_category.entity.id}) }}">{{ node.field_top_course_category[0].entity.title.value }}
+                            </a> 
+                        </li>
+                        <li>{{ node.label }}</li> 
+                    </ul>
+                </div>
+            </div>
+            {# <div class="col-lg-3 desk-com">
+              {{ complete_app_btn|raw }}
+            </div> #}
+      </div>
+  </div>
+</section>
+<!-- Breadcrub End -->
+<!-- nav bar stricky Start-->
+<div id="icici-page-navbar">
+  <div id="icici-navbar">
+    <div class="container">
+      <div class="row desktop-hide icici-page-scroll">
+        <ul class="nav nav-tabs" role="tablist">
+          {% if node.field_floater_menu is not empty %}
+            {% for key, value in node.field_floater_menu %}
+              <li><a href="#{{ value.entity.field_menu_section.value }}" class="searchbycharICICI">{{ value.entity.field_menu_title.value }}</a></li>
+            {% endfor %}
+          {% endif %}
+          {% if node.field_click_to_call_phone_number.value is not empty %}
+            <li><a href="tel:{{ node.field_click_to_call_phone_number.value }}"><i class="fa fa-phone"></i>{{ node.field_click_to_call_phone_number.value }}</a></li>
+          {% endif %}
+          <li class="new_mutlistep_apply_btn newbtnApplypink"> {# {{ StackathonLeadFormBtn|raw }} #} <div class="Stackathon-Lead-Form-div"></div></div> </li>
+        </ul>
+      </div>
+      <div class="row pl-0 mobile-hide">
+        <div class="col-md-8 icici-page-scroll">
+          {% if node.field_floater_menu is not empty %}
+            {% for key, value in node.field_floater_menu %}
+              <a href="#{{ value.entity.field_menu_section.value }}" class="searchbycharICICI">{{ value.entity.field_menu_title.value }}</a>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div class="col-md-4 newstackroute-navbar-btn">
+          <p class="iciciStickyNav new_mutlistep_apply_btn newbtnApplypink">
+            {% if node.field_click_to_call_phone_number.value is not empty %}
+              <a href="tel:{{ node.field_click_to_call_phone_number.value }}"><i class="fa fa-phone"></i>{{ node.field_click_to_call_phone_number.value }}</a>
+            {% endif %}
+           {# {{ StackathonLeadFormBtn|raw }} #} <div class="Stackathon-Lead-Form-div"></div> </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- nav bar stricky end-->
+
+
+<!-- Course Overview start-->
+
+<section class="newImgBanner stackRouteNewBanner new_product_page">
+  <div class="newBannerImage">
+    {% if node.field_background_video_image.entity.fileuri is not empty %}
+      {# <img class="img-responsive banner-img js-lazyload-image" src="/sites/default/files/transparentimg.jpg" data-src = "{{ file_url(node.field_background_video_image.entity.fileuri) }}" alt="{{ node.field_background_video_image.alt  }}" /> #}
+      <picture>
+      <source class="img-responsive banner-img js-lazyload-image" data-srcset="{{ webp_image_get(node.field_background_video_image.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ node.field_background_video_image.alt  }}"/>
+      <img class="img-responsive banner-img js-lazyload-image" data-src="{{ node.field_background_video_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ node.field_background_video_image.alt  }}"/>
+      </picture>
+    {% endif %}
+  </div>
+  <section class="newBannerStyle">
+    <div class="container">
+      <div class="newBannerTextOverlay">
+        <div class="col-md-7 pl-0 pr-0">
+          <div class="newIciciLogo">
+              {% if node.field_title_logo.entity.fileuri is not empty %}
+                {# <img class="img-responsive iciciLogo js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg" data-src = "{{ file_url(node.field_title_logo.entity.fileuri) }}" alt="{{ node.field_title_logo.alt  }}" /> #}
+                <picture>
+                <source class="img-responsive iciciLogo js-lazyload-image" data-srcset="{{ webp_image_get(node.field_title_logo.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ node.field_title_logo.alt  }}"/>
+                <img class="img-responsive iciciLogo js-lazyload-image" data-src="{{ node.field_title_logo.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ node.field_title_logo.alt  }}"/>
+                </picture>
+              {% endif %}
+            </div>
+
+          <div class="offer_ticker mt-5">
+              {% if node.field_placement_offer.value is not empty %}
+              {% if node.field_placement_offer_text.value is not empty %}
+                <span class="ticker_title">{{ node.field_placement_offer.value }}</span>
+                <div class="programme_ticker">
+                <div class="ticker_text_animate"><marquee>{{ node.field_placement_offer_text.value }}</marquee></div>
+                </div>
+                {% endif %}
+                {% endif %}
+              </div>
+
+          <div class="newCourseDetail-1">
+            
+              {% if node.field_course_summary.value is not empty %}
+                <h6>{{ node.field_course_summary.value }}</h6>
+              {% endif %}
+              <h1 class="mt-2">{{ node.title.value }}</h1>
+              {% if node.field_course_short_description[0].value is not empty %}
+              <div class="col-md-12 pl-0 mb_2">
+                <div class="media">
+                  <div class="media-left">
+                    <img class="media-object js-lazyload-image" data-src="/india/themes/custom/nexus/assets/images/noun_verify_-1.png" src="/india/sites/default/files/transparentimg.jpg" alt="noun verify">
+                  </div>
+                  <div class="media-body">               
+                    <p>{{ node.field_course_short_description[0].value }}</p>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% if node.field_course_short_description[1].value is not empty %}
+              <div class="col-md-12 pl-0 mb_2">
+                <div class="media">
+                  <div class="media-left">
+                    <img class="media-object js-lazyload-image" data-src="/india/themes/custom/nexus/assets/images/noun_verify_-1.png" src="/india/sites/default/files/transparentimg.jpg" alt="noun verify">
+                  </div>
+                  <div class="media-body">               
+                    <p>{{ node.field_course_short_description[1].value }}</p>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% if node.field_course_short_description[2].value is not empty %}
+              <div class="col-md-12 pl-0 mb_3">
+                <div class="media">
+                  <div class="media-left">
+                    <img class="media-object js-lazyload-image" data-src="/india/themes/custom/nexus/assets/images/noun_verify_green.png" src="/india/sites/default/files/transparentimg.jpg" alt="noun verify">
+                  </div>
+                  <div class="media-body grncolortxt">               
+                    <p>{{ node.field_course_short_description[2].value }}</p>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              <div class="sp_socail col-md-12 pl-0 mb_3">
+                <a href="#"><i class="fa fa-whatsapp" aria-hidden="true"></i></a>
+                <a href="https://www.facebook.com/NIIT4u/"><i class="fa fa-facebook-square" aria-hidden="true"></i></a>
+                <a href="https://twitter.com/NIITLtd"><i class="fa fa-twitter-square" aria-hidden="true"></i></a>
+              </div>
+            
+             
+            <div class="row mt_10">
+               {% if node.field_expanded_lead_form.value != 1 %}
+               <div class="col-md-5 col-xs-6 mt-3 new_mutlistep_apply_btn sp_enrollNow_hit mobile-hide">
+               {# {{ StackathonLeadFormBtn|raw }} #} 
+               <div class="Stackathon-Lead-Form-div"></div>
+			   <!--<div class="stackathon-div"></div>-->
+              </div>
+              {% endif %}
+              <div class="col-md-5 col-xs-6 mt-3 new_mutlistep_apply_btn sp_enrollNow_hit only-mobiles-show">
+              <div class="Stackathon-Lead-Form-div"></div>
+              </div>
+              {# {% if node.field_course_video_review[0].input is not empty %}
+              <p class="col-md-4 col-xs-6 newIntroVideo" onclick="video_iframe_popup('{{ node.field_course_video_review[0].input }}')">
+                <img data-src="/india/themes/custom/nexus/assets/images/Group 3478.png" class="img-responsive js-lazyload-image" src="/sites/default/files/transparentimg.jpg">
+                <span>Watch <br><span>Program Video</span></span>
+              </p>
+              {% endif %}  #}
+            </div>
+           
+          </div>
+        </div>
+        {% if node.field_expanded_lead_form.value == 1 %}
+        <div class="col-md-4 col-md-offset-1 newEmdedFormWidth stackrouteEnrollForm strouteEnrollFormSec mobile-hide">
+        <div class="self-paced-embed-div"></div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- Course Overview end--> 
+
+<!-- <section class="new_prodcutpage_usp">
+  <div class="container">
+    <div class="row">
+      <div class="product_usps">
+        <div class="col-md-9 new_usp_box">
+
+          <div class="row">
+            {% if node.field_course_duration.value is not empty %}
+            <div class="col-md-4 col-xs-6">
+              <div class="media">
+                <div class="media-left">
+                  <img class="media-object" src="{{ file_url(node.field_course_duration_icon.entity.fileuri) }}" alt="calender">
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading"><strong>{{ node.field_course_duration.value }} </strong></h4>
+                  <p>{{ node.field_course_duration_tooltip.value }} </p>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% if node.field_mode_of_delivery.value is not empty %}
+            <div class="col-md-4 col-xs-6">
+              <div class="media">
+                <div class="media-left">
+                  <img class="media-object" src="/india/themes/custom/nexus/assets/images/vid.png" alt="calender">
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading pr_10"><strong>{{ node.field_mode_of_delivery.value }}</strong></h4>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% if node.field_course_modules.value is not empty %}
+            <div class="col-md-4 col-xs-6">
+              <div class="media">
+                <div class="media-left">
+                  <img class="media-object" src="{{ file_url(node.field_course_module_icon.entity.fileuri) }}" alt="calender">
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading pr_10"><strong>{{ node.field_course_modules.value }}</strong></h4>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% if node.field_course_type.value is not empty %}
+            <div class="col-md-4 col-xs-6">
+              <div class="media">
+                <div class="media-left">
+                  <img class="media-object" src="{{ file_url(node.field_course_type_icon.entity.fileuri) }}" alt="calender">
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading"><strong>{{ node.field_course_type.value }}</strong></h4>
+                  <p> {{ node.field_course_type_tooltip.value }}</p>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% if node.field_rated_text.value is not empty %}
+            <div class="col-md-4 col-xs-6">
+              <div class="media">
+                <div class="media-left">
+                  <img class="media-object" src="{{ file_url(node.field_rated_icon.entity.fileuri) }}" alt="calender">
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading"><strong>{{ node.field_rated_text.value }}</strong></h4>
+                  <p>{{ node.field_rated_tooltip.value }}</p>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% if node.field_course_student_enrolled.value is not empty %}
+            <div class="col-md-4 col-xs-6">
+              <div class="media">
+                <div class="media-left">
+                  <img class="media-object" src="{{ file_url(node.field_student_enrolled_icon.entity.fileuri) }}" alt="calender">
+                </div>
+                <div class="media-body">
+                  <h4 class="media-heading"><strong>{{ node.field_course_student_enrolled.value }}</strong></h4>
+                  <p>{{ node.field_student_enrolled_tooltip.value }}</p>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div> 
+
+        </div>
+        <div class="col-md-3 col-xs-12 timer_box">
+          <div class="col-md-12 col-xs-7">
+            {% if node.field_course_batch_start_text.value is not empty %}
+              <p class="pt-4 mb-0">{{ node.field_course_batch_start_text.value }}</p>
+            {% endif %}
+            <h4 class="mt-0 mb-4">{{ courseBatchStartDate }}</h4>
+          </div>
+          {{ courseBatchStartDateTimeCounter|raw }}
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+{# new programme highlight section Start #}
+<div id="programOverviewSectionNav"></div>
+<section class="new_program_highlights">
+  <div class="container">   
+    <div class="row new_program_highlights_sec">
+      <h3 class="new_productPage_title mb-4">{{ node.field_program_overview_title_cou.value  }}</h3>
+      {% for key, item in node.field_program_overview_icon_text %}
+        <div class="col-md-6 pl-0 mb_3">
+          <div class="media">
+            <div class="media-left">
+              {# <img class="media-object" src="{{ file_url(item.entity.field_icon.entity.fileuri) }}" alt="{{ item.field_icon.alt }}"> #}
+              <picture>
+                <source class="media-object js-lazyload-image" data-srcset="{{ webp_image_get(item.entity.field_icon.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ item.field_icon.alt  }}"/>
+                <img class="media-object js-lazyload-image" data-src="{{ item.entity.field_icon.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ item.field_icon.alt  }}"/>
+              </picture>
+            </div>
+            <div class="media-body">               
+              <p>{{ item.entity.field_text.value }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}  
+    </div>
+    <div class="row"> <hr class="pl-0 pr-0 horizontal_line"></div>
+    <div class="row whoIsFor_prog">
+      {% for key, value in node.field_programme_highlights %}
+        <div class="col-md-4 mb-3">
+          <div class="media">
+            <div class="media-left">
+              {# <img class="media-object" src="{{ file_url(value.entity.field_image_pedagogy.entity.fileuri) }}" alt="{{ value.field_image_pedagogy.alt }}"> #}
+              <picture>
+                <source class="media-object js-lazyload-image" data-srcset="{{ webp_image_get(value.entity.field_image_pedagogy.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="{{ value.field_image_pedagogy.alt  }}"/>
+                <img class="media-object js-lazyload-image" data-src="{{ value.entity.field_image_pedagogy.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="{{ value.field_image_pedagogy.alt  }}"/>
+              </picture>
+            </div>
+            <div class="media-body">  
+              <h5>{{ value.entity.field_title_pedagogy.value }}</h5>            
+              <p>{{ value.entity.field_summary_pedagogy.value }}</p>
+              {% if loop.last %}
+                {{node.field_term_condition_text.value|raw}}
+              {% endif %}
+              
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="row"> <hr class="pl-0 pr-0 horizontal_line"></div>
+  </div>
+</section>
+{# new programme highlight section End #}
+
+<!-- Our Pedagogy Start -->
+{# <div id="ourPedagogySectionNav"></div> #}
+<section id="pedagogySecnew" class="ourPedagogynew pb-3">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+      <div class="mt-5">
+        {% if node.field_pedagogy_video.value is not empty %}
+          <iframe width="100%" height="300" style="border-radius:6px;" src="{{ node.field_pedagogy_video.value }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        {% endif %} 
+      </div>
+    </div>
+    
+    </div>
+    <hr class="horizontal_line mt-5">
+  </div>
+</section>
+
+<!-- {% if node.field_pedagogy_image_title_summa is not empty %}
+<section id="pedagogySecGrid" class="pedagogySecGridnew">
+  <div class="container">
+    <div class="row whoIsFor_prog">
+    {% for key, value in node.field_pedagogy_image_title_summa %}
+
+    <div class="col-md-4 pedagogySecGridDivnew">
+          <div class="media">
+            <div class="media-left">
+              <img class="media-object" src="{{ file_url(value.entity.field_image_pedagogy.entity.fileuri) }}">
+            </div>
+            <div class="media-body">  
+              <h5>{{ value.entity.field_title_pedagogy.value }}</h5>            
+              <p>{{ value.entity.field_summary_pedagogy.value }}</p>              
+            </div>
+          </div>
+        </div>
+    {% endfor %}
+   </div>
+  </div>
+</section>
+{% endif %} #} -->
+<!-- Our Pedagogy End -->
+<!-- Curriculum Details Start -->
+<!-- <div id="courseDetailsSectionNav"></div>
+ --><!-- <section id="iciciCourseDetail"  class="pt-3 mb-4 stackRouteCourse newProgrm_details">
+  <div class="container">
+    {% if node.field_course_details_title.value is not empty %}
+    <h3 class="new_productPage_title pl-0">{{ node.field_course_details_title.value }}</h3>
+    {% endif %}
+      <p class="courseBrief mobile-hide">{{ node.field_course_details_summary.value }}</p>
+    <div class="row mt-5">
+      <div class="mb-5 iciciCourseDetail_accordion newStackathonRules">
+        
+          
+            {% if node.field_course_details.value is not empty %}
+              {{ node.field_course_details.value|raw }}
+            {% endif %}
+          
+        
+      </div>
+
+    </div>
+  </div>
+</section> -->
+{% if node.field_program_curriculum_1 is not empty %}
+  <section class="NewStackRouteCouseDetailFAQSec mb-4">
+    <div class="container">
+      <div class="row newStackRoutecourseDetailFAQ">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12 col-xs-12">
+              <h3 class="new_productPage_title pull-left">Program Curriculum</h3>
+            </div>
+           {#  <div class="col-md-3 col-xs-5 text-right pl-0 pt-5">
+              {% if node.field_course_brochure.entity.fileuri is not empty %}
+                <a class="btn brochureDwnloadBtn" target="_blank" href="{{ file_url(node.field_course_brochure.entity.fileuri) }}" download><i class="fa fa-download"></i> Download Brochure</a>
+              {% endif %}
+            </div> #}
+          </div>
+        </div>
+        {% if programCurriculumArr is not empty %}
+        <div class="col-md-12 mt-3 newStackAccordianDetail">
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+            {% for key, data in programCurriculumArr %}
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                  <h4 class="panel-title">
+                    {# <div class="row"> #}
+                    {% if loop.first %}
+                      {% set class_faq = "collapse in" %}
+                      {% set class_title_faq = "" %}
+                    {% else %}
+                      {% set class_faq = "collapse" %}
+                      {% set class_title_faq = "collapsed" %}
+                    {% endif %}
+                      <a class="{{ class_title_faq }}" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-course-{{ key }}" aria-expanded="false" aria-controls="collapseOne">
+                        <div class="col-md-10 col-xs-8 pl-0">
+                          <h4 class="pt-3">{{ data.title }}</h4>
+                        </div>
+                        {% if data.Duration is not empty %}
+                        <div class="col-md-2 col-xs-4 pl-0">
+                          <h5 class="pt-2"><i class="fa fa-calendar-o"></i> {{ data.Duration }}</h5>
+                        </div>
+                        {% endif %}
+                      </a>
+                    {# </div> #}
+                  </h4>
+                </div>
+                <div id="collapse-course-{{ key }}" class="panel-collapse {{ class_faq }}" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body">
+                    {% for key1, data1 in data.sprint %}
+
+                      {% if data1.title is not empty %}
+                        <div class="row modular_head">
+                          <div class="col-md-10 col-xs-8">
+                            <h3>{{ data1.title }}</h3>
+                          </div>
+                          <div class="col-md-2 col-xs-4 pt-3">
+                            <h5>{{ data1.Duration }}</h5>
+                          </div>
+                        </div>
+                        <hr class="pl-0 pr-0 horizontal_line">
+                      {% endif %}
+
+                      {% for key2, data2 in data1.step %}
+                        <div class="row modular_Sub_head">
+                          <div class="col-md-10 col-xs-8">
+                            <h4>{{ data2.title }}</h4>
+                          </div>
+                          <div class="col-md-2 col-xs-4">
+                            <h5>{{ data2.Duration }}</h5>
+                          </div>
+                        </div>
+                        <div class="row modular_context">
+                          {% for key3, data3 in data2.activity %}
+                            <div class="col-md-12 mb_2">
+                              <div class="media">
+                                <div class="media-left">               
+                                  <img class="media-object" src="{{ data3.icon }}" alt="{{ data3.text }}">               
+                                </div>
+                                <div class="media-body">               
+                                  <p>{{ data3.text }}</p>
+                                </div>
+                              </div>
+                            </div>
+                          {% endfor %} 
+
+                        </div>
+                        <hr class="pl-0 pr-0 horizontal_line">
+
+
+                      {% endfor %} 
+                      
+                    {% endfor %} 
+                    <div class="new_mutlistep_apply_btn"> {# {{ StackathonLeadFormBtn|raw }} #} <div class="Stackathon-Lead-Form-div"></div>
+					<!--<div class="stackathon-div"></div>-->
+					</div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %} 
+
+          </div>
+        </div>
+        {% endif %}
+        {% if node.field_course_domain_category[0].target_id is not empty %}
+        <!-- <div class="col-md-12">
+          <p class="text-right">
+            <a href="/india/search/content?keys=&f%5B0%5D=course_domain_category%3A{{ node.field_course_domain_category[0].target_id }}" class="new_mutlistep_apply_btn">
+             <span class="btn btn-primary btnApply">Explore other {{ node.field_course_domain_category[0].entity.name.value }} courses</span> 
+            </a>
+          </p>
+        </div> -->
+        {% endif %}
+
+        
+      </div>
+      <hr class="horizontal_line">
+    </div>
+  </section>
+{% else %}
+<section class="stackRouteCouseDetailFAQSec mb-4">
+  <div class="container">
+    <div class="row stackRoutecourseDetailFAQ ">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-9 col-xs-4">
+            <h3 class="iciciCourseDetailTitle mt-0 mb-0">Program Design</h3>
+          </div>
+          <div class="col-md-3 col-xs-8 text-right">
+            {% if node.field_course_brochure.entity.fileuri is not empty %}
+              <a class="btn brochureDwnloadBtn" target="_blank" href="{{ file_url(node.field_course_brochure.entity.fileuri) }}" download><i class="fa fa-download"></i> Download Brochure</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% if node.field_course_module_faq is not empty %}
+      <div class="col-md-12 mt-3 iciciAccordianDetail">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          {% for key, data in node.field_course_module_faq %}
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-course-{{ key }}" aria-expanded="false" aria-controls="collapseOne">
+                    {{ data.question }}
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-course-{{ key }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  {{ data.answer|raw }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}  
+        </div>
+      </div>
+      {% endif %}
+      
+    </div>
+    <hr class="horizontal_line">
+  </div>
+</section>
+{% endif %}
+
+
+<!-- tools covered Start -->
+<!-- {# {% if node.field_course_details_tools is not empty %}
+<section class="tools_covered">
+  <div class="container">
+    <div class="row">     
+      <div class="col-md-12">
+        <div class="tool_cover_box text-center">
+        <h3 class="new_productPage_title">{{ node.field_course_details_tools_title.value }}</h3>
+
+        <div class="row col-md-10 col-md-offset-1 col-xs-12 p-0">
+          <ul class="list-unstyled">
+           {% for key, value in node.field_course_details_tools %}  
+            <li><img src="{{ file_url(value.entity.fileuri) }}" class="img-responsive"></li>  
+           {% endfor %}         
+        </ul>
+        </div>
+        <hr class="row col-md-10 col-md-offset-1 col-xs-12">
+
+        <div class="col-md-10 col-md-offset-1">
+          <h3 class="new_productPage_title pl-0">{{ node.field_placement_company_title.value }} </h3>
+          <p class="courseBrief">{{ node.field_placement_company_summary.value }}</p>
+          <div id="exampleSlider3">      
+             <div class="MS-content">
+                {% for key, value in node.field_placement_company_list %}
+                  <div class="item"> <img data-src="{{ file_url(value.entity.field_company_logo.entity.fileuri) }}" class="img-responsive js-lazyload-image" src="/india/sites/default/files/transparentimg.jpg"> </div>
+                {% endfor %} 
+              </div>
+            </div>
+        
+        </div>
+
+
+      </div></div>
+    </div>
+  </div>
+</section>
+{% endif %} #} -->
+<!-- tools covered end -->
+
+
+
+
+
+{# {% if node.field_student_s_project is not empty %}
+<!-- Student Project Start -->
+<section class="new_productTestimonial" id="studentprojectSectionNav">
+  <div class="container">
+    <div class="row">
+      <h3 class="new_productPage_title">Student Projects</h3>
+         <div class="card-slider card-slider1">
+               {% for key, value in node.field_student_s_project %}
+                  <div class="card text-center"><center>
+                    <img class="card-img-top" src="{{ file_url(value.entity.field_student_s_image.entity.fileuri) }}" alt=""></center>
+                    <div class="card-body">
+                      <h5>{{ value.entity.title.value }}  <br />
+                        <span> by {{ value.entity.field_student_s_name.value }} </span></h5>
+                      <p class="card-text card_logo"><img src="{{ file_url(value.entity.field_company_logo.entity.fileuri) }}" class="img-responsive"> </p>
+                      </div>
+
+                      <div class="product_overlay">
+                      <div class="text"> {{ value.entity.field_overview.value|raw }} </div>
+                    </div>
+                </div>
+               {% endfor %}
+          </div>
+    </div>
+  </div>
+</section>
+<!-- Student Project end -->
+{% endif %} #}
+
+
+
+
+
+
+
+
+<!-----------Batches section start from here------------------------------------------>
+
+<!-- <section class="batches_fees_section">
+    <div class="container">
+        <div class="row tool_cover_box text-center m-0">
+        {% for key, value in node.field_niit_certificate %}
+         <div class="col-md-6 border-right">
+           <h3 class="new_productPage_title">Certification</h3>    
+           <div id="myCarousel_certificatie" class="carousel slide" data-ride="carousel">
+               <ol class="carousel-indicators">
+                      <li data-target="#myCarousel_certificatie" data-slide-to="0" class="active"></li>
+                     <li data-target="#myCarousel_certificatie" data-slide-to="1" class=""></li>
+               </ol>
+
+             <div class="carousel-inner">
+              {% if value.entity.field_niit_certificate_image.entity.fileuri is not empty%}
+                <div class="cert-img item active">
+                      <img src="{{ file_url(value.entity.field_niit_certificate_image.entity.fileuri) }}" alt="NIIT Certificate" class="img-responsive">
+                      <p class="text-center"><a class="colorbox-node lightbox" href="#certificate-img-0"><i><b><u>Click to Zoom</u> 
+                      </b></i></a></p>    
+                </div>
+                {% endif %}
+                {% if value.entity.field_niit_certificate_back_imag.entity.fileuri is not empty%}
+                <div class="cert-img item">
+                      <img src="{{ file_url(value.entity.field_niit_certificate_back_imag.entity.fileuri) }}" alt="NIIT Certificate" class="img-responsive">
+                      <p class="text-center"><a class="colorbox-node lightbox" href="#certificate-img-1"><i><b><u>Click to Zoom</u> 
+                      </b></i></a></p>    
+                 </div>
+                 {% endif %}
+             </div> 
+           
+           </div>
+            {% if value.entity.field_niit_certificate_image.entity.fileuri is not empty%}
+            <div class="lightbox-target" id="certificate-img-0">
+                <img src="{{ file_url(value.entity.field_niit_certificate_image.entity.fileuri) }}">
+                 <a class="lightbox-close" href="#myCarousel_certificatie"></a>
+            </div>
+            {% endif %}
+            {% if value.entity.field_niit_certificate_back_imag.entity.fileuri is not empty%}
+            <div class="lightbox-target" id="certificate-img-1">
+                <img src="{{ file_url(value.entity.field_niit_certificate_back_imag.entity.fileuri) }}">
+                 <a class="lightbox-close" href="#myCarousel_certificatie"></a>
+            </div>
+            {% endif %}
+                
+            </div>
+            {% endfor %}
+
+            <div class="col-md-6">
+               <h4 class="new_productPage_title mt-4">Program Fee</h4>
+                <div class="product_page_feesSection myModalnew1">                   
+                    <h2>FREE  <span><del>{{ node.field_course_fee.value }}</del></span></h2>
+                    <div class="saving_text"><p>Your total savings : <b>{{ node.field_saving_amount.value }}</b></p></div>
+                    <div class="new_mutlistep_apply_btn newbtnApplypink">{{ StackathonLeadFormBtn|raw }} <div class="Stackathon-Lead-Form-div"></div> </div>
+                </div>
+            </div>
+        </div>
+        <hr class="horizontal_line mt-5">
+    </div>
+</section> -->
+
+<!-----------Batches section END here------------------------------------------>
+
+
+
+
+
+
+
+<section class="new_sp_productTestimonial mb-0">
+{% set tidtaxnew = node.field_course_domain_category.target_id %} 
+      <div class="container">
+            <div class="row">
+         <h3 class="sp_title">Upgrade to our Advanced Tracks</h3>
+            <div class="card-slider card-slider4 advancedprog1">        
+                {{ drupal_view( 'self_paced', 'block_7', tidtaxnew ) }}
+            </div>   
+        </div>
+      </div>
+
+</section>
+
+
+<!--KC upcoming events start here-->
+<!-- {% if getEventsData.status == 1 %}
+  {% if getEventsData.data is not empty %}
+<section class="new-hp-page-wrapper">
+<section class="events pb-5 pt-5">
+   <div class="container">
+      <div class="events-mob">
+         <h3>Upcoming Events</h3>
+      </div>
+      <div class="d-flex">
+         <div class="left-event">
+            <h3>Upcoming Events</h3>
+            <div class="arrows">
+               <div class="dots-item"></div>
+            </div>
+            <div class="button button-secondary"><a href="/india/kc-events?scgrp=Webinar&amp;evtyp=schedule">EXPLORE ALL EVENTS</a></div>
+         </div>
+         <div class="slider-primary">
+
+                {% for key, value in getEventsData.data %}
+                  <div class="event-blk wow fadeIn" data-wow-delay=".3s">
+                    <div class="right-event">
+                      <div class="cards-white slide">
+                        <img src="{{ value.img }}" alt="{{ value.ttl }}" />
+                        <div class="cards-white_length">
+                          <span>{{ value.evd|date("jS F  Y") }}</span>
+                          <div class="button button-tertiary">
+                            <a href="{{ generateTaxonomyUrl(value.map_taxonomy.0.id) }}">{{value.map_taxonomy.0.value}}</a>
+                          </div>
+                          <h5>{{ value.ttl }}</h5>
+                          <p>{{ value.dsc|raw }}</p>
+                         <div class="link parcipate_cta"><a href="{{ value.src }}" data-taxonomy="{{value.map_taxonomy.0.value}}" target="_blank">Partcipate Now</a></div>
+                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  
+                {% endfor %}
+               </div>
+              </div>
+
+   </div>
+ </section>
+</section>
+{% endif %}
+{% endif %} -->
+<!--KC upcoming events end here-->
+
+
+
+
+<!--KC upcoming events start here-->
+{% if node.field_display_on_kc.value == '1' %}
+<section class="new-hp-page-wrapper">
+<section class="events pb-5 pt-5">
+   <div class="container">
+      <div class="events-mob">
+         <h3>Upcoming Events</h3>
+      </div>
+      <div class="d-flex">
+         <div class="left-event">
+            <h3>Upcoming Events</h3>
+
+        
+            <div class="arrows">
+               <div class="dots-item"></div>
+            </div>
+            <div class="button button-secondary"><a href="/india/kc-events?scgrp=Webinar&amp;evtyp=schedule">EXPLORE ALL EVENTS</a></div>
+         </div>
+         <div class="slider-primary">
+
+          {{ drupal_view( 'self_paced', 'block_14', tidtaxnew ) }}
+         </div>
+        </div>
+
+   </div>
+ </section>
+</section>
+{% endif %}
+<!--KC upcoming events end here-->
+
+
+
+<section class="new_sp_productTestimonial sp_event_slider">
+  <div class="container">
+    <div class="row">   
+
+   <h3 class="sp_title">Popular Articles</h3>
+        <div class="card-slider card-slider5">
+          
+          {{ drupal_view( 'self_paced', 'block_15', tidtaxnew ) }}
+          
+        </div>
+       </div>
+    </div>    
+</section>
+
+
+
+{% if node.field_popular_articles is not empty %}
+<section class="new_sp_productTestimonial sp_event_slider">
+  <div class="container">
+    <div class="row">   
+
+   <h3 class="sp_title">Popular Articles</h3>
+        <div class="card-slider card-slider5">
+          {% for key, value in node.field_popular_articles %}
+          <div class="contentbar contentimgrow">
+             <a href="{{ value.entity.field_video_link.value }}">
+             {# <img src="{{file_url(value.entity.field_image.entity.fileuri) }}" alt="How to Develop Your Own Game Using Python" class="img-responsive js-lazyload-image loaded"> #}
+             <picture>
+              <source class="img-responsive js-lazyload-image" data-srcset="{{ webp_image_get(value.entity.field_image.entity.fileuri | image_style('1000')) }}" type="image/webp" srcset="/india/sites/default/files/transparentimg.jpg" alt="How to Develop Your Own Game Using Python"/>
+              <img class="img-responsive js-lazyload-image" data-src="{{ value.entity.field_image.entity.fileuri }}" src="/india/sites/default/files/transparentimg.jpg" alt="How to Develop Your Own Game Using Python"/>
+            </picture>
+             </a>
+             <span class="kmcgbar"><a href="{{ path('entity.node.canonical', {'node':  node.field_popular_articles.entity.id}) }}">{{ value.entity.field_categories.entity.name.value }}</a></span>
+             <label><a href="{{ path('entity.node.canonical', {'node':  node.field_popular_articles.entity.id}) }}">{{ value.entity.title.value }}</a></label>
+             <div class="contentimg col-md-12">
+                <p class="pl-4">{{ value.entity.body.summary|raw }}</p>
+                <p class="articlebar">
+                   <i class="fa fa-book"></i> <b>{{ value.entity.field_blog_type.entity.name.value }}</b>. {{ value.entity.field_duration.value }}.By &nbsp;{{ value.entity.field_faculty_name.value }} 
+                   {% if user.id == 0 %}
+                    <span data-toggle="modal" data-target="#user_account_modal_form"><i class="fa fa-bookmark-o make-bookmark"></i></span>
+                   {% else %}
+                    <span class="kc-bookmark-btn" node-id="{{ node.field_popular_articles.entity.id }}" category-id="{{ value.entity.field_categories.entity.tid.value }}" bmk-text="No">
+                        {# bookmark code append here #}
+                    </span>
+                  {% endif %}
+                </p>
+             </div>
+          </div>
+          {% endfor %}
+        </div>
+       </div>
+    </div>    
+</section>
+{% endif %}
+
+
+
+
+
+
+<!--FAQ start here -------->
+<div id="faqSectionNav"></div>
+<section id="Icicifaq-sec" class="icici-faq stackroutFAQ CourseBgColorGray">
+   <div class="container">
+      <h3 class="new_productPage_title">{{ courseFAQTitle|raw }}</h3>
+      <!-- <p class="iciciDis mb-5 col-md-12">{{ node.field_faq_summary.value }}</p> -->
+      {% if node.field_faq is not empty %}
+      <div class="col-md-12 mt-3 iciciAccordianDetail newProductPagefaq">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          {% for key, data in node.field_faq %}
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ key }}" aria-expanded="false" aria-controls="collapseOne">
+                    {{ data.question }} 
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-{{ key }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  {{ data.answer|raw }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}  
+        </div>
+      </div>
+      {% endif %}
+   </div>
+</section>
+<!--FAQ end here -------->
+
+<!-- <section class="stackrouteHaveQuery py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-4 new_applyNow_btns1">
+                <p class="mb-0 dFlex newbtnApplypink"><span class="IcicistillHaveIssue">ANY QUERIES?</span> 
+                  {{ mutlistep_connectus_btn|raw }}</p>
+            </div>           
+        </div>
+    </div>
+</section>  -->
+
+
+
+{# footer sticky Apply now button mobile view -- Start #}
+<footer id="mobile-sticky-footer" class="desktop-hide">
+  <div class="container">
+    <div class="row new_applyNow_btns1">
+      {# {% if complete_app_btn is not empty %}
+         <div class="col-md-6 col-xs-6 mob-apply">
+           <center>{{ StackathonLeadFormBtn|raw }} </center>
+         </div>
+         <div class="col-md-6 col-xs-6 mob-com">
+           <center>{{ complete_app_btn|raw }} </center>
+         </div>
+      {% else %}
+         <center class="only-apply">{{ StackathonLeadFormBtn|raw }} </center>
+      {% endif %} #}
+      <center class="only-apply newbtnApplypink">{# {{ StackathonLeadFormBtn|raw }} #} <div class="Stackathon-Lead-Form-div"></div>
+	  <!--<div class="stackathon-div"></div>-->
+	  </center>
+    </div>
+  </div>
+</footer>
+{# footer sticky Apply now button mobile view -- End #}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--Modal- open start-------------->
+<div id="course_modal" class="modal course_modal centre_modal modal_full fade" role="dialog">
+<!-- Append  -->
+</div>
+<!--Related course end here -------->
+
+</div>
+</section>
+{% include directory ~ '/templates/layout/footer.html.twig' %}

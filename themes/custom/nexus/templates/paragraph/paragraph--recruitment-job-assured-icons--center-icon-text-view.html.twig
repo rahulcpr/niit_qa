@@ -1,0 +1,10 @@
+{% block paragraph %}
+    {% block content %}
+        <div class="feature col-xs-6">
+            <div class="circleBox">
+                <img src="{{ content.field_icon_image[0] }}">
+            </div>
+            <h2>{{ content.field_icon_title }}</h2>
+        </div>
+    {% endblock %}
+{% endblock paragraph %}

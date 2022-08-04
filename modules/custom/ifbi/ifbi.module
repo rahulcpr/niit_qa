@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @file
+ * Contains ifbi.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Database\Database;
+use Drupal\node\Entity\Node;
+
+
+
+/**
+ * Implementation of hook_user_login()
+ */
+function ifbi_form_user_login_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+     $form['#validate'][] = '_custom_user_login_validation';
+}
+
+/**
+ * Implementation login validate
+ */
+
+function _custom_user_login_validation(&$form, FormStateInterface $form_state) {
+    $username = $form_state->getValue('name');   
+    $userObj = user_load_by_name($username);
+    if($userObj) {
+        $roles = $userObj->getRoles();
+        $userRoles = $roles[1];
+        
+        if($userRoles != 'administrator') {
+            $currentDomain = _get_current_domain();
+            if(isset($currentDomain) && $currentDomain == 'ifbi' ) {
+                $ifbiUserRoles = array('ifbiadmin');
+                if(! in_array($userRoles, $ifbiUserRoles)) {
+                    $form_state->setErrorByName('', t('Invalid login credentials for this domain.'));
+                }
+            } 
+
+            if(isset($currentDomain) && $currentDomain == 'niitapp' ) {
+                $niitUserRoles = array('india', 'niitadmin', 'niitdeveloper');
+                if(! in_array($userRoles, $niitUserRoles)) {
+                    $form_state->setErrorByName('', t('Invalid login credentials for this domain.'));
+                }
+            } 
+        }           
+    }
+}
+
+/**
+ * Function to get current Domain
+ *
+ */
+function _get_current_domain() {
+    $loader = \Drupal::service('domain.negotiator');
+    $current_domain = $loader->getActiveDomain();
+    return $current_domain->getOriginalId();
+}

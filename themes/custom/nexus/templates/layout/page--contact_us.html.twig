@@ -1,0 +1,125 @@
+<!-- Header Start-->
+<header role="banner">
+    {% include directory ~ '/templates/layout/header.html.twig' %}
+</header>
+<!-- Header End -->
+
+<!-- Breadcrub Start -->
+<section class="course-page-breadcrub mobile-hide icici-breadcrumb">
+  <div class="container">
+    <div class="row">
+            <div class="col-lg-12">
+                <div class="page-breadcrumbs">
+                    <ul class="breadcrumb">
+                        <li>
+                            <a href="/">Home</a>
+                        </li>
+                        <li>
+                            <a id="courseCategory"
+                                href="/">
+                                Contact Us
+                            </a> 
+                        </li>
+                        <li>{{ node.label }}</li> 
+                    </ul>
+                </div>
+            </div>
+      </div>
+  </div>
+</section>
+<!-- Breadcrub End -->
+
+{% if node.field_banner_image.entity.fileuri is not empty %}
+  <section class="img-section-data">
+        <img src="{{ file_url(node.field_banner_image.entity.fileuri) }}" class="img-responsive"  alt="{{ node.field_banner_image.alt  }}">
+  </section>
+{% endif %} 
+
+
+<section class="hr-career-jobList mt-5">
+  <div class="container">
+
+
+    {% if node.field_page_type_contact.value == 'Center Information' %}
+         <div class="row center-info-new">  
+          <div class="col-md-10 col-md-offset-1 center-information-new">  
+            <div class="popular_courses corporateContactInfo">
+              <div class="job_filter catfilter">
+                <h3 class="center-info-text">Center Information</h3>
+                  <div class="col-md-6">
+                  <select name="category_career" class="form-select category_career center-course-details center-course-details-1">
+                    <option value="">Choose Course</option>
+                    <option value = "IT" class="center-course-option">IT</option>
+                    <option value = "BFSI" class="center-course-option">BFSi</option>
+                    </select>
+                   </div>
+                 <div class="col-md-6">
+                  {{ NiitGetCenterInformationCity|raw }}
+                  </div>
+              </div>
+            <div id="job_loader"></div>
+            
+          </div>
+       </div> 
+       <div class="career-center-details"></div>
+     </div>
+    {% endif %}
+
+
+{% if node.field_page_type_contact.value in ['Contact Information', 'About-US'] %}
+    <div class="row">
+      <div class="col-md-12 bg-white">
+        <div class="corporate_aboutText">
+          <h3 class="mt-0">{{ node.field_about_us.fieldDefinition.label }}</h3>
+          <p class="mb-0">{{ node.field_about_us.value|raw }}</p>
+        </div>
+      </div>
+    </div>
+{% endif %} 
+
+
+{% if node.field_page_type_contact.value == 'Contact Information' %}
+<div class="row mt-4">      
+  <h3 class="titleMain">Contact Information</h3>
+    <div class="row corporateContactInfo">
+       
+      {{ drupal_view('contact_informations' , 'block_1') }}
+      
+    </div>  
+</div>
+{% endif %}
+
+{% if node.field_page_type_contact.value == 'About-US' %}
+     <div class="row mt-5">
+       <div class="col-md-12 bg-white">
+          <div class="corporate_aboutText carporate-overview">
+           <h3 class="mt-0">{{ node.field_overview_about.fieldDefinition.label }}</h3>
+           <p class="mb-0">{{ node.field_overview_about.value|raw }}</p>
+          </div>
+        </div>
+     </div>
+
+     <div class="row mt-5 mb-5">
+       <div class="col-md-12 bg-white">
+          <div class="corporate_aboutText carporate-awards">
+           <h3 class="mt-0">{{ node.field_recent_awards.fieldDefinition.label }}</h3>
+           <p class="mb-0">{{ node.field_recent_awards.value|raw }}</p>
+          </div>
+        </div>
+     </div>
+{% endif %}
+
+  
+  </div>  
+</section>
+
+
+
+
+
+
+<!--============Programs END=============================================--> 
+
+<!--   Footer Inclusde  ** Start -->
+{% include directory ~ '/templates/layout/footer.html.twig' %}
+<!--   Footer Inclusde  ** End

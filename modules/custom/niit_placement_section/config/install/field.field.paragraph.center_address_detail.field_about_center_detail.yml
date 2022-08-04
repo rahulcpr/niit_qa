@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_about_center_detail
+    - paragraphs.paragraphs_type.center_address_detail
+id: paragraph.center_address_detail.field_about_center_detail
+field_name: field_about_center_detail
+entity_type: paragraph
+bundle: center_address_detail
+label: 'About Center Detail'
+description: field_center_phone_extension
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

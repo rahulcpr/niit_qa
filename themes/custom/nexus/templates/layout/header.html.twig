@@ -1,0 +1,27 @@
+{{ drupal_menu('top-menu') }}
+
+<section class="main_nav mobile-hide">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="nav_left_block">
+          <ul class="list-unstyled">
+            <li><a href="{{ path('<front>') }}"><img src="/india/themes/custom/nexus/assets/images/logo_1.png" class="img-responsive" alt="logo"></a></li>
+            <li class="program_cta"><a href="javascript:void(0)"><img src="/india/themes/custom/nexus/assets/images/course_icon.svg" alt="programs"> PROGRAMS</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="nav_right_block pull-right">
+          {# <p><a href="">sign in</a></p> #}
+          <div id="afterlogin-userinfo"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{{ drupal_menu('main') }}
+
+
+
+

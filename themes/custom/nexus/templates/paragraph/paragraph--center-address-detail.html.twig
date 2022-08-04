@@ -1,0 +1,54 @@
+{% set field_center_complete_address=content.field_center_complete_address[0]['#context']['value'] %}
+{% set field_center_map=content.field_center_map %}
+{% set field_center_address_detail_labe=content.field_center_address_detail_labe[0]['#context']['value'] %}
+{% set field_about_center_detail=content.field_about_center_detail[0]['#context']['value'] %}
+{% set field_center_phone_extension=content.field_center_phone_extension[0]['#context']['value'] %}
+{% set connect_now = content.field_connect_now[0]['#context']['value'] %}
+
+{% set field_slider_cta_title=content.field_slider_cta[0]['#title'] %}
+{% set field_icon_and_text=content.field_icon_and_text %}
+<section class="sliderinner-wrap center_name">
+    <div class="container">
+        <div class="col-md-6 col-xs-12">
+            <h2>{{ field_center_address_detail_labe }}</h2>
+            <h5></h5>
+            <div class="addresswrap">
+                <ul>
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i> {{ field_center_complete_address }}
+                    </li>
+                    <li class="phncenter"><i
+                            class="fas fa-phone"></i>{{ field_center_phone_extension }}
+                    </li>
+                    {% if connect_now is not empty %}
+                    <li class="phncenter phncentermob">
+                    <a href="tel:{{ connect_now }}"><i class="fas fa-phone"></i>{{ connect_now }}</a>
+                    </li> 
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="Advance">
+                {{ field_about_center_detail }}
+            </div>
+            <div class="GlobalBox">
+                {{ field_icon_and_text }}
+                <div class="clr"></div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xs-12 map_col">
+            <div class="mapouter">
+                <div class="gmap_canvas">
+                    <iframe
+                            src="https://maps.google.com/maps?q={{ field_center_address_detail_labe }}&hl=es;z=14&amp;output=embed"
+                            width="600"
+                            height="450"
+                            frameborder="0"
+                            style="border:0"
+                            allowfullscreen>
+                    </iframe>
+                    {#{{ field_center_map }}#}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

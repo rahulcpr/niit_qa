@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:486e829f-a049-457f-9516-7c23a9ec5085'
+  module:
+    - block_content
+    - system
+  theme:
+    - nexus
+id: striponbanner
+theme: nexus
+region: strip_on_banner
+weight: -30
+provider: null
+plugin: 'block_content:486e829f-a049-457f-9516-7c23a9ec5085'
+settings:
+  id: 'block_content:486e829f-a049-457f-9516-7c23a9ec5085'
+  label: 'Strip on banner'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }

@@ -1,0 +1,45 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.placement_mentors_advice
+    - field.field.node.mentors_advice.field_mentor_image
+    - field.field.node.mentors_advice.field_mentor_name
+    - field.field.node.mentors_advice.field_mentor_text
+    - field.field.node.mentors_advice.field_mentor_tile
+    - node.type.mentors_advice
+  module:
+    - image
+    - user
+id: node.mentors_advice.placement_mentors_advice
+targetEntityType: node
+bundle: mentors_advice
+mode: placement_mentors_advice
+content:
+  field_mentor_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    type: image_url
+    region: content
+  field_mentor_text:
+    weight: 2
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_mentor_tile:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  field_mentor_name: true
+  links: true
+  share_everywhere: true

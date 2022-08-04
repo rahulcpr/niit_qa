@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.alumni_faculty.field_alumni_faculti_label
+    - field.field.paragraph.alumni_faculty.field_star_alumni_reference
+    - paragraphs.paragraphs_type.alumni_faculty
+id: paragraph.alumni_faculty.default
+targetEntityType: paragraph
+bundle: alumni_faculty
+mode: default
+content:
+  field_alumni_faculti_label:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_star_alumni_reference:
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

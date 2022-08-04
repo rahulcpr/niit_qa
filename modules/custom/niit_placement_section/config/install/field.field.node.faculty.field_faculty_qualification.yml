@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_faculty_qualification
+    - node.type.faculty
+id: node.faculty.field_faculty_qualification
+field_name: field_faculty_qualification
+entity_type: node
+bundle: faculty
+label: 'faculty qualification'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

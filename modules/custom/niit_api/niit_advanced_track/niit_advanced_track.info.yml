@@ -1,0 +1,5 @@
+name: NIIT Advanced Track API
+description: Advanced Track.
+package: Niit Custom API
+type: module
+core: 8.x

@@ -1,0 +1,53 @@
+<section class="sliderinner-wrap sliderinnerbg">
+    <div class="container">
+        <div id="book-appointment" class="headding text-center">
+            <h2>Appointment with counsellor</h2>
+            <span class="underline"></span>
+        </div>
+        <div class="ftop-appoinment">
+            <div class="fieldwrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <div class="info-form">
+                                    
+                                    {{ element.elements.form_token }}
+                                    {{ element.elements.form_build_id }}
+                                    {{ element.elements.form_id }}
+                                    {{ element.elements.form_description }}
+
+                                <form {{ attributes }}
+                            onsubmit="jQuery('#formResponse').fadeIn();" data-drupal-form-fields="gdpr-checkbox">
+
+                                     <div class="form-group formgroup">
+                                            {{ element.elements.full_name }}
+                                        </div>
+                                        <div class="form-group formgroup">
+                                           {{ element.elements.mobile_number }}
+                                        </div>
+                                        <div class="form-group formgroup">
+                                             {{ element.elements.email_id }}
+                                        </div>
+                                        
+                                        {{ element.elements.theme }}
+                                        {{ element.form_token }}
+                                        {{ element.form_build_id }}
+                                        {{ element.form_id }}
+                                       
+                                        {{ title_suffix }}
+
+                                     <div class="publish_checkboxall"> 
+                                            {{ element.elements.privacy_policy }} 
+                                     </div>
+
+                                     {{ element.elements.actions }}
+                                     
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>  

@@ -1,0 +1,531 @@
+<style>
+    @import url("{{ request_path }}modules/starrating/css/star.css?pea7ek");
+</style>
+<section class="slider-container cat-banner">
+    <div class="slidermain">
+        <div>
+            <div class="slidewrap" id="category-banner">
+            </div>
+        </div>
+    </div>
+    <div class="sliderinnerbg">
+        <img
+            src="/india/sites/default/files/transparentimg.jpg" data-src="{{ request_path }}themes/custom/nexus/assets/images/banner-inner.jpg"
+            width="1366" height="11" class="js-lazyload-image">
+    </div>
+    <div class="chatandconslr">
+        <ul class="mobilechatcon">
+            <li><a href="javascript://" id="getc"><span>Get Counseled</span></a>
+            </li>
+            <!--<li><a href="">Chat</a></li>-->
+            <div class="clearfix"></div>
+        </ul>
+    </div>
+
+   {{ drupal_entity('webform','talk_to_expert') }} 
+    
+   {# <div class="container fieldwraprel">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="fieldwrap">
+                    <h2>Talk to our
+                        <span>Experts</span>
+                    </h2>
+                    <form class="gdprForm">
+                        <div class="form-check">
+                            <input class="form-control txtbx" name="name"
+                                type="text" placeholder="Name" required>
+                        </div>
+                        <div class="form-check">
+                            <input type="text" pattern="^\d{10}$"
+                                class="form-control txtbx" name="phone" required
+                                oninvalid="setCustomValidity('Please enter a valid 10 digit mobile number')"
+                                onchange="try{setCustomValidity('')}catch(e){}"
+                                placeholder="Mobile Number">
+                        </div>
+                        <div class="form-check">
+                            <input type="email" class="form-control txtbx"
+                                name="email" required placeholder="Enter email">
+                        </div>
+                        <div class="publish_checkbox">
+                            <div
+                                class="js-form-item form-item js-form-type-checkbox form-item-checkbox js-form-item-checkbox">
+                                <input type="checkbox" id="edit-checkbox"
+                                    name="checkbox" value="1"
+                                    class="form-checkbox required gdpr-required"
+                                    aria-required="true">
+                                <label for="edit-checkbox" class="option">Please
+                                    tick this box to indicate that you
+                                    understand that your personal data will be
+                                    used in accordance with the
+                                    <a target="_blank"
+                                        href="https://ppm.niit.com/consent-form/prospective_customer.html"
+                                        style="color: white;">Privacy Policy</a>
+                                    here *</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="bttn">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> #}
+</section>
+<!--Slider-->
+<!--Most popular-->
+<section class="sliderinner-wrap sliderinnerbg cat-popular slidetrending">
+    <div class="container">
+        <div class="headding text-center categoryhtagseo">
+            <h1>Popular Programmes in <span class="top-category-name"></span>
+            </h1>
+            <h3>Elevate your skills with our most in-demand programmes</h3>
+            <span class="underline"></span>
+        </div>
+        <div class="tabnav-container" id="">
+            <!-- <div class="catfilter">
+                <select class="form-control select" id="category-taxonomy">
+                    {# <option value="all">Category</option> #}
+                    {#
+                    <option value="2">College Students</option>
+                    <option value="3">Graduates</option>
+                    <option value="4">Working Professionals</option>
+                    <option value="5">All</option> #}
+                </select>
+                <div class="filetrbx" id="filetrbx">
+                    <span class="font" id="filterby">Filter By</span>
+                    <span class="font" id="filterby1">Filter By</span>
+                    <div class="checkdataouter">
+                        <div class="checkdata">
+                            <div class="checkbox checkbox-inline">
+                                <input id="checkbox1"
+                                    name="filterTrendingCourse[]"
+                                    value="field_is_placement_assisted"
+                                    type="checkbox">
+                                <label for="checkbox1"> Job Assured
+                                    Course </label>
+                            </div>
+                            <div class="checkbox checkbox-inline">
+                                <input id="checkbox2"
+                                    name="filterTrendingCourse[]"
+                                    value="field_rating" type="checkbox">
+                                <label for="checkbox2"> Top Rated </label>
+                            </div>
+                            {# <div class="checkbox checkbox-inline">
+																<input id="checkbox3" name="filterTrendingCourse[]" value="field_new_upcoming" type="checkbox">
+																<label for="checkbox3"> New/Upcoming </label>
+														</div> #}
+                            <div class="checkbox checkbox-inline">
+                                <input id="checkbox4"
+                                    name="filterTrendingCourse[]"
+                                    value="field_is_most_popular"
+                                    type="checkbox" checked>
+                                <label for="checkbox4"> Most Popular </label>
+                            </div>
+							
+						    <div class="checkbox checkbox-inline">
+                                <input id="checkbox5"
+                                    name="filterTrendingCourse[]"
+                                    value="field_is_short_term"
+                                    type="checkbox" >
+                                <label for="checkbox5"> Short Term </label>
+                            </div>	
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <!-- {{ node.field_course_domain_categorie.value }}
+                        {{ node.field_course_category_page.entity.name.value }}
+                        {{ node.field_booming_point_1_text.value }}
+                        {{ node.field_booming_point_2_text.value }}
+                        {{ node.field_course_domain_categorie.target_id }} -->
+
+
+            {% set tidtax = node.field_course_domain_categorie.target_id %}
+            <div class="row" id="trendingCourseParent3">
+                {% if node.field_course_category_page.entity.name.value == 'Short Term Courses' %}
+                <div class="contant-tab">
+                    <div id="trendingCourse4">
+                        
+                        
+                        {{ drupal_view('course', 'block_6', tidtax ) }}
+                    </div>
+                </div>
+                {% endif %}
+                {% if node.field_course_category_page.entity.name.value == 'College Students' %}
+                <div class="contant-tab">
+                    <div id="trendingCourse4">
+                        
+                        
+                        {{ drupal_view('course', 'block_7', tidtax ) }}
+                    </div>
+                </div>
+                {% endif %}
+                {% if node.field_course_category_page.entity.name.value == 'Graduates' %}
+                <div class="contant-tab">
+                    <div id="trendingCourse4">
+                        
+                        
+                        {{ drupal_view('course', 'block_8', tidtax ) }}
+                    </div>
+                </div>
+                {% endif %}
+                {% if node.field_course_category_page.entity.name.value == 'Working Professionals' %}
+                <div class="contant-tab">
+                    <div id="trendingCourse4">
+                        
+                        
+                        {{ drupal_view('course', 'block_9', tidtax ) }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+           <!--  <div class="text-center" id="trendingCourseBelowButtons">
+                <a class="morebtn" id="category-explore-more" href="#">explore
+                    more</a>
+            </div> -->
+        </div>
+    </div>
+</section>
+<!--Most popular-->
+<!--Why IT is Booming-->
+<section class="advantage-wrap1 why-it-is-booming-media" id="why-it-is-booming">
+    {# {{ drupal_view('why_it_is_booming', 'block_1') }} #}
+</section>
+<div class="modal fade" id="booming-youtube-modal" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe class="embed-responsive-item" id="boomingYoutubeIframe"
+                    width="560" height="315" frameborder="0"
+                    allow="encrypted-media"
+                    allowfullscreen></iframe>
+            </div>
+            {#
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div> #}
+        </div>
+    </div>
+</div>
+<!--Why IT is Booming-->
+<!--Achieve your aspiration in information Technology -->
+{{ drupal_block('aspirational_career_gallery') }}
+<!--Achieve your aspiration in information Technology -->
+{% if general_management == false %}
+    <!--Assured Job-->
+    <section class="sliderinner-wrap">
+        <div class="container">
+            <div id="placement-assistance" class="headding text-center">
+                <h2>Job Assured Programmes</h2>
+                <h3>Programmes designed with 100% placement assurance with top
+                    companies</h3>
+                <span class="underline"></span>
+            </div>
+            <div class="Ajob-container">
+                <div class="">
+                    <div class="arrowslick slider5aply"
+                        id="assuredJobContainer">
+                        
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 0.9em; margin-top: 3em;">
+                    Disclaimer:
+                    The Placement assurance is subject to successful completion
+                    of the programme and other criteria of the recruiting
+                    company. T&C apply.</p>
+            </div>
+        </div>
+    </section>
+    <!--Assured Job-->
+{% endif %}
+<!--Placements-->
+{# {% if page.placement_section %} #}
+<section class="sliderinner-wrap sliderinnerbg" id="placement-parent">
+    <div class="container">
+        <div class="headding text-center">
+            <h2>Placements</h2>
+            <div class="recruit">
+                <span>{{ drupal_view('counter_value', 'block_1') }}</span>
+                NIITians making waves in the industry.
+            </div>
+            <span class="underline"></span>
+        </div>
+        <div class="placement-container">
+            <div class="placementcom-filtered" id="placementPartnerCompany">
+                {# {{ drupal_view('niit_company', 'block_1') }} #}
+                <!-- <div>
+                                          <div class="cus-sayingtxt"><img src="themes/custom/nexus/assets/images/com-logo06.png" width="" height=""></div>
+                                      </div>-->
+            </div>
+            <p style="text-align: center; font-size: 0.9em; margin-top: 3em;">
+                Disclaimer: The aforementioned companies have no obligation to
+                recruit NIIT students each year.</p>
+        </div>
+    </div>
+</section>
+{# {% endif %} #}
+<!--Placements-->
+<!--Placement Company-->
+<section id="pacementCompany" class="sliderinner-wrap networkinnerbg bgnoise">
+    <div class="container">
+        <div class="headding head50 text-center">
+            <h2>OUR ALUMNI WORK FOR AMAZING COMPANIES</h2>
+            <span class="underline"></span>
+        </div>
+        <div class="placement-container">
+            <div id="amazingCompanyWrapper">
+                {#
+								 <div>
+										 <div class="amazingwrap">
+												 <img src="{{ request_path }}themes/custom/nexus/assets/images/work-emp01.png" width="" height="" class="mainimg">
+												 <h2>Manvi Kapoor</h2>
+												 <div class="hoverhide">
+														 <h3>Work for</h3>
+														 <h2>Indigo</h2>
+												 </div>
+												 <div class="hovershow">
+														 <h3>Work as</h3>
+														 <h2>PHP Developer</h2>
+														 <img src="{{ request_path }}themes/custom/nexus/assets/images/work-as-company01.png" width="" height="" class="scale">
+												 </div>
+										 </div>
+								 </div>
+
+								 <div>
+										 <div class="amazingwrap">
+												 <img src="{{ request_path }}themes/custom/nexus/assets/images/work-emp02.png" width="" height="" class="mainimg">
+												 <h2>Manu Mehta</h2>
+												 <div class="hoverhide">
+														 <h3>Work for</h3>
+														 <h2>Indigo</h2>
+												 </div>
+												 <div class="hovershow">
+														<h3>Work as</h3>
+														 <h2>PHP Developer</h2>
+														 <img src="{{ request_path }}themes/custom/nexus/assets/images/work-as-company01.png" width="" height="" class="scale">
+												 </div>
+										 </div>
+								 </div>
+								 <div>
+										 <div class="amazingwrap">
+												 <img src="{{ request_path }}themes/custom/nexus/assets/images/work-emp03.png" width="" height="" class="mainimg">
+												 <h2>Shivangi</h2>
+												 <div class="hoverhide">
+														 <h3>Work for</h3>
+														 <h2>IBM</h2>
+												 </div>
+												 <div class="hovershow">
+														 <h3>Work as</h3>
+														 <h2>PHP Developer</h2>
+														 <img src="{{ request_path }}themes/custom/nexus/assets/images/work-as-company06.png" width="" height="" class="scale">
+												 </div>
+										 </div>
+								 </div>
+								 <div>
+										 <div class="amazingwrap">
+												 <img src="{{ request_path }}themes/custom/nexus/assets/images/work-emp04.png" width="" height="" class="mainimg">
+												 <h2>Joseph</h2>
+												 <div class="hoverhide">
+														 <h3>Work for</h3>
+														 <h2>Oracle</h2>
+												 </div>
+												 <div class="hovershow">
+														 <h3>Work as</h3>
+														 <h2>PHP Developer</h2>
+														 <img src="{{ request_path }}themes/custom/nexus/assets/images/work-as-company04.png" width="" height="" class="scale">
+												 </div>
+										 </div>
+								 </div>
+								 <div>
+										 <div class="amazingwrap">
+												 <img src="{{ request_path }}themes/custom/nexus/assets/images/work-emp01.png" width="" height="" class="mainimg">
+												 <h2>Manvi Kapoor</h2>
+												 <div class="hoverhide">
+														 <h3>Work for</h3>
+														 <h2>Indigo</h2>
+												 </div>
+												 <div class="hovershow">
+														 <h3>Work as</h3>
+														 <h2>PHP Developer</h2>
+														 <img src="{{ request_path }}themes/custom/nexus/assets/images/work-as-company01.png" width="" height="" class="scale">
+												 </div>
+										 </div>
+								 </div> #}
+            </div>
+        </div>
+    </div>
+</section>
+<!--Placement Company-->
+<!--Placements-->
+{# <section class="sliderinner-wrap">
+    <div class="container">
+        <div class="headding text-center">
+            <h2>Our Partners</h2>
+            <span class="underline"></span>
+        </div>
+
+        <div class="placement-container">
+
+            <div id="ourPartners">
+                <div>
+                    <div class="cus-sayingtxt">
+                        <img src="{{ request_path }}themes/custom/nexus/assets/images/partner01.png" width="" height="">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section> #}
+<!--Placements-->
+<section class="module module-testimonials" id="alumni">
+    <div id="alumni-speak-category" class="alumniowl">
+    </div>
+</section>
+<!--Popular Articles-->
+<section class="sliderinner-wrap sliderinnerbg">
+    <div class="container" id="knowledge-center">
+        <div class="headding text-center">
+            <h2>Knowledge Center</h2>
+            <h3>Catch up on industry trends</h3>
+            <span class="underline"></span>
+        </div>
+        <div class="knowledge-container">
+            <div class="arrowslick" id="category-based-articles">
+                <!--<div class="col-lg-12">
+                                    <div class="knowledge-box">
+                                        <div class="knowimg"><img src="themes/custom/nexus/assets/images/knowledge_img01.jpg" class="scale" alt="img"></div>
+                                        <div class="detailbox">
+                                            <h2>Learning to Learn</h2>
+                                            <p>Schools in Delhi will now teach "happiness" as a subject, and an upcoming private school built around that concept believes that the traditional </p>
+                                            <a class="morebtn" href="#">See More</a>
+                                        </div>
+                                    </div>
+                                 </div>
+                            </div>-->
+                {# {{ drupal_view('knowledge_bites_view', 'block_1') }} #}
+
+            </div>
+        </div>
+</section>
+<!--Popular Articles-->
+<!--successful career -->
+<section class="sliderinner-wrap homeblue_wrap">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="headding text-center colorwhite">
+                    <h2>Unable to find what you are looking for?</h2>
+                    <span class="underline"></span>
+                </div>
+            </div>
+            <div class="notsure-wrap">
+                <div class="col-xs-12 col-sm-6 notsure-box">
+                    <div class="detailbox">
+                        <h2>
+                            <img
+                                src="{{ request_path }}themes/custom/nexus/assets/images/councelled.png"
+                                class="scale">
+                        </h2>
+                        <p>We'll help you find the right course to kickstart
+                            your career</p>
+                        <a class="morebtn leadform-category-url"
+                            href="{{ request_path }}lead-form">Get
+                            councelled</a>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 notsure-box">
+                    <div class="detailbox">
+                        <h2>
+                            <img
+                                src="{{ request_path }}themes/custom/nexus/assets/images/appoinment.png"
+                                class="scale">
+                        </h2>
+                        <p>Walk in to our centres near you. We will help
+                            you.</p>
+                        <a class="morebtn leadform-category-url"
+                            href="{{ request_path }}lead-form">book
+                            appointment</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--successful career -->
+<!--Appointment for counselor-->
+<section class="sliderinner-wrap sliderinnerbg">
+    <div class="container">
+        <div id="book-appointment" class="headding text-center">
+            <h2>Talk to our Experts</h2>
+            <span class="underline"></span>
+        </div>
+        <div class="ftop-appoinment">
+            <div class="fieldwrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <div class="info-form">
+                                <form
+                                    class="gdprForm form-inline justify-content-center">
+                                    <div class="form-group formgroup">
+                                        <input class="form-control txtbx"
+                                            name="name" type="text"
+                                            placeholder="Name"
+                                            pattern="^[a-zA-Z\s]*$"
+                                            oninvalid="setCustomValidity('Please enter your name. Numbers and special characters are not allowed in this field')"
+                                            onchange="try{setCustomValidity('')}catch(e){}"
+                                            required>
+                                    </div>
+                                    <div class="form-group formgroup">
+                                        <input type="text" pattern="^\d{10}$"
+                                            class="form-control txtbx"
+                                            name="phone" required
+                                            oninvalid="setCustomValidity('Please enter a valid 10 digit mobile number')"
+                                            onchange="try{setCustomValidity('')}catch(e){}"
+                                            placeholder="Mobile Number">
+                                    </div>
+                                    <div class="form-group formgroup">
+                                        <input class="form-control txtbx"
+                                            name="email" type="email"
+                                            placeholder="Email" required>
+                                    </div>
+                                    <div class="publish_checkboxall">
+                                        <div
+                                            class="js-form-item form-item js-form-type-checkbox form-item-checkbox js-form-item-checkbox">
+                                            <input type="checkbox"
+                                                id="gdpr-checkbox"
+                                                name="checkbox" value="1"
+                                                class="form-checkbox required gdpr-required"
+                                                aria-required="true">
+                                            <label for="gdpr-checkbox"
+                                                >Please tick this
+                                                box to indicate that you
+                                                understand that your personal
+                                                data will be used in accordance
+                                                with the
+                                                <a target="_blank"
+                                                    href="https://ppm.niit.com/consent-form/prospective_customer.html">Privacy
+                                                    Policy</a> here *</label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="bttn">Submit
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- advance search bar close -->

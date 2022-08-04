@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.center_page_image_gallery
+label: 'Center Page IMAGE GALLERY'
+targetEntityType: node
+cache: true

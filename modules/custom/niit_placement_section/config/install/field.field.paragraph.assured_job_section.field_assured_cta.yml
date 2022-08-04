@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_assured_cta
+    - paragraphs.paragraphs_type.assured_job_section
+  module:
+    - link
+id: paragraph.assured_job_section.field_assured_cta
+field_name: field_assured_cta
+entity_type: paragraph
+bundle: assured_job_section
+label: 'Slider CTA'
+description: 'Placement assured job slider action.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 1
+field_type: link

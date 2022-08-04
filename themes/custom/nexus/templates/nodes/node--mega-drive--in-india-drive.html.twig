@@ -1,0 +1,12 @@
+<div class="eventitem">
+    <div class="col-sm-6">
+        <figure>
+            <img src="{{ content.field_video_thumbnail[0] }}" alt=""></figure>
+    </div>
+    <div class="col-sm-6">
+        <h3><a href="javascript:void(0)" data-toggle="modal" data-target="#in-india-{{ node.id }}" tabindex="0"><i>
+                    <img src="{{ base_url }}themes/custom/nexus/assets/images/icon-calendar.png" alt=""></i>
+                    {{ content.field_drive_date[0]['#text']| date("dS M") }}</a></h3>
+        <p>{{ content.body }}</p>
+    </div>
+</div>

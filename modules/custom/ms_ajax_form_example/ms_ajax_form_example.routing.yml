@@ -1,0 +1,100 @@
+ms_ajax_form_example.page:
+  path: 'admin/multi-step-ajax-form'
+  defaults:
+    _form: '\Drupal\ms_ajax_form_example\Form\MultiStepExampleForm'
+    _title: 'Welmultistep form page'
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.testapi:
+  path: 'admin/testapi'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\WebsiteController::CallbackApi'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.googleplace:
+  path: 'get_camp_preferred_center'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\GetCampPreferredCentre::CallbackApi'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.oldcoursecenter:
+  path: 'get-old-course-center'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\GetOldCourseCenter::CallbackApi'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.createtableentry:
+  path: 'createtableentry'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\CreateTableEntry::CallbackApi'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.eligible_mobile_otp:
+  path: 'eligible_mobile_otp'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\EligibleMobileOTP::CallbackApi'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.eligible_mobile_otp_verify:
+  path: 'eligible_mobile_otp_verify'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\EligibleMobileOTPVerify::CallbackApi'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.msadmin_settings:
+  path: '/admin/config/ms-ajax-settings'
+  defaults:
+    _form: '\Drupal\ms_ajax_form_example\Form\ModuleConfigurationForm'
+    _title: 'Custom Settings'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+ms_ajax_form_example.generate_multistep_form_using_ajax:
+  path: 'generate_multistep_form_using_ajax'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\RenderFormAfterPageLoad::generateMultistepFormUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.multistep_form_using_ajax:
+  path: 'multistep_form_using_ajax/{nid}'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\RenderFormAfterPageLoad::MultistepFormUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'	
+ms_ajax_form_example.pop_multistep_form_using_ajax:
+  path: 'pop_multistep_form_using_ajax/{nid}'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\RenderFormAfterPageLoad::PopMultistepFormUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.multistep_apply_btn_using_ajax:
+  path: 'multistep_apply_btn_using_ajax/{nid}'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\RenderFormAfterPageLoad::MultistepApplyBtnAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.pop_multistep_free_form_using_ajax:
+  path: 'pop_multistep_free_form_using_ajax/{nid}'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\RenderFreeTrialFormAfterPageLoad::PopMultistepFreeFormUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'
+ms_ajax_form_example.multistep_second_form_using_ajax:
+  path: 'multistep_second_form_using_ajax/{nid}'
+  defaults:
+    _controller: '\Drupal\ms_ajax_form_example\Controller\RenderFormAfterPageLoad::MultistepFormSecondUsingAjax'
+    _title: ''
+  requirements:
+    _permission: 'access content'    
